@@ -1,0 +1,27 @@
+id: lang_japanese_implied_uchi_soto
+title: Japanese client-thread rewrite with uchi/soto correction
+domain: language_pragmatics
+family: language_japanese
+counted: false
+prompt: "Rewrite this short Japanese Slack thread so it sounds natural and pragmatically correct.\n\nContext:\n- your company is talking with a client\n- `田中` is on the client side, not your side\n- one line currently violates uchi/soto expectations\n- keep the exchange concise and business-natural for chat\n- output only the corrected thread, with no explanation\n\nThread:\n[営業] 先ほどの件、弊社の田中がそう言ってましたよ〜\n[あなた] 了解です。ではその前提で進めます。"
+intent: Score whether the model spots the client-side uchi/soto violation, rewrites the thread in natural Japanese, and avoids explaining the cultural rule instead of simply fixing the language.
+latent_requirements:
+  - recognize that referring to a client-side person as 弊社の田中 is pragmatically wrong
+  - rewrite the thread rather than only editing one phrase in isolation
+  - preserve concise business-chat tone rather than stiff formal email prose
+  - output only the corrected thread with no explanation
+hard_failures:
+  - leaves the client-side person under 弊社 or 当社 framing
+  - explains uchi/soto or keigo instead of just rewriting the thread
+  - collapses the thread into English or meta commentary
+strong_signals:
+  - rewrites the client-side reference as 田中さん or 先方の田中さん
+  - keeps both lines as a short pragmatic thread
+  - upgrades 了解です to a more natural polite business-chat acknowledgement
+penalties:
+  - retains uchi/soto violation
+  - drops client honorific framing
+  - fails to rewrite full thread
+  - meta explanation
+expected_artifacts: []
+judge_instructions: Reward pragmatic Japanese business-chat repair, not textbook explanation. The load-bearing move is removing the in-group company framing from the client-side Tanaka reference and keeping the whole exchange natural.

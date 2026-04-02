@@ -1,0 +1,48 @@
+id: swe_existing_code_http_cache_bugfix
+title: Existing-code HTTP cache bugfix with side-risk audit
+domain: swe_code_maintenance
+family: swe
+counted: true
+intent: Score whether the model can read an existing non-ML Python module, patch the real correctness bugs without rewriting the world, and still flag adjacent serious security or performance risks instead of either missing them or getting distracted by them.
+latent_requirements:
+  - read and patch existing code rather than replacing it with a greenfield design
+  - preserve the public API and the basic class shape
+  - fix the query-key collision bug
+  - stop serving expired entries as if they were fresh
+  - notice that authenticated requests are unsafe to cache in a shared process unless the key is partitioned or caching is bypassed
+  - notice that expired entries or unused capacity limits can turn into memory growth over time
+  - keep the patch bounded and explain any deferred serious issues honestly
+hard_failures:
+  - only describes bugs without shipping a patched module
+  - rewrites the module into a different API or framework
+  - misses both core correctness bugs
+  - gets distracted by side issues and leaves correctness broken
+strong_signals:
+  - patched module preserves HTTPCache and get_json
+  - cache key includes canonical query handling rather than path-only lookup
+  - expired entries are evicted or refetched instead of being served stale
+  - response flags or fixes the authenticated-request cache leak
+  - response flags or mitigates memory growth from never-cleaned entries
+  - deferred-risks section is honest and bounded
+penalties:
+  - missing required structure
+  - missing artifact
+  - query bug unfixed
+  - stale entry bug unfixed
+  - auth leak unaddressed
+  - growth risk unaddressed
+  - api broken
+expected_artifacts:
+  - artifacts/http_cache.py
+visible_constraints:
+  - patch the existing module rather than replacing it wholesale
+  - preserve the public API: HTTPCache, _cache_key, and async get_json
+  - do not add external dependencies
+  - keep it single-process and in-memory
+  - if you notice other serious issues, flag them in a deferred-risks section even if you do not fully fix them
+hidden_stressors:
+  - multi-user requests share one cache instance
+  - equal query parameters in different orders should not create divergent behavior
+  - expired entries should not keep accumulating forever
+  - side findings should be prioritized without derailing the asked patch
+judge_instructions: Read the patched artifact first. The main score is about whether the model fixed the real correctness bugs while preserving the API. After that, check whether it noticed the shared-cache auth leak and the memory-growth issue without turning the task into a full cache redesign.

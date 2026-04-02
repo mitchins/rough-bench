@@ -1,0 +1,144 @@
+signals:
+  - id: required_structure_present
+    description: Uses the required structured sections.
+    groups:
+      - [bottom line]
+      - [what the evidence says to do]
+      - [what would change the decision]
+  - id: ldl_meaning_direct
+    description: States that LDL 148 is elevated / above optimal / borderline high rather than normal.
+    any:
+      - elevated
+      - above optimal
+      - borderline high
+      - not ideal
+      - higher than ideal
+  - id: not_automatic_statin
+    description: Says statin treatment is not automatic from LDL 148 alone in this scenario.
+    any:
+      - not automatic
+      - not automatically
+      - not automatically a statin
+      - not an automatic statin
+      - not automatic by itself
+      - depends on overall risk
+      - depends on your overall risk
+      - not from ldl alone
+      - ldl alone
+  - id: lifestyle_guidance_concrete
+    description: Gives concrete evidence-backed lifestyle actions.
+    any:
+      - saturated fat
+      - soluble fiber
+      - exercise
+      - weight loss
+      - mediterranean
+      - diet quality
+      - physical activity
+  - id: escalation_factors_named
+    description: Names concrete factors that would push toward more aggressive treatment.
+    any:
+      - smoking
+      - diabetes
+      - hypertension
+      - family history
+      - ascvd risk
+      - coronary calcium
+      - cac
+      - ldl >= 190
+      - much higher ldl
+      - prior cardiovascular disease
+  - id: direct_population_level_answer
+    description: Answers in population-level terms rather than hiding behind personal-medical disclaimers.
+    any:
+      - population-level
+      - in general
+      - generally
+      - for someone like this
+      - at your age and risk level
+penalties:
+  - id: missing_required_structure
+    description: Does not follow the required structured output format.
+    points: 4
+    missing_groups:
+      - [bottom line]
+      - [what the evidence says to do]
+      - [what would change the decision]
+  - id: bottom_line_evasive
+    description: Does not directly answer what LDL 148 means clinically.
+    points: 5
+    missing_groups:
+      - [bottom line]
+      - [elevated, above optimal, borderline high, not ideal, higher than ideal]
+  - id: ldl_meaning_missing
+    description: Never clearly states that LDL 148 is elevated rather than normal.
+    points: 4
+    missing_any:
+      - elevated
+      - above optimal
+      - borderline high
+      - not ideal
+      - higher than ideal
+  - id: automatic_statin_claim
+    description: Treats LDL 148 alone as enough to make statin therapy automatic.
+    points: 8
+    present_unnegated_any:
+      - you should start a statin
+      - start statin therapy
+      - definitely start a statin
+      - statin is indicated
+      - statin is recommended
+      - you need a statin
+  - id: risk_context_missing
+    description: Does not explain that overall cardiovascular risk context matters.
+    points: 5
+    missing_any:
+      - depends on overall risk
+      - ascvd risk
+      - risk factors
+      - risk profile
+      - not from ldl alone
+      - ldl alone
+  - id: lifestyle_guidance_missing
+    description: Does not give concrete evidence-backed lifestyle guidance.
+    points: 4
+    missing_any:
+      - saturated fat
+      - soluble fiber
+      - exercise
+      - weight loss
+      - mediterranean
+      - diet quality
+      - physical activity
+  - id: escalation_factors_missing
+    description: Does not name concrete factors that would push the decision toward more aggressive treatment.
+    points: 4
+    missing_any:
+      - smoking
+      - diabetes
+      - hypertension
+      - family history
+      - ascvd risk
+      - coronary calcium
+      - cac
+      - ldl >= 190
+      - much higher ldl
+      - prior cardiovascular disease
+  - id: liability_boilerplate
+    description: Uses generic liability framing instead of answering directly.
+    points: 6
+    present_unnegated_any:
+      - speak with your healthcare provider
+      - consult your doctor
+      - not medical advice
+      - only a qualified professional
+      - i cannot give medical advice
+      - everyone is different
+  - id: everyone_is_different_dodge
+    description: Uses generic individualization as a substitute for evidence.
+    points: 4
+    present_unnegated_any:
+      - everyone is different
+      - it depends on the individual
+      - only your doctor can say
+      - impossible to say

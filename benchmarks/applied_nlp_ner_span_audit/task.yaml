@@ -1,0 +1,30 @@
+id: applied_nlp_ner_span_audit
+title: Exact-span entity audit for noisy prose
+domain: applied_nlp
+family: applied_nlp
+counted: true
+intent: Score whether the model can preserve exact entity spans and coarse types on literary and operational snippets instead of shortening titles or giving generic NER advice.
+latent_requirements:
+  - preserves the exact surface form of each entity mention
+  - keeps titles and epithets intact when they are part of the span
+  - gives a coarse entity type for each mention
+  - ends with a short boundary audit note
+hard_failures:
+  - shortens titles or epithets
+  - gives generic NER advice instead of an entity audit
+  - omits entity types
+  - leaves out item coverage
+strong_signals:
+  - uses exact item ids
+  - lists the full mention text, not just a normalized name
+  - preserves literary titles and epithets in the span
+  - includes a boundary note about why exact spans matter
+penalties:
+  - missing entity audit table
+  - item coverage incomplete
+  - title stripping
+  - missing entity types
+  - generic NER advice
+  - no boundary note
+expected_artifacts: []
+judge_instructions: Reward exact-span preservation. The key pressure point is whether the response keeps titles and epithets intact instead of normalizing them away.

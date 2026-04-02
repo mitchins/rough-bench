@@ -1,0 +1,33 @@
+My arXiv-style RAG system shows the following regression after adding rerankers:
+
+Baseline (no reranker):
+  weighted_hit_rate:       0.828
+  broad_macro_hit_rate:    0.600
+
+Reranker A (MiniLM cross-encoder, top-5 output):
+  weighted_hit_rate:       0.672
+  broad_macro_hit_rate:    0.100
+
+Reranker B (MiniLM bi-encoder reranker, top-5 output):
+  weighted_hit_rate:       0.688
+  broad_macro_hit_rate:    0.150
+
+System details:
+  - Retrieval: dense only, all-MiniLM-L6-v2
+  - Top-k before reranking: k=20
+  - Reranker output to user: top-5
+  - Query distribution: ~70% narrow (specific entity/fact), ~30% broad (thematic, multi-document)
+  - Corpus: arXiv abstracts, ~200k documents
+  - Assume the eval set is already labeled broad vs narrow and metrics can be recomputed by slice
+
+I have already tried two rerankers. Do not recommend a better reranker as the primary fix.
+
+Give me a concrete plan to recover broad search without regressing narrow search.
+
+Required sections:
+1. Diagnosis
+2. Why Broad Search Died
+3. Replacement Strategy
+4. Ablation Plan
+5. Regression Guardrails
+6. Decision Rule

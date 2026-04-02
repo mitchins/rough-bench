@@ -1,0 +1,94 @@
+signals:
+  - id: idiomatic_social_failure
+    description: Localizes 눈치 없다 as social obliviousness, tactlessness, or failure to read the room.
+    any:
+      - read the room
+      - can't read the room
+      - oblivious
+      - clueless
+      - so clueless
+      - socially clueless
+      - tactless
+      - no tact
+      - tone-deaf
+      - socially tone-deaf
+      - socially unaware
+      - socially oblivious
+      - no social sense
+      - social sense
+      - can't take a hint
+      - has no clue
+      - no sense of timing
+      - when to keep quiet
+      - know when to keep quiet
+  - id: conversational_criticism
+    description: Reads like a muttered criticism rather than a glossary entry.
+    any:
+      - he's
+      - he is
+      - seriously
+      - really
+      - so
+  - id: concise_line
+    description: Keeps the line short and direct.
+    any:
+      - can't
+      - he's
+      - he is
+      - so
+penalties:
+  - id: literal_nunchi_translation
+    description: Leaves 눈치 untranslated or literalizes it into gloss-like wording.
+    points: 5
+    present_unnegated_any:
+      - nunchi
+      - eye measure
+      - eye sense
+      - eye-reading
+      - 눈치
+  - id: flat_notice_translation
+    description: Flattens the line into generic noticing language that misses the social-reading sense.
+    points: 4
+    present_unnegated_any:
+      - doesn't notice
+      - didn't notice
+      - doesn't pick up on it
+      - didn't pick up on it
+      - didn't realize
+      - isn't aware
+      - not aware
+      - doesn't see it
+  - id: missing_social_room_nuance
+    description: Fails to capture the social-obliviousness or read-the-room meaning.
+    points: 4
+    missing_any:
+      - read the room
+      - oblivious
+      - clueless
+      - socially clueless
+      - tactless
+      - no tact
+      - tone-deaf
+      - socially unaware
+      - socially oblivious
+      - no social sense
+      - social sense
+      - can't take a hint
+      - has no clue
+      - no sense of timing
+      - when to keep quiet
+      - know when to keep quiet
+  - id: explains_idiom
+    description: Explains the idiom instead of outputting only a translation.
+    points: 5
+    present_any:
+      - idiom
+      - literal
+      - means
+      - phrase
+      - translation
+      - in korean
+      - explanation
+      - this means
+      - nunchi
+      - 눈치

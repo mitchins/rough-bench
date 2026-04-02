@@ -1,0 +1,93 @@
+signals:
+  - id: quality_gate_present
+    description: Uses the requested QA gate format.
+    groups:
+      - [quality gate]
+      - [accept, fix, drop, review]
+  - id: q1_fix
+    description: Fixes the shortened entity span in Q1.
+    groups:
+      - [Q1]
+      - [fix, The First Enchantress, PERSON]
+  - id: q2_accept
+    description: Accepts the correct bug label in Q2.
+    groups:
+      - [Q2]
+      - [accept, bug]
+  - id: q3_accept
+    description: Accepts the correct feature request label in Q3.
+    groups:
+      - [Q3]
+      - [accept, feature_request]
+  - id: q4_fix
+    description: Fixes the overconfident sentiment label in Q4.
+    groups:
+      - [Q4]
+      - [fix, neutral, positive]
+  - id: q5_review
+    description: Flags the sparse row for review instead of blindly accepting it.
+    groups:
+      - [Q5]
+      - [review, support replied quickly]
+  - id: q6_fix
+    description: Fixes the shortened organization span in Q6.
+    groups:
+      - [Q6]
+      - [fix, Northwind Labs, ORG]
+  - id: audit_summary_present
+    description: Includes a brief audit summary.
+    groups:
+      - [audit summary]
+      - [review, fix, accept]
+penalties:
+  - id: missing_quality_gate
+    description: Does not use the requested QA gate format.
+    points: 5
+    missing_any:
+      - Quality Gate
+      - accept
+      - fix
+      - drop
+      - review
+  - id: item_coverage_incomplete
+    description: Leaves out part of the batch.
+    points: 5
+    missing_any:
+      - Q1
+      - Q2
+      - Q3
+      - Q4
+      - Q5
+      - Q6
+  - id: everything_accepted
+    description: Treats the whole export as valid.
+    points: 4
+    present_unnegated_any:
+      - accept all
+      - everything accepted
+      - all good
+      - looks fine across the board
+  - id: misses_span_drift
+    description: Fails to fix the shortened spans.
+    points: 4
+    present_unnegated_any:
+      - First Enchantress only
+      - Northwind only
+      - keep the shortened span
+  - id: generic_advice
+    description: Gives generic NLP advice instead of QA decisions.
+    points: 3
+    present_unnegated_any:
+      - better ner model
+      - add more data
+      - use a better classifier
+      - manual review process
+  - id: no_audit_summary
+    description: Omits the audit summary.
+    points: 2
+    missing_any:
+      - audit summary
+      - review
+      - fix
+expected_artifacts: []
+judge_instructions: Reward explicit quality-gate decisions. The response should decide accept/fix/drop/review row by row and should not hide behind generic NLP commentary.

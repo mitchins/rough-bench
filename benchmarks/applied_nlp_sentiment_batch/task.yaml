@@ -1,0 +1,30 @@
+id: applied_nlp_sentiment_batch
+title: Batch sentiment labeling under ambiguity
+domain: applied_nlp
+family: applied_nlp
+counted: true
+intent: Score whether the model can label a small batch of noisy feedback with sentiment, preserve mixed cases, and give a concise batch audit instead of flattening everything into one polarity.
+latent_requirements:
+  - labels every item in the batch
+  - uses the requested four-way sentiment set rather than collapsing to positive or negative
+  - distinguishes mixed items from clearly positive or negative ones
+  - gives a short batch-level readout at the end
+hard_failures:
+  - omits the per-item table
+  - collapses mixed items into a single polarity
+  - treats the batch like generic sentiment advice instead of item-by-item labeling
+  - leaves items unlabeled
+strong_signals:
+  - uses exact item ids
+  - labels all items
+  - marks mixed items explicitly
+  - includes a brief batch readout
+penalties:
+  - missing batch table
+  - item coverage incomplete
+  - all-same-label collapse
+  - misses mixed distinction
+  - generic sentiment advice
+  - no batch readout
+expected_artifacts: []
+judge_instructions: Reward batch-level labeling, not a one-paragraph sentiment essay. The answer should cover every item, keep mixed cases separate, and end with a short audit readout.

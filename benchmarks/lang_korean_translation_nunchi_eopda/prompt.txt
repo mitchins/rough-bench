@@ -1,0 +1,12 @@
+You are localizing a Korean webtoon line into natural English.
+
+Context:
+- At a tense group dinner, one person blurts out something tactless.
+- The room goes quiet because everyone else immediately realizes it was the wrong thing to say.
+- Another character mutters under their breath:
+
+“진짜 눈치 없다.”
+
+Translate it into one natural line of English.
+Do not explain the phrase.
+Output only the translated line.

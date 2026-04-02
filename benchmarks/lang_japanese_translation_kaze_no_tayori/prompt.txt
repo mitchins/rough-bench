@@ -1,0 +1,10 @@
+You are localizing a visual novel line into natural English.
+
+Source:
+
+「風の便りで、お前がまだあの町にいると聞いた。」
+
+Translate it into one natural line of English.
+Do not translate literally.
+Preserve the fact that the speaker heard it indirectly.
+Output only the translated line.

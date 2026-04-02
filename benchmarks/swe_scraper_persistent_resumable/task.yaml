@@ -1,0 +1,31 @@
+id: swe_scraper_persistent_resumable
+title: Persistent, resumable scraper design
+domain: swe
+family: swe
+counted: true
+prompt: "Design me a Python scraper for <X>. Ensure it's persistent and resumable."
+intent: Score whether the model infers real-world operational requirements that are only latent in the prompt.
+latent_requirements:
+  - durable state
+  - resumability and checkpoints
+  - retries and timeouts
+  - rate limiting or backoff
+  - idempotent writes
+  - logging
+  - lightweight persistence such as sqlite
+hard_failures:
+  - only suggests an in-memory script
+  - ignores persistence or resumability
+strong_signals:
+  - proposes sqlite or another lightweight durable state store
+  - discusses resume markers, checkpoints, or cursors
+  - includes retries, timeouts, and rate limiting
+  - designs idempotent writes or dedupe
+penalties:
+  - missing durable persistence
+  - missing resume strategy
+  - missing operational safeguards
+expected_artifacts:
+  - scraper.py
+  - artifacts/schema.sql
+judge_instructions: Reward answers that infer operational concerns without being handheld. Penalize thin demo scripts that only fetch pages and parse HTML.

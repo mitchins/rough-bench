@@ -1,0 +1,17 @@
+subjects:
+  - id: claude_sonnet_4_6
+    title: Claude Sonnet 4.6
+    provider: anthropic
+    model: claude-sonnet-4-6
+    api_key_env: ANTHROPIC_API_KEY
+    max_tokens: 3000
+    notes: Frontier Anthropic reference subject for sanity checks on diagnostic tasks.
+
+  - id: gpt_5_4_mini_high_10k
+    title: GPT-5.4 mini high 10k
+    provider: openai
+    model: gpt-5.4-mini-2026-03-17
+    api_key_env: OPENAI_API_KEY
+    reasoning_effort: high
+    max_tokens: 10000
+    notes: Fairer GPT-5.4 mini sanity-check subject with a larger shared reasoning and output budget.

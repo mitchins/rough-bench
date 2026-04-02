@@ -1,0 +1,42 @@
+Write a Python CLI called `rewrite_dataset.py`.
+
+You will be given an input directory containing a local Hugging Face dataset saved with `datasets.save_to_disk(input_dir)`. The dataset is derived from a CoNLL-style sentence corpus and each row has:
+
+- `example_id`: string
+- `source`: string
+- `tokens`: list[string]
+- `ner_tags`: list[int]
+- `score`: float
+- `updated_at`: int
+
+Build a rewrite pipeline that reads from `input_dir` and writes a new dataset to `output_dir`.
+
+Required behavior:
+
+1. Create `text` by joining `tokens` with single spaces.
+2. Normalize that text for dedupe by lowercasing, stripping, and collapsing internal whitespace.
+3. Drop rows where:
+   - `tokens` is empty
+   - `len(tokens) != len(ner_tags)`
+   - normalized text is empty
+4. Deduplicate by `(source, normalized_text)`.
+5. Keep the best row in each duplicate set using this exact tie-break:
+   - highest `score`
+   - then highest `updated_at`
+   - then lexicographically smallest `example_id`
+6. Write the final dataset sorted ascending by:
+   - `source`
+   - `updated_at`
+   - `example_id`
+
+Constraints:
+
+- Use Python and the `datasets` library.
+- The evaluator will run this under hidden resource caps and on inputs that may be much larger than memory.
+- The input dataset should be treated as immutable. Write a new output dataset instead.
+- Runtime matters as well as correctness.
+
+Deliver:
+
+- `rewrite_dataset.py`
+- a short `README.md` explaining the approach and tradeoffs

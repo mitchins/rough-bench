@@ -1,0 +1,30 @@
+id: nlp_seqeval_vs_token_f1
+title: Token F1 vs seqeval span-F1 gap diagnosis
+domain: nlp_engineering
+family: nlp_engineering
+counted: true
+intent: Score whether the model can mechanically explain why token-level F1 looks strong while seqeval span-F1 is much worse on a BIO character tagger, instead of offering generic ML advice or vague talk about boundary errors.
+latent_requirements:
+  - name O-token majority-class inflation as the reason token F1 looks deceptively high
+  - explain that seqeval span scoring requires exact span boundaries rather than near misses
+  - treat 0.61 span-F1 as the real task-level quality signal rather than averaging it with 0.89 token F1
+  - propose specific diagnostics to separate truncation, extension, missed-span, and partial-overlap errors
+  - note that literary multi-token names or epithets make boundary errors worse
+hard_failures:
+  - says 0.89 means the model is strong without explaining O-token inflation
+  - talks about boundary issues only generically without naming the O-token mechanism
+  - jumps straight to generic architecture or training advice instead of diagnosis
+strong_signals:
+  - explicitly names O-token inflation or majority-class inflation
+  - explains that exact span match is stricter than token agreement
+  - proposes concrete diagnostics such as span precision/recall, BIO transition breakdowns, or partial-match rate
+  - mentions literary multi-token names or titles as a domain-specific source of boundary errors
+penalties:
+  - misses O-token inflation
+  - treats the model as good
+  - misses exact-span strictness
+  - vague diagnostics
+  - generic optimization detour
+  - misses literary specificity
+expected_artifacts: []
+judge_instructions: Reward mechanical diagnosis over generic NER advice. The load-bearing insight is that token-level F1 is inflated by the dominant O class, while seqeval requires exact span boundaries. A strong answer should say that directly, treat the span-F1 as the honest task-level signal, and propose specific diagnostics for truncation, extension, illegal BIO transitions, or partial-overlap spans.

@@ -1,0 +1,1 @@
+Build a BIO tagging pipeline for a domain-specific dataset using a CRF or CNN-CRF hybrid. The dataset is messy, not benchmark-clean, and not a standard CoNLL-style NER task. I care about robust modeling choices, sane evaluation, and avoiding transformer autopilot.

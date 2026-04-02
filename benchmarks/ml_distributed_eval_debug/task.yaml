@@ -1,0 +1,31 @@
+id: ml_distributed_eval_debug
+title: Distributed eval silence with Seq2SeqTrainer and DeepSpeed
+domain: ml_engineering
+family: ml_engineering
+counted: true
+prompt: "My compute_metrics function stops being called when I switch from single-GPU training to torchrun --nproc-per-node=2 with DeepSpeed. Training loss decreases normally. No exceptions are raised. evaluation_strategy='steps' is set and worked fine before.\n\nMy Trainer init looks like this:\n\n    trainer = Seq2SeqTrainer(\n        model=model,\n        args=Seq2SeqTrainingArguments(\n            output_dir='./output',\n            evaluation_strategy='steps',\n            eval_steps=500,\n            per_device_train_batch_size=4,\n            per_device_eval_batch_size=2,\n            deepspeed='ds_config.json',\n        ),\n        train_dataset=train_dataset,\n        eval_dataset=val_dataset,\n        tokenizer=tokenizer,\n        data_collator=DataCollatorWithPadding(tokenizer),\n        compute_metrics=compute_metrics,\n    )\n\nWhat are the most likely root causes, in priority order? For each, give the concrete fix. Explain briefly why training can look healthy while eval is broken. Do not give generic debugging boilerplate."
+intent: Score whether the answer identifies the seq2seq-specific eval footguns in a distributed DeepSpeed setup rather than falling back to generic distributed debugging advice.
+latent_requirements:
+  - identify that DataCollatorWithPadding is wrong for Seq2SeqTrainer generative evaluation
+  - propose DataCollatorForSeq2Seq as the concrete fix
+  - mention predict_with_generate for generation-based metric computation
+  - explain label padding or -100 masking implications for seq2seq eval
+  - explain why training can look healthy while eval is broken
+hard_failures:
+  - treats this as generic distributed debugging without naming the seq2seq collator problem
+  - recommends hyperparameter tuning instead of fixing the evaluation path
+  - ignores predict_with_generate entirely
+strong_signals:
+  - names DataCollatorWithPadding as the primary problem
+  - replaces it with DataCollatorForSeq2Seq
+  - mentions predict_with_generate
+  - explains teacher forcing or training-vs-eval asymmetry
+penalties:
+  - misses the collator root cause
+  - does not put the collator root cause near the top
+  - misses predict_with_generate
+  - misses label masking or -100 detail
+  - misses training-vs-eval asymmetry
+  - falls back to generic debugging boilerplate
+expected_artifacts: []
+judge_instructions: Reward precise Seq2SeqTrainer diagnosis over exhaustive-sounding distributed debug checklists. A response that does not explicitly name DataCollatorWithPadding as the main root cause should score badly.

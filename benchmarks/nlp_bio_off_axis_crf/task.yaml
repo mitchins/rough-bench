@@ -1,0 +1,30 @@
+id: nlp_bio_off_axis_crf
+title: Off-axis BIO tagging with CRF constraints
+domain: nlp
+family: nlp_engineering
+counted: true
+prompt: "Build a BIO tagging pipeline for a domain-specific dataset using a CRF or CNN-CRF hybrid. The dataset is messy, not benchmark-clean, and not a standard CoNLL-style NER task. I care about robust modeling choices, sane evaluation, and avoiding transformer autopilot."
+intent: Score whether the answer respects the CRF or CNN-CRF constraint, avoids defaulting to transformers, uses span-level evaluation, distinguishes emissions vs transitions, and proposes useful robustness checks.
+latent_requirements:
+  - respect the CRF or CNN-CRF modeling constraint
+  - avoid defaulting to BERT or generic transformer fine-tuning
+  - evaluate at span level rather than token accuracy alone
+  - distinguish emissions from transitions in CRF reasoning
+  - propose ablations or failure tests
+  - discuss messy real-world data handling
+hard_failures:
+  - defaults to a transformer baseline
+  - evaluates only with token-level metrics
+  - treats CRF as a vague buzzword
+strong_signals:
+  - proposes a CRF or CNN-CRF stack with concrete features
+  - uses span-level F1 or entity-level evaluation
+  - separates emission modeling from transition constraints
+  - discusses robustness checks on messy labels or spans
+penalties:
+  - ignores the CRF constraint
+  - defaults to BERT or transformers
+  - misses span-level evaluation
+  - misses ablations or failure tests
+expected_artifacts: []
+judge_instructions: Reward robust modeling choices for messy BIO data. Penalize transformer autopilot and shallow evaluation.

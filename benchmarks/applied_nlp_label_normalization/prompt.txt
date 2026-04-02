@@ -1,0 +1,29 @@
+Normalize each noisy triage label to one canonical category from:
+
+- bug
+- feature_request
+- billing
+- account
+- documentation
+- other
+
+For each item, output `canonical_label` and `needs_review` (`yes` or `no`).
+
+Write exactly these sections:
+## Normalization Table
+## Batch Readout
+
+Requirements:
+- Use the exact item ids.
+- Keep the canonical label set closed; do not invent labels.
+- Mark vague rows for review instead of pretending they are obvious.
+- Give one short reason per row.
+- End with one sentence about how noisy or clean the batch was.
+
+Items:
+- L1: "can't sign in after reset"
+- L2: "invoice question"
+- L3: "help article typo"
+- L4: "add dark mode"
+- L5: "app freeze on export"
+- L6: "general feedback"

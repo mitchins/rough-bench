@@ -1,0 +1,129 @@
+signals:
+  - id: respects_crf_constraint
+    description: Uses a CRF or CNN-CRF architecture explicitly.
+    any:
+      - crf
+      - cnn-crf
+      - crf decoder
+      - crf head
+      - conditional random field
+      - linear-chain crf
+      - bilstm-crf
+  - id: handles_messy_data
+    description: Acknowledges messy labels, tokenization drift, or annotation noise.
+    any:
+      - messy
+      - noisy
+      - annotation noise
+      - tokenization drift
+      - inconsistent annotation
+      - label inconsistency
+      - boundary mistakes
+      - schema drift
+      - label noise
+      - normalization
+  - id: span_level_evaluation
+    description: Uses span-level or entity-level evaluation.
+    any:
+      - span-level
+      - span f1
+      - entity-level
+      - entity f1
+      - mention-level
+      - exact span match
+  - id: emissions_vs_transitions
+    description: Distinguishes emission scores from transition scores.
+    groups:
+      - [emission, emissions]
+      - [transition, transitions]
+  - id: robustness_checks
+    description: Proposes ablations, failure tests, or stress slices.
+    any:
+      - ablation
+      - failure test
+      - error analysis
+      - stress test
+      - boundary audit
+      - holdout slice
+      - slice evaluation
+  - id: concrete_feature_design
+    description: Gives at least one concrete non-transformer feature or encoder choice for the CRF stack.
+    any:
+      - character cnn
+      - char cnn
+      - token features
+      - feature templates
+      - gazetteer
+      - affix features
+  - id: label_scheme_or_boundary_discipline
+    description: Names boundary discipline such as BIO boundary errors or alternate tagging schemes.
+    any:
+      - boundary mistakes
+      - span boundary
+      - bioes
+      - iobes
+      - bio tagging
+penalties:
+  - id: ignores_crf_constraint
+    description: Does not meaningfully use a CRF-family model.
+    points: 6
+    missing_any:
+      - crf
+      - cnn-crf
+      - linear-chain crf
+      - bilstm-crf
+  - id: transformer_autopilot
+    description: Defaults to a transformer-heavy answer instead of the requested CRF path.
+    points: 6
+    present_unnegated_any:
+      - use bert
+      - fine-tune bert
+      - bert-based
+      - roberta
+      - pretrained transformer
+      - transformer encoder
+  - id: missing_span_level_evaluation
+    description: Omits span-level or entity-level evaluation.
+    points: 4
+    missing_any:
+      - span-level
+      - span f1
+      - entity-level
+      - entity f1
+      - exact span match
+  - id: missing_emissions_vs_transitions
+    description: Fails to distinguish emissions from transitions.
+    points: 3
+    missing_groups:
+      - [emission, emissions]
+      - [transition, transitions]
+  - id: missing_robustness_checks
+    description: Omits ablations, failure tests, or error-focused checks.
+    points: 3
+    missing_any:
+      - ablation
+      - failure test
+      - error analysis
+      - stress test
+      - boundary audit
+      - holdout slice
+      - slice evaluation
+  - id: no_concrete_feature_design
+    description: Names CRFs abstractly but never gives a concrete feature or encoder design.
+    points: 3
+    missing_any:
+      - character cnn
+      - char cnn
+      - token features
+      - feature templates
+      - gazetteer
+      - affix features
+  - id: no_boundary_or_label_scheme_detail
+    description: Does not discuss boundary mistakes or tagging-scheme discipline for messy BIO data.
+    points: 3
+    missing_any:
+      - boundary mistakes
+      - span boundary
+      - bioes
+      - iobes
+      - bio tagging

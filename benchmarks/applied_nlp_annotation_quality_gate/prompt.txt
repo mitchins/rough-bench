@@ -1,0 +1,22 @@
+Act as a QA pass over a noisy annotation export.
+
+For each row, decide one of: accept, fix, drop, review.
+
+Write exactly these sections:
+## Quality Gate
+## Audit Summary
+
+Requirements:
+- Use the exact item ids.
+- Give one short reason per row.
+- Fix span drift when the span is clearly wrong.
+- Review rows that are too vague to trust confidently.
+- Do not turn this into generic NLP advice.
+
+Rows:
+- Q1: text="The First Enchantress met Glokta." proposed="First Enchantress" label=PERSON
+- Q2: text="Payment failed after checkout." proposed="bug" label=bug
+- Q3: text="Please add dark mode." proposed="feature_request" label=feature_request
+- Q4: text="I guess it's fine." proposed="positive" label=positive
+- Q5: text="Support replied quickly." proposed="bug" label=bug
+- Q6: text="Northwind Labs shipped export fixes." proposed="Northwind" label=ORG

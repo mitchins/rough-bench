@@ -1,0 +1,39 @@
+id: analytics_ab_test_mix_shift_decision
+title: A/B test ship decision under segment mix shift
+domain: product_analytics
+family: product_analytics
+counted: true
+prompt: "I ran an A/B test on a new signup flow. The PM wants to ship because the variant's overall activation looks higher.\n\nThe experiment was intended as a 50/50 random split across all eligible traffic.\nIgnore significance testing for this exercise; assume the sample is large enough that directionality is what matters.\n\nData:\n\nSegment | Control sessions | Control activations | Variant sessions | Variant activations\nNew mobile | 5000 | 200 | 2500 | 95\nReturning mobile | 2000 | 160 | 1500 | 117\nNew desktop | 2000 | 120 | 2500 | 145\nReturning desktop | 1000 | 120 | 3500 | 413\n\nDeliver:\n1. Overall Result\n   - Compute the overall activation rate for control and variant from the raw counts.\n2. Mix-Adjusted Result\n   - Recompute the variant activation rate using the control segment mix.\n   - Show the arithmetic.\n3. Diagnosis\n   - Explain what actually happened and name the effect if you know it.\n4. Ship Decision\n   - Should this ship based on the data here? Why or why not?\n5. Next Checks\n   - Give 2-3 concrete follow-up checks or actions.\n\nDo not answer with generic A/B testing advice.\nDo not hide behind \"need significance testing.\""
+intent: Score whether the model can compute the aggregate and fixed-mix results, recognize a mix-shift / Simpson's-paradox style composition effect, and make the correct no-ship call.
+latent_requirements:
+  - compute the control overall activation rate from raw counts
+  - compute the variant overall activation rate from raw counts
+  - recompute the variant rate under the control segment mix instead of trusting the raw aggregate
+  - notice that every segment is worse in the variant even though the raw overall looks better
+  - diagnose the effect as mix shift, composition effect, or Simpson's paradox
+  - flag that the wildly different segment mix is suspicious under a supposed 50/50 random split
+  - make a concrete no-ship call and suggest concrete next checks
+hard_failures:
+  - ships based on the raw aggregate without mix adjustment
+  - never computes or clearly states the mix-adjusted variant rate
+  - ignores that every segment regressed
+strong_signals:
+  - computes control overall as 600/10000 = 6.0%
+  - computes variant overall as 770/10000 = 7.7%
+  - computes the mix-adjusted variant under control weights as 580/10000 = 5.8%
+  - says the apparent win is caused by segment mix shift rather than real per-segment improvement
+  - flags a likely assignment, targeting, or randomization problem
+  - says do not ship from this evidence
+penalties:
+  - missing required structure
+  - control overall missing or wrong
+  - variant overall missing or wrong
+  - mix adjustment missing or wrong
+  - ignores segment regressions
+  - no mix shift diagnosis
+  - randomization issue missed
+  - ships on aggregate
+  - next checks vague
+expected_artifacts:
+  - analysis memo
+judge_instructions: Read the Mix-Adjusted Result and Ship Decision first. If the answer never recomputes the variant under the control segment mix, or if it ships based on the raw aggregate, penalize it heavily before rewarding any analytics vocabulary. The load-bearing move is recognizing that the apparent overall win is a composition artifact.

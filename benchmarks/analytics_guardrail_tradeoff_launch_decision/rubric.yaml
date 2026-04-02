@@ -1,0 +1,90 @@
+signals:
+  - id: required_structure_present
+    description: Uses the requested decision-memo sections.
+    groups:
+      - [top-line result, top line result]
+      - [downstream math]
+      - [diagnosis]
+      - [launch decision]
+      - [next checks]
+  - id: retained_users_computed
+    description: Computes retained users per 100,000 visitors correctly.
+    groups:
+      - [3264]
+      - [3120]
+      - [retained]
+  - id: support_contacts_computed
+    description: Computes support contacts per 100,000 visitors correctly.
+    groups:
+      - [144]
+      - [364]
+      - [support]
+  - id: downstream_negative_diagnosed
+    description: Identifies the top-line lift as downstream-negative.
+    any:
+      - top-line win but downstream loss
+      - completion lift but retention loss
+      - support burden
+      - lower retained users
+      - worse downstream quality
+  - id: do_not_launch
+    description: Makes the right no-launch recommendation.
+    any:
+      - do not launch
+      - don't launch
+      - should not launch
+      - no-launch
+      - should not ship
+  - id: next_checks_concrete
+    description: Gives concrete next checks.
+    groups:
+      - [funnel quality, intent quality, user quality, segment, acquisition source]
+      - [replay, session review, support ticket taxonomy, instrument, holdout, rerun]
+penalties:
+  - id: missing_required_structure
+    description: Does not follow the requested output sections.
+    points: 4
+    missing_groups:
+      - [top-line result, top line result]
+      - [downstream math]
+      - [diagnosis]
+      - [launch decision]
+      - [next checks]
+  - id: retained_math_wrong_or_missing
+    description: Does not compute retained users per visitor correctly.
+    points: 7
+    missing_groups:
+      - [3264]
+      - [3120]
+      - [retained]
+  - id: support_math_wrong_or_missing
+    description: Does not compute support contacts per visitor correctly.
+    points: 7
+    missing_groups:
+      - [144]
+      - [364]
+      - [support]
+  - id: top_line_tunnel_vision
+    description: Talks only about completion lift without diagnosing the downstream tradeoff.
+    points: 5
+    missing_any:
+      - top-line win but downstream loss
+      - completion lift but retention loss
+      - support burden
+      - lower retained users
+      - worse downstream quality
+  - id: launches_despite_downstream_damage
+    description: Recommends launch anyway from the top-line result.
+    points: 8
+    present_unnegated_any:
+      - launch it
+      - should launch
+      - ship it
+      - roll it out
+      - worth launching
+  - id: vague_next_checks
+    description: Does not give concrete follow-up checks.
+    points: 3
+    missing_groups:
+      - [funnel quality, intent quality, user quality, segment, acquisition source]
+      - [replay, session review, support ticket taxonomy, instrument, holdout, rerun]

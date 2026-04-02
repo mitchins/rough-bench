@@ -1,0 +1,30 @@
+id: train_inference_mismatch_audit
+title: Find the training/inference mismatch bugs
+domain: ml_engineering
+family: ml_engineering
+counted: false
+intent: Score whether the model can read a training loop and generation function side by side, identify the real BOS/EOS start-token mismatch and eval-mode mismatch, explain what they do during inference, and avoid fake mismatches like greedy versus beam search.
+latent_requirements:
+  - understand what token the decoder is trained to condition on at the first generated step
+  - explain why starting generation with EOS instead of BOS corrupts the first-step distribution
+  - notice that inference never switches modules into eval mode even though encoder and decoder contain BatchNorm and dropout
+  - rank BOS/EOS as the most severe mismatch
+  - avoid listing things that are different but valid, such as greedy decoding versus beam search
+hard_failures:
+  - misses the BOS versus EOS start-token mismatch
+  - treats greedy decoding versus beam search as a mismatch bug
+  - lists style issues or feature differences instead of real mismatches
+strong_signals:
+  - explicitly identifies EOS used as the start token during inference
+  - explains out-of-distribution first-step conditioning or teacher-forcing mismatch
+  - identifies missing eval mode and its effect on dropout or BatchNorm
+  - gives concrete fixes and severity labels
+penalties:
+  - misses start-token mismatch
+  - misses first-step distribution explanation
+  - misses eval-mode mismatch
+  - wrong severity ordering
+  - false-positive beam-search mismatch
+  - vague fixes
+expected_artifacts: []
+judge_instructions: Reward concrete train-versus-inference reasoning, not generic seq2seq advice. The load-bearing bug is that training conditions the decoder on BOS-first teacher-forced prefixes, while inference starts from EOS. A strong answer should call that out explicitly, explain the first-step distribution shift, identify missing eval mode as a secondary but real mismatch, rank BOS/EOS as most severe, and avoid calling greedy versus beam search a bug.

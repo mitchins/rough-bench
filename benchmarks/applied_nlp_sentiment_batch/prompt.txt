@@ -1,0 +1,21 @@
+Label each item with one of: positive, negative, neutral, mixed.
+
+Write exactly these sections:
+## Sentiment Table
+## Batch Readout
+
+Requirements:
+- Use the exact item ids.
+- Give one short reason per item.
+- Keep mixed items separate from clearly positive or negative items.
+- End with one sentence that names the dominant pattern across the batch.
+- Do not turn this into generic sentiment advice.
+- Do not skip any item.
+
+Items:
+- A1: The patch fixed my crash and the new search is much faster.
+- A2: It launches, but the logout loop makes the app unusable.
+- A3: I used it to check the dashboard today.
+- A4: Great release, finally the export works again.
+- A5: Support replied quickly, though the bug is still open.
+- A6: Nothing happened after I clicked submit.

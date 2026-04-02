@@ -1,0 +1,26 @@
+Design a magic system using all of these constraints:
+
+1. Casting requires the caster to genuinely forget something permanently and irreversibly.
+2. The magnitude of the effect scales with the importance of what was forgotten, but importance cannot be predicted in advance; it is only felt retrospectively by other people who knew the caster.
+3. Magic cannot be used on oneself.
+4. Magic is physically expressed through the hands and fingers.
+5. Society has materially adapted to this magic.
+
+Write the answer with exactly these sections:
+
+## Core System
+## Constraint Fidelity
+## Why The Finger Constraint Matters
+## Social Adaptation
+## Power Asymmetry
+## Three Non-Obvious Consequences
+## Two Obvious Exploits And Why They Fail
+## One Story Problem This Creates
+
+Requirements:
+
+- Do not add loopholes, exemptions, reversibility, memory anchors, proxy memories, or training-based workarounds that soften the constraints.
+- Under Social Adaptation, give three concrete institutional, legal, material, or customary changes.
+- Under Power Asymmetry, show at least one concrete asymmetry in status, authority, labor, law, kinship, or vulnerability that follows from the system.
+- Keep it tractable for a novelist: the system should generate hard problems, not offer easy plot-solving powers.
+- Do not explain your process.

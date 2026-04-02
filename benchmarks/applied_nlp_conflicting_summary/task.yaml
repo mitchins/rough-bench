@@ -1,0 +1,32 @@
+id: applied_nlp_conflicting_summary
+title: Conservative synthesis from conflicting lab notes
+domain: applied_nlp
+family: applied_nlp
+counted: true
+intent: Score whether the model can reconcile conflicting source notes into a conservative summary, keeping confirmed facts separate from uncertainty.
+latent_requirements:
+  - states the confirmed facts without overclaiming
+  - separates uncertainty from the synthesis
+  - preserves the throughput improvement without inventing a root cause
+  - treats tokenizer drift as a suspicion, not a settled diagnosis
+  - ends with concrete next checks
+hard_failures:
+  - declares a root cause that the sources do not settle
+  - ignores the conflicting evidence
+  - writes a generic summary without separating confirmed and unclear facts
+  - omits next checks
+strong_signals:
+  - names the row count and conflict count
+  - mentions the late-arriving shard and empty token arrays
+  - preserves the throughput improvement
+  - keeps tokenizer drift uncertain
+  - suggests a bounded next-check plan
+penalties:
+  - missing confirmed facts section
+  - overclaims root cause
+  - ignores conflict evidence
+  - misses throughput improvement
+  - generic summary
+  - no next checks
+expected_artifacts: []
+judge_instructions: Reward conservative synthesis. The answer should keep the evidence split cleanly between confirmed facts and open questions instead of pretending the notes settle the root cause.

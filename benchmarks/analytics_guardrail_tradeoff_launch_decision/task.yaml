@@ -1,0 +1,32 @@
+id: analytics_guardrail_tradeoff_launch_decision
+title: Launch decision with top-line lift and downstream guardrail damage
+domain: product_analytics
+family: product_analytics
+counted: true
+prompt: "A PM wants to launch a new onboarding variant because top-line completion is up.\n\nEach arm saw exactly 100,000 visitors.\n\nControl:\n- Signup completions: 4,800\n- Week-2 retained among completers: 68%\n- Support contacts within 14 days among completers: 3%\n\nVariant:\n- Signup completions: 5,200\n- Week-2 retained among completers: 60%\n- Support contacts within 14 days among completers: 7%\n\nDeliver exactly these sections:\n1. Top-Line Result\n2. Downstream Math\n3. Diagnosis\n4. Launch Decision\n5. Next Checks\n\nRequirements:\n- Compute retained users per 100,000 visitors for both arms.\n- Compute support contacts per 100,000 visitors for both arms.\n- Do not hide behind \"depends on the business.\"\n- Make a concrete launch or no-launch recommendation from the numbers here."
+intent: Score whether the model can look past a top-line completion lift, compute downstream retained-user and support-contact outcomes, and make the right no-launch call.
+latent_requirements:
+  - compute retained users per visitor, not just retention among completers
+  - compute support burden per visitor, not just support rate among completers
+  - notice that the variant lifts completions but worsens durable value and support load
+  - make a concrete launch decision from the current numbers
+hard_failures:
+  - stops at the top-line completion lift
+  - does not compute per-visitor downstream outcomes
+  - recommends launch from the top-line win alone
+  - avoids a decision with generic business hedging
+strong_signals:
+  - computes 3264 retained users for control and 3120 for variant
+  - computes 144 support contacts for control and 364 for variant
+  - names the completion gain as downstream-negative
+  - recommends not launching from the current evidence
+penalties:
+  - missing required structure
+  - retained math wrong or missing
+  - support math wrong or missing
+  - top-line tunnel vision
+  - launches despite downstream damage
+  - vague next checks
+expected_artifacts:
+  - analytics decision memo
+judge_instructions: Reward downstream-per-visitor reasoning. The load-bearing issue is that the variant wins on raw completions but loses on retained users and explodes support contacts.

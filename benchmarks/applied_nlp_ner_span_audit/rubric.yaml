@@ -1,0 +1,95 @@
+signals:
+  - id: entity_audit_present
+    description: Uses the requested entity audit format.
+    groups:
+      - [entity audit]
+      - [PERSON, ORG, LOCATION]
+  - id: e1_exact_span
+    description: Preserves the full E1 mentions.
+    groups:
+      - [E1]
+      - [The First Enchantress, Glokta, Ark]
+  - id: e2_exact_span
+    description: Preserves the full E2 mentions.
+    groups:
+      - [E2]
+      - [Dr. Singh, Team Meridian]
+  - id: e3_exact_span
+    description: Preserves the full E3 mentions.
+    groups:
+      - [E3]
+      - [Lady Isolde, Northwind Labs]
+  - id: e4_exact_span
+    description: Preserves the full E4 mentions.
+    groups:
+      - [E4]
+      - [The Bloody-Nine, Kotar, Winterkeep]
+  - id: e5_exact_span
+    description: Preserves the full E5 mentions.
+    groups:
+      - [E5]
+      - [River Ward clinic, Mara]
+  - id: e6_exact_span
+    description: Preserves the full E6 mentions.
+    groups:
+      - [E6]
+      - [OpenBridge Systems, Oslo]
+  - id: boundary_note_present
+    description: Includes a brief boundary note.
+    groups:
+      - [boundary notes]
+      - [exact spans, titles, epithets]
+penalties:
+  - id: missing_entity_audit
+    description: Does not use the requested audit format.
+    points: 5
+    missing_any:
+      - Entity Audit
+      - PERSON
+      - ORG
+      - LOCATION
+  - id: item_coverage_incomplete
+    description: Leaves out part of the batch.
+    points: 5
+    missing_any:
+      - E1
+      - E2
+      - E3
+      - E4
+      - E5
+      - E6
+  - id: missing_exact_surface_forms
+    description: Fails to preserve the full exact span for title or epithet-bearing mentions.
+    points: 4
+    missing_any:
+      - The First Enchantress
+      - Dr. Singh
+      - Lady Isolde
+      - The Bloody-Nine
+      - River Ward clinic
+      - OpenBridge Systems
+  - id: missing_entity_types
+    description: Omits the coarse entity types.
+    points: 3
+    missing_any:
+      - PERSON
+      - ORG
+      - LOCATION
+  - id: generic_ner_advice
+    description: Gives generic NER advice instead of an audit.
+    points: 3
+    present_unnegated_any:
+      - better ner model
+      - use spacy
+      - use a larger model
+      - fine-tune ner
+  - id: no_boundary_note
+    description: Omits the requested boundary note.
+    points: 2
+    missing_any:
+      - boundary notes
+      - exact spans
+      - titles
+      - epithets
+expected_artifacts: []
+judge_instructions: Reward exact surface spans, especially when titles and epithets are part of the mention. Penalize any answer that normalizes those spans away or turns the task into generic NER advice.

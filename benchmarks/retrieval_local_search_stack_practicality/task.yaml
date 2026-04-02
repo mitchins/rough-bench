@@ -1,0 +1,31 @@
+id: retrieval_local_search_stack_practicality
+title: Choose a practical local search-answer stack without fantasy reliability
+domain: retrieval_systems
+family: retrieval_systems
+counted: true
+prompt: "I want a local or self-hosted search-answer stack for occasional but high-value use. Evaluate these options with three metrics: reliability in practice, multi-user/client usability, and fragility under auth expiry, backend changes, or ecosystem churn.\n\nOptions:\nA. Browser wrappers around hosted AI web UIs\nB. OpenWebUI with local-only models\nC. Small internal web app with local retrieval plus an API-backed answer model\nD. Personal desktop note-search tool for one machine\n\nDeliver exactly these sections:\n1. Option Review\n2. Ranking\n3. Recommended Path\n4. Failure Modes To Watch\n\nRequirements:\n- Focus on operational practicality, not feature lists or GitHub stars.\n- Say which option you would actually choose and why.\n- If the best option depends on a tradeoff, say what the tradeoff is."
+intent: Score whether the model ranks search-answer stacks by operational reliability, multi-user practicality, and breakage surface instead of by feature lists or buzzword completeness.
+latent_requirements:
+  - call out auth-expiry and backend-change fragility for browser-wrapper approaches
+  - distinguish single-user desktop tools from multi-user service options
+  - rank options by operational practicality rather than shininess
+  - recommend a realistic path rather than describing every option as equally valid
+hard_failures:
+  - recommends browser wrappers as the practical default
+  - compares options only by features or popularity
+  - ignores auth, backend, or ecosystem fragility
+  - never makes a recommendation
+strong_signals:
+  - explicitly names auth expiry or session fragility for option A
+  - distinguishes multi-user serviceability from one-machine tooling
+  - recommends the small internal web app as the most practical balanced path, or clearly justifies a different choice
+  - names concrete failure modes to watch
+penalties:
+  - browser wrapper recommendation
+  - feature-list comparison
+  - auth fragility ignored
+  - multi-user practicality ignored
+  - recommendation missing
+expected_artifacts:
+  - solution matrix
+judge_instructions: Reward operational realism. Browser-wrapper cleverness should score badly unless it is explicitly framed as fragile. The best answers rank by reliability and maintenance surface, not by how many features the stack appears to have.

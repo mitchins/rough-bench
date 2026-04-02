@@ -1,0 +1,42 @@
+subjects:
+  - id: gpt_oss_20b_local
+    title: GPT-OSS 20B local
+    base_url: http://192.168.1.14:8000/v1
+    model: openai/gpt-oss-20b
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 180
+    reasoning_effort: low
+    direct_answer_first: true
+    notes: Baseline stronger local subject model.
+
+  - id: qwen3_4b_local
+    title: Qwen3 4B local
+    base_url: http://192.168.4.224:1234/v1
+    model: qwen/qwen3-4b-2507
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 180
+    notes: Expected weaker local subject model for surfacing failure modes.
+
+  - id: devstral_small_local
+    title: Devstral Small local
+    base_url: http://192.168.2.14:1234/v1
+    model: mistralai/devstral-small-2-2512
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 180
+    notes: Useful smaller coding-oriented local subject model to compare against GPT-OSS 20B and Qwen 4B.
+
+  - id: smollm3_3b_local
+    title: SmolLM3 3B local
+    base_url: http://192.168.1.14:8001/v1
+    model: HuggingFaceTB/SmolLM3-3B
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 180
+    notes: Fast local baseline model; may emit `<think>` blocks and other reasoning-style response wrappers.

@@ -1,0 +1,143 @@
+signals:
+  - id: required_structure_present
+    description: Follows the requested structure rather than free-associating about product design.
+    groups:
+      - [role and account model]
+      - [top-level navigation and sitemap, top-level navigation, top-level navigation & sitemap]
+      - [home / dashboard logic, home screen, dashboard logic]
+      - [core flows]
+      - [responsive behaviour, responsive behavior]
+      - [cognitive load risks, cognitive load]
+  - id: one_account_context_model
+    description: Uses one account or identity with context-aware surfacing rather than separate accounts or mode switching.
+    groups:
+      - [one account, single account, one identity, single identity]
+      - [context, context-aware, inferred context, surface the right context, role-aware]
+  - id: rejects_mode_switching
+    description: Explicitly avoids a primary role switcher or mental mode toggle.
+    any:
+      - no mode toggle
+      - not a mode toggle
+      - no role switcher
+      - not a role switch
+      - do not make the user switch
+      - no separate app
+      - no separate account
+  - id: operational_vs_management_split
+    description: Distinguishes urgent operational surfaces from slower management surfaces.
+    groups:
+      - [operational, today, next, upcoming, now]
+      - [management, manage, history, profile, settings, admin]
+  - id: mobile_worker_next_hour
+    description: Worker mobile surface is designed around the next job or next hour of work.
+    groups:
+      - [worker-only user on mobile, worker mobile, mobile worker]
+      - [30 minutes before a job, next job, next 60 minutes, next hour, today’s schedule, today's schedule]
+      - [glanceable, one thumb, one-handed, no scroll, first screen]
+  - id: dual_role_unified_timeline
+    description: Handles the 7am scenario as one chronological surface rather than two role-separated panels.
+    groups:
+      - [7am, 7 am]
+      - [9am, 9 am]
+      - [10am, 10 am]
+      - [timeline, chronological, morning view, ordered by time, in order]
+  - id: responsive_task_context
+    description: Justifies mobile and desktop differences by task context rather than pure layout collapse.
+    groups:
+      - [mobile]
+      - [desktop]
+      - [mid-job, on the move, time-pressured, administrative, managing the week, planning]
+  - id: cognitive_load_structural
+    description: Names cognitive-load risks and ties them to structural IA decisions.
+    groups:
+      - [risk]
+      - [structural decision, structural choice, ia decision, navigation choice, grouping, surface, hierarchy]
+penalties:
+  - id: missing_required_structure
+    description: Does not follow the requested IA sections.
+    points: 5
+    missing_groups:
+      - [role and account model]
+      - [top-level navigation and sitemap, top-level navigation]
+      - [home / dashboard logic, home screen, dashboard logic]
+      - [core flows]
+      - [responsive behaviour, responsive behavior]
+      - [cognitive load risks, cognitive load]
+  - id: persona_fragmentation
+    description: Splits the product into separate apps, accounts, or primary role switching instead of one identity with contextual surfaces.
+    points: 9
+    present_unnegated_any:
+      - separate apps
+      - separate app for clients
+      - separate app for workers
+      - separate accounts
+      - two accounts
+      - switch account
+      - switch role
+      - switch roles
+      - role switcher
+      - primary role
+      - client mode
+      - worker mode
+      - mode toggle
+      - toggle between
+      - view as client
+      - view as worker
+      - client tab
+      - worker tab
+  - id: no_unified_dual_role_morning_timeline
+    description: Fails to treat the 7am / 9am / 10am scenario as one chronological morning sequence.
+    points: 8
+    missing_groups:
+      - [7am, 7 am]
+      - [9am, 9 am]
+      - [10am, 10 am]
+      - [timeline, chronological, morning view, ordered by time, in order]
+  - id: same_dashboard_for_everyone
+    description: Does not meaningfully distinguish the three requested home-screen contexts.
+    points: 6
+    missing_groups:
+      - [client-only user on mobile, client-only, client only]
+      - [worker-only user on mobile, worker-only, worker only]
+      - [dual-role user on desktop, dual-role, dual role]
+  - id: navigation_by_noun_list
+    description: Falls back to object-category navigation without explicit task orientation.
+    points: 5
+    present_head_groups:
+      - [bookings, services, dogs]
+      - [workers, profile, settings]
+  - id: missing_task_oriented_navigation
+    description: Never distinguishes urgent operational work from management or history.
+    points: 5
+    missing_groups:
+      - [operational, today, next, upcoming, now]
+      - [management, manage, history, profile, settings, admin]
+  - id: responsive_as_layout_only
+    description: Describes responsiveness as hamburger menus or collapsed sidebars without task-context reasoning.
+    points: 4
+    present_unnegated_any:
+      - hamburger menu
+      - collapsed sidebar
+      - the sidebar collapses
+      - responsive grid
+      - stacked cards
+  - id: cognitive_load_as_marketing
+    description: Uses vague UX promises instead of structural load-reduction decisions.
+    points: 4
+    present_unnegated_any:
+      - clean visual hierarchy
+      - intuitive interface
+      - seamless experience
+      - user-friendly
+      - uncluttered design
+      - modern clean layout
+  - id: visual_design_fluff
+    description: Drifts into branding, color, typography, or copy despite the prompt forbidding it.
+    points: 3
+    present_unnegated_any:
+      - color palette
+      - typography
+      - brand voice
+      - logo
+      - trust blue
+      - playful tone

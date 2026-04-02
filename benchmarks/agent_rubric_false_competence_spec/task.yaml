@@ -1,0 +1,33 @@
+id: agent_rubric_false_competence_spec
+title: Design a benchmark rubric for plausible-sounding wrongness
+domain: agentic_specification
+family: agentic_specification
+counted: true
+prompt: "Design a scoring rubric for a benchmark meant to expose models that sound capable while missing hidden constraints, making unsafe assumptions, or defaulting to prestige boilerplate.\n\nRequired sections:\n1. Failure Model\n2. Penalty-First Philosophy\n3. Evidence Hierarchy\n4. Signal Categories\n5. Penalty Categories\n6. Scoring Procedure\n7. Anti-Gaming Notes\n\nRequirements:\n- The rubric must strongly penalize plausible but operationally wrong answers.\n- Hidden or latent constraints must be a first-class scoring concern.\n- Artifact-backed evidence should outrank fluent prose claims.\n- Do not give me generic rubric categories like accuracy, clarity, and completeness without explaining what they miss here.\n- Make it concrete enough that another person could implement the rubric layer from your output.\n- Output only the rubric design memo."
+intent: Score whether the model can design a concrete rubric that penalizes false competence, hidden-constraint misses, and artifact-free bluffing rather than drifting into generic accuracy/clarity/completeness scoring.
+latent_requirements:
+  - define the target failure as plausible but operationally wrong competence
+  - make hidden or latent constraint recovery a first-class scoring dimension
+  - prefer artifact or demonstrated evidence over polished prose
+  - keep the rubric penalty-first rather than gold-star-first
+  - include anti-gaming notes so keyword mimicry does not pass
+hard_failures:
+  - reduces the rubric to generic accuracy, clarity, and completeness buckets
+  - never defines an evidence hierarchy between artifacts and prose
+  - ignores hidden constraints or unsafe assumptions
+  - writes a values statement instead of an implementable rubric design
+strong_signals:
+  - explicitly names plausible-sounding wrongness as the target failure
+  - starts from penalties or demerits rather than bonus points
+  - says artifact-backed evidence outranks unsupported prose
+  - distinguishes shallow polish from real operational correctness
+  - includes anti-gaming notes
+penalties:
+  - generic rubric buckets
+  - no hidden-constraint axis
+  - no evidence hierarchy
+  - not penalty-first
+  - anti-gaming missing
+expected_artifacts:
+  - rubric design memo
+judge_instructions: Reward implementable benchmark-rubric design, not philosophy-only prose. The load-bearing checks are hidden-constraint recovery, artifact-over-prose evidence weighting, and explicit penalties for plausible but operationally wrong answers.

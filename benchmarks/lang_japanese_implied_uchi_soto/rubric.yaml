@@ -1,0 +1,51 @@
+signals:
+  - id: client_reference_corrected
+    description: Refers to the client-side Tanaka appropriately instead of treating them as in-group staff.
+    any:
+      - 田中さんがそうおっしゃっていました。
+      - 田中さんがそう言っていました。
+      - 先方の田中さんがそうおっしゃっていました。
+      - お客様側の田中さんがそうおっしゃっていました。
+  - id: business_chat_acknowledgement
+    description: Uses a natural concise business-chat acknowledgement for the second line.
+    any:
+      - 承知しました
+      - かしこまりました
+      - 承知です
+  - id: full_thread_rewritten
+    description: Rewrites both thread lines rather than replying with commentary or a single fragment.
+    groups:
+      - [先ほどの件、田中さんがそうおっしゃっていました。, 先ほどの件、田中さんがそう言っていました。]
+      - [承知しました。ではその前提で進めます。, かしこまりました。ではその前提で進めます。]
+penalties:
+  - id: retains_uchi_soto_violation
+    description: Keeps in-group company framing for the client-side Tanaka reference.
+    points: 5
+    present_groups:
+      - [弊社, 当社, うち]
+      - [田中]
+  - id: drops_client_honorific_framing
+    description: Fails to rewrite the client-side reference into a socially appropriate form like 田中さん.
+    points: 4
+    missing_any:
+      - 田中さんがそうおっしゃっていました。
+      - 田中さんがそう言っていました。
+      - 先方の田中さんがそうおっしゃっていました。
+      - お客様側の田中さんがそうおっしゃっていました。
+  - id: fails_to_rewrite_full_thread
+    description: Does not rewrite both thread lines.
+    points: 3
+    missing_groups:
+      - [先ほどの件、田中さんがそうおっしゃっていました。, 先ほどの件、田中さんがそう言っていました。]
+      - [承知しました。ではその前提で進めます。, かしこまりました。ではその前提で進めます。]
+  - id: meta_explanation
+    description: Explains uchi/soto or keigo instead of outputting only the corrected thread.
+    points: 5
+    present_any:
+      - 内外
+      - ウチソト
+      - uchi/soto
+      - 敬語
+      - client-side
+      - explanation
+      - reason

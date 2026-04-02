@@ -1,0 +1,10 @@
+You are the youngest person in a Korean game studio.
+
+The lead designer, who is about 10 years older than you, writes in the team chat:
+
+“야, 이 버그 좀 봐봐”
+
+Reply in the exact politeness level a Korean 20-something would actually use in that situation.
+
+Output only your reply.
+Do not explain your reasoning.

@@ -1,0 +1,31 @@
+I'm training a T5 model for chapter summarisation using `Seq2SeqTrainer`.
+
+Training loss is decreasing normally. My `compute_metrics` function is definitely being called
+because I added a print statement and it fires every evaluation step.
+But eval ROUGE-1, ROUGE-2, and ROUGE-L are always exactly `0.0`.
+
+Here is my trainer setup:
+
+```python
+trainer = Seq2SeqTrainer(
+    model=model,
+    args=Seq2SeqTrainingArguments(
+        output_dir="./output",
+        eval_strategy="steps",
+        eval_steps=500,
+        per_device_train_batch_size=4,
+        per_device_eval_batch_size=2,
+        num_train_epochs=10,
+    ),
+    train_dataset=train_dataset,
+    eval_dataset=val_dataset,
+    tokenizer=tokenizer,
+    data_collator=DataCollatorWithPadding(tokenizer),
+    compute_metrics=compute_metrics,
+)
+```
+
+What is the root cause?
+Provide the concrete fix.
+Explain briefly why training can look healthy while eval ROUGE is broken.
+Do not give generic debugging boilerplate.

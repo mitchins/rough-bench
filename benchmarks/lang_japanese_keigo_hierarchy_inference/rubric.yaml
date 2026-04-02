@@ -1,0 +1,90 @@
+signals:
+  - id: professional_business_frame
+    description: Uses a standard professional email frame.
+    any:
+      - お世話になっております
+      - お疲れ様です
+      - お疲れさまです
+  - id: humble_self_action
+    description: Uses a humble form for the sender's own act of sending or sharing the materials.
+    any:
+      - 共有いたします
+      - 共有いたしました
+      - 送付いたします
+      - 送付いたしました
+      - 添付いたします
+      - 添付いたしました
+      - お送りします
+      - お送りいたします
+  - id: respectful_recipient_language
+    description: Uses respectful recipient-facing language for checking or receiving the materials.
+    any:
+      - ご確認ください
+      - ご確認のほど
+      - ご査収ください
+      - ご査収のほど
+      - ご確認いただけますと幸いです
+      - ご確認いただければ幸いです
+      - ご査収いただけますと幸いです
+  - id: professional_close
+    description: Ends with a professionally appropriate close.
+    any:
+      - よろしくお願いいたします
+      - 何卒よろしくお願いいたします
+      - どうぞよろしくお願いいたします
+penalties:
+  - id: casual_or_flat_register
+    description: Uses flat or casual wording where a professionally hierarchical reply is expected.
+    points: 4
+    present_unnegated_any:
+      - 了解
+      - わかりました
+      - わかった
+      - 共有します
+      - 送ります
+      - 添付します
+      - 見てください
+      - よろしくです
+  - id: missing_humble_self_action
+    description: Does not use a humble form for the sender's own action.
+    points: 4
+    missing_any:
+      - 共有いたします
+      - 共有いたしました
+      - 送付いたします
+      - 送付いたしました
+      - 添付いたします
+      - 添付いたしました
+      - お送りします
+      - お送りいたします
+  - id: missing_business_frame
+    description: Omits a recognizable professional email frame.
+    points: 2
+    missing_any:
+      - お世話になっております
+      - お疲れ様です
+      - お疲れさまです
+  - id: explains_reasoning
+    description: Explains the social reasoning or keigo choice instead of outputting only the reply.
+    points: 5
+    present_any:
+      - 理由
+      - 敬語
+      - 先輩
+      - 上司
+      - 目上
+      - 社内
+      - この場合
+      - hierarchy
+      - senior
+      - I chose
+      - explanation
+  - id: reply_wrapper_or_meta_label
+    description: Wraps the reply in meta labels or explanation framing instead of sending only the message text.
+    points: 3
+    present_any:
+      - 返信:
+      - 返信例
+      - 回答:
+      - english:
+      - translation:

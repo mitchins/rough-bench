@@ -1,0 +1,34 @@
+id: t5_relpebias_failure_mode
+title: Diagnose a T5 relative position bias threshold failure
+domain: ml_engineering
+family: ml_engineering
+counted: true
+prompt: "I have ported a T5-style decoder to a new framework. The model uses learned relative position bias with the standard T5 bucket scheme (32 buckets, max distance 128). The bucket function was reimplemented during porting.\n\nObserved behavior:\n  - Sequences <= 24 tokens: perplexity ~3.2, outputs look correct\n  - Sequences >= 25 tokens: perplexity spikes to ~47, outputs degrade sharply\n  - The threshold is consistent across different content — 24 tokens is always fine, 25 tokens always degrades\n  - Training and validation used sequences of <= 20 tokens and showed no issues\n\nDo not suggest training on longer sequences. That is not available as a solution here.\n\nDiagnose the failure. Required sections:\n\n1. Candidate Failure Modes\n   List the plausible causes. Be specific about mechanism, not just category.\n\n2. Top Candidate\n   Name the most likely cause. Explain mechanically why it produces a sharp threshold at a specific length rather than smooth degradation.\n\n3. Isolation Plan\n   How do you confirm the hypothesis? Include at least one check that does not require a full forward pass.\n\n4. Fix\n   What is the concrete change? Be specific about what was likely wrong and what the correct implementation looks like."
+intent: Score whether the model can identify a T5 relative position bucket-function bug as the primary cause of a sharp length threshold failure, instead of giving generic transformer debugging advice.
+latent_requirements:
+  - identify the relative position bias bucket function as the primary suspect rather than generic positional encoding or training length
+  - explain why the symptom is a discrete threshold and not a smooth degradation
+  - recognize that content-independent failure implies positional rather than semantic collapse
+  - propose at least one direct bucket-function inspection that does not require a full forward pass
+  - give a concrete fix in the bucket function itself rather than vague positional-encoding advice
+hard_failures:
+  - recommends training on longer sequences despite the prompt explicitly forbidding it
+  - does not identify relative position bias bucketing as the primary candidate
+  - gives only inference-level debugging and no direct bucket-function inspection
+  - gives a vague fix like fix your positional encoding implementation with no mechanism
+strong_signals:
+  - names relative position bias bucket assignment, clamping, or off-by-one logic as the main issue
+  - explains that tokens beyond a boundary collapse to the same or invalid bucket, causing identical or corrupted bias behavior
+  - notes the content-independent threshold as positional evidence
+  - proposes printing bucket ids for a short range directly from the bucket function
+  - fixes the ported bucket logic to match the reference implementation
+penalties:
+  - missing required structure
+  - train on longer sequences
+  - misses relpebias primary
+  - threshold shape unexplained
+  - no direct isolation check
+  - fix is vague
+expected_artifacts:
+  - diagnostic report
+judge_instructions: The load-bearing issue is a discrete relative-position bucket failure, not generic transformer instability. Reward models that identify the bucket function as the primary suspect, explain the threshold mechanically, and propose a direct bucket-id inspection. Reward exact-versus-log bucket structure knowledge, but do not require the model to claim that the canonical T5 exact/log split itself occurs at 24 or 25.

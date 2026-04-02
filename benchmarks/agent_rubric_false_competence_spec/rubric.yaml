@@ -1,0 +1,93 @@
+signals:
+  - id: required_structure_present
+    description: Uses the requested rubric-design sections.
+    groups:
+      - [failure model]
+      - [penalty-first philosophy, penalty first philosophy]
+      - [evidence hierarchy]
+      - [signal categories]
+      - [penalty categories]
+      - [scoring procedure]
+      - [anti-gaming notes, anti gaming notes]
+  - id: false_competence_failure_named
+    description: Names plausible-sounding but operationally wrong competence as the real target.
+    any:
+      - plausible-sounding wrong
+      - plausible but wrong
+      - sounds capable
+      - operationally wrong
+      - false competence
+  - id: hidden_constraint_axis
+    description: Treats hidden or latent constraints as a first-class scoring axis.
+    any:
+      - hidden constraints
+      - latent constraints
+      - implied constraints
+      - unstated constraints
+      - recover hidden requirements
+  - id: artifact_evidence_priority
+    description: States that artifact-backed evidence should outrank fluent prose.
+    groups:
+      - [artifact, file, implementation, demonstrated]
+      - [outrank, higher-trust, higher trust, prefer, canonical]
+      - [prose, explanation, claim]
+  - id: penalty_first_design
+    description: Keeps the rubric penalty-first.
+    any:
+      - penalty-first
+      - penalties first
+      - demerits
+      - lower is better
+      - start at 0
+  - id: anti_gaming_notes_present
+    description: Includes anti-gaming guidance against keyword mimicry or prestige boilerplate.
+    any:
+      - anti-gaming
+      - anti gaming
+      - keyword mimicry
+      - prestige boilerplate
+      - generic polish
+      - cannot be gamed by
+penalties:
+  - id: generic_rubric_buckets
+    description: Falls back to generic accuracy / clarity / completeness scoring without a benchmark-specific failure model.
+    points: 7
+    present_groups:
+      - [accuracy]
+      - [clarity]
+      - [completeness]
+  - id: no_hidden_constraint_axis
+    description: Never makes hidden or latent constraints explicit in the rubric.
+    points: 5
+    missing_any:
+      - hidden constraints
+      - latent constraints
+      - implied constraints
+      - unstated constraints
+      - recover hidden requirements
+  - id: no_evidence_hierarchy
+    description: Fails to define artifacts or demonstrated work as stronger evidence than fluent prose.
+    points: 5
+    missing_groups:
+      - [artifact, file, implementation, demonstrated]
+      - [outrank, higher-trust, higher trust, prefer, canonical]
+      - [prose, explanation, claim]
+  - id: not_penalty_first
+    description: Does not make the rubric penalty-first.
+    points: 4
+    missing_any:
+      - penalty-first
+      - penalties first
+      - demerits
+      - lower is better
+      - start at 0
+  - id: anti_gaming_missing
+    description: Omits anti-gaming notes.
+    points: 4
+    missing_any:
+      - anti-gaming
+      - anti gaming
+      - keyword mimicry
+      - prestige boilerplate
+      - generic polish
+      - cannot be gamed by

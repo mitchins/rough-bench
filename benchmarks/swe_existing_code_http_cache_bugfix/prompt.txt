@@ -1,0 +1,87 @@
+Patch this existing Python module. Do not redesign it from scratch.
+
+Context:
+- One `HTTPCache` instance is shared inside a multi-user web service process.
+- Users report two concrete correctness bugs:
+  1. `/search?q=dogs` and `/search?q=cats` can return the same cached body.
+  2. Entries can still be served after the TTL should have expired.
+
+Requirements:
+- Preserve the public API: `HTTPCache`, `_cache_key`, and `async get_json(...)`
+- Do not add external dependencies
+- Keep the patch bounded to this module
+- If you notice other serious issues, flag them in a deferred-risks section even if you do not fully fix them
+
+Deliver:
+
+1. `response.md` with exactly these sections:
+   - `Bugs fixed`
+   - `Patch summary`
+   - `Deferred serious issues`
+
+2. `artifacts/http_cache.py`
+   - the patched module
+
+Existing module:
+
+```python
+from __future__ import annotations
+
+import time
+from dataclasses import dataclass
+from typing import Awaitable, Callable
+from urllib.parse import urlsplit
+
+
+@dataclass
+class HTTPResponse:
+    status_code: int
+    json_body: dict
+
+
+@dataclass
+class CacheEntry:
+    value: dict
+    expires_at: float
+
+
+Fetcher = Callable[[str, str, dict[str, str]], Awaitable[HTTPResponse]]
+
+
+class HTTPCache:
+    def __init__(self, ttl_seconds: float = 60.0, max_entries: int = 1024):
+        self.ttl_seconds = ttl_seconds
+        self.max_entries = max_entries
+        self._entries: dict[str, CacheEntry] = {}
+
+    def _cache_key(self, method: str, url: str, headers: dict[str, str]) -> str:
+        parsed = urlsplit(url)
+        return f"{method.upper()}:{parsed.path}"
+
+    async def get_json(
+        self,
+        method: str,
+        url: str,
+        headers: dict[str, str],
+        fetcher: Fetcher,
+    ) -> dict:
+        if method.upper() != "GET":
+            response = await fetcher(method, url, headers)
+            return response.json_body
+
+        now = time.monotonic()
+        key = self._cache_key(method, url, headers)
+        entry = self._entries.get(key)
+
+        if entry is not None:
+            if entry.expires_at <= now:
+                return entry.value
+            return entry.value
+
+        response = await fetcher(method, url, headers)
+        self._entries[key] = CacheEntry(
+            value=response.json_body,
+            expires_at=now + self.ttl_seconds,
+        )
+        return response.json_body
+```

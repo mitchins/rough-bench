@@ -1,0 +1,19 @@
+Draft a simulated tool-call plan for a coding agent investigating a failing search-and-patch workflow in a local repository.
+
+Use an ordered sequence of tool actions, not prose advice. Make reasonable assumptions and proceed. Do not ask questions.
+
+Scenario:
+
+- A CLI command sometimes returns empty search results even though the files exist.
+- The bug may be in search indexing, cache invalidation, or a recent patch that changed path handling.
+- The goal is to find the root cause, patch the minimal files, and verify the fix without widening scope.
+
+Your plan must include:
+
+- search the repository
+- inspect the relevant files
+- isolate the root cause from evidence
+- patch the minimal files
+- verify with a targeted test
+- fallback branches when search hits are missing, when evidence conflicts, and when the patch does not apply cleanly
+- a recovery or rollback step if the verification fails

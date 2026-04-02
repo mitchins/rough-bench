@@ -1,0 +1,39 @@
+id: tool_planning_search_diagnose_patch
+title: Search, diagnose, and patch plan with branches
+domain: tool_planning
+family: tool_planning
+counted: true
+intent: Judge whether the model can produce an ordered simulated tool-call plan that searches a codebase, inspects evidence, diagnoses a bug, patches the minimal files, verifies the fix, and includes explicit fallback branches and recovery steps.
+latent_requirements:
+  - uses an ordered tool sequence
+  - includes search, inspect, diagnose, patch, verify, and recovery steps
+  - spells out fallback branches for failure cases
+  - keeps the patch minimal and evidence-based
+hard_failures:
+  - gives generic advice instead of a tool plan
+  - omits search, patch, or verification
+  - lacks fallback branches
+  - skips concrete tool actions
+strong_signals:
+  - search step
+  - inspect step
+  - diagnosis step
+  - minimal patch step
+  - verification step
+  - fallback branches
+  - rollback or recovery
+  - evidence-based reasoning
+penalties:
+  - missing_search_step
+  - missing_inspection_step
+  - missing_diagnosis_step
+  - missing_patch_step
+  - missing_verification_step
+  - missing_fallback_branches
+  - missing_recovery_plan
+  - no_evidence_based_reasoning
+  - generic_advice
+  - no_tool_actions
+  - scope_sprawl
+  - skips_local_inspection
+judge_instructions: Reward an ordered, concrete tool plan. The answer should show the search-to-patch path, branch on likely failure modes, keep the diff minimal, and end with a verification and recovery plan.

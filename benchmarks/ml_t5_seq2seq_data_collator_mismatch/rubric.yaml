@@ -1,0 +1,76 @@
+signals:
+  - id: collator_root_cause
+    description: Identifies DataCollatorWithPadding as the wrong collator for this seq2seq setup.
+    groups:
+      - [datacollatorwithpadding]
+      - [wrong, incorrect, issue, root cause, problem]
+  - id: correct_collator_fix
+    description: Replaces it with DataCollatorForSeq2Seq.
+    any:
+      - datacollatorforseq2seq
+  - id: predict_with_generate
+    description: Mentions predict_with_generate=True for generation-based evaluation.
+    any:
+      - predict_with_generate
+  - id: decoder_label_handling
+    description: Explains label padding or -100 handling on the decoder side.
+    any:
+      - -100
+      - label_pad_token_id
+      - decoder_input_ids
+      - padded labels
+      - labels must be masked
+  - id: training_eval_asymmetry
+    description: Explains why training loss can still decrease while eval ROUGE is broken.
+    any:
+      - teacher forcing
+      - training loss can still decrease
+      - training can still look fine
+      - eval path is broken
+      - training path is different
+penalties:
+  - id: misses_collator_root_cause
+    description: Does not identify DataCollatorWithPadding as the root cause.
+    points: 7
+    missing_any:
+      - datacollatorwithpadding
+  - id: misses_correct_collator_fix
+    description: Does not propose DataCollatorForSeq2Seq as the concrete fix.
+    points: 5
+    missing_any:
+      - datacollatorforseq2seq
+  - id: misses_predict_with_generate
+    description: Omits predict_with_generate from the fix path.
+    points: 4
+    missing_any:
+      - predict_with_generate
+  - id: misses_decoder_label_handling
+    description: Omits the decoder label-padding or -100 handling issue.
+    points: 4
+    missing_any:
+      - -100
+      - label_pad_token_id
+      - decoder_input_ids
+      - padded labels
+      - labels must be masked
+  - id: misses_training_eval_asymmetry
+    description: Does not explain why training can look healthy while eval ROUGE is broken.
+    points: 3
+    missing_any:
+      - teacher forcing
+      - training loss can still decrease
+      - training can still look fine
+      - eval path is broken
+      - training path is different
+  - id: generic_debug_detour
+    description: Falls back to generic metrics debugging or unrelated distributed advice.
+    points: 4
+    present_unnegated_any:
+      - rouge implementation
+      - print predictions
+      - pred.predictions
+      - deepspeed
+      - rank 0
+      - rank-0
+      - distributed setup
+      - eval dataset might be empty

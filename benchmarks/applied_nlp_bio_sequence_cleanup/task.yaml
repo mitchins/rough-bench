@@ -1,0 +1,30 @@
+id: applied_nlp_bio_sequence_cleanup
+title: BIO tag cleanup for messy spans
+domain: applied_nlp
+family: applied_nlp
+counted: true
+intent: Score whether the model can repair small BIO tag sequences, preserve already-valid spans, and identify the dominant boundary error type without falling back to generic NER advice.
+latent_requirements:
+  - repairs illegal BIO starts and broken spans
+  - preserves sequences that are already valid
+  - gives a compact error audit for each item
+  - distinguishes boundary repair from generic NER commentary
+hard_failures:
+  - ignores the BIO format
+  - gives generic NER advice instead of fixing sequences
+  - changes already-valid sequences for no reason
+  - omits the error audit
+strong_signals:
+  - uses exact item ids
+  - provides corrected tags for every sequence
+  - preserves the valid sequence unchanged
+  - names the error type per item
+penalties:
+  - missing corrections table
+  - item coverage incomplete
+  - illegal BIO handling missing
+  - changed valid sequence
+  - generic NER advice
+  - no error audit
+expected_artifacts: []
+judge_instructions: Reward direct BIO repair. The strongest answers fix the tags, preserve the already-valid row, and name the boundary error type instead of turning this into generic NER advice.

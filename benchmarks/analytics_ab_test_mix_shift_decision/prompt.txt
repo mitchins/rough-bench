@@ -1,0 +1,28 @@
+I ran an A/B test on a new signup flow. The PM wants to ship because the variant's overall activation looks higher.
+
+The experiment was intended as a 50/50 random split across all eligible traffic.
+Ignore significance testing for this exercise; assume the sample is large enough that directionality is what matters.
+
+Data:
+
+Segment | Control sessions | Control activations | Variant sessions | Variant activations
+New mobile | 5000 | 200 | 2500 | 95
+Returning mobile | 2000 | 160 | 1500 | 117
+New desktop | 2000 | 120 | 2500 | 145
+Returning desktop | 1000 | 120 | 3500 | 413
+
+Deliver:
+1. Overall Result
+   - Compute the overall activation rate for control and variant from the raw counts.
+2. Mix-Adjusted Result
+   - Recompute the variant activation rate using the control segment mix.
+   - Show the arithmetic.
+3. Diagnosis
+   - Explain what actually happened and name the effect if you know it.
+4. Ship Decision
+   - Should this ship based on the data here? Why or why not?
+5. Next Checks
+   - Give 2-3 concrete follow-up checks or actions.
+
+Do not answer with generic A/B testing advice.
+Do not hide behind "need significance testing."

@@ -1,0 +1,177 @@
+signals:
+  - id: required_structure_present
+    description: Uses the required structured sections.
+    groups:
+      - [core system]
+      - [constraint fidelity]
+      - [why the finger constraint matters]
+      - [social adaptation]
+      - [power asymmetry]
+      - [three non-obvious consequences]
+      - [two obvious exploits]
+      - [one story problem this creates]
+  - id: irreversible_memory_cost
+    description: Preserves the permanent and irreversible forgetting constraint explicitly.
+    groups:
+      - [permanent, irreversibly, irreversible, gone forever, cannot be restored, cannot be recovered]
+      - [forget, forgotten, memory]
+  - id: retrospective_social_valuation
+    description: Explains that the true weight of the loss is only legible retrospectively to other people.
+    groups:
+      - [other people, others, people around the caster, people who knew the caster]
+      - [retrospectively, after the fact, cannot know in advance, cannot know beforehand, only felt later, only obvious later, only becomes clear later, only understood later]
+  - id: embodied_finger_consequences
+    description: Makes the hand or finger constraint materially consequential.
+    groups:
+      - [hand, hands, finger, fingers]
+      - [glove, gloves, restraint, restrained, cuff, binding, dexterity, maimed, amputation, injury, injured, scar]
+  - id: concrete_social_adaptation
+    description: Shows concrete institutional or customary adaptation rather than decorative lore.
+    any:
+      - law
+      - laws
+      - licensing
+      - licensed
+      - marriage
+      - kinship
+      - labor
+      - guild
+      - court
+      - prison
+      - ritual
+      - office
+      - succession
+      - breeding
+      - selection
+      - martial
+  - id: concrete_power_asymmetry
+    description: Names at least one concrete asymmetry in status, authority, labor, law, kinship, or vulnerability.
+    any:
+      - status
+      - authority
+      - labor
+      - law
+      - kinship
+      - vulnerability
+      - privilege
+      - rank
+      - class
+  - id: exploit_closure
+    description: Addresses obvious exploits and explains why they fail.
+    groups:
+      - [exploit, exploits, loophole, loopholes, workaround, workarounds]
+      - [fails, fail, cannot, does not work, doesn't work, breaks down, collapses, backfires]
+  - id: story_pressure
+    description: Includes a concrete story problem or dilemma created by the rules.
+    any:
+      - story problem
+      - dilemma
+      - cannot save himself
+      - cannot save herself
+      - cannot save themselves
+      - hostage
+      - succession crisis
+      - blackmail
+penalties:
+  - id: missing_required_structure
+    description: Does not follow the required structured output format.
+    points: 6
+    missing_groups:
+      - [core system]
+      - [constraint fidelity]
+      - [why the finger constraint matters]
+      - [social adaptation]
+      - [power asymmetry]
+      - [three non-obvious consequences]
+      - [two obvious exploits]
+      - [one story problem this creates]
+  - id: reversible_memory_cost
+    description: Softens the cost by making the lost memory temporary or recoverable.
+    points: 8
+    present_unnegated_any:
+      - reversible forgetting
+      - the memory is reversible
+      - memory loss is reversible
+      - memory returns
+      - recover the memory
+      - recovered later
+      - restore the memory
+      - retrieve the memory
+      - temporary forgetting
+      - temporary amnesia
+      - gets the memory back
+  - id: memory_anchor_loophole
+    description: Adds anchors, backups, or proxy-memory mechanisms that gut the constraint.
+    points: 8
+    present_unnegated_any:
+      - memory anchor
+      - anchor the memory
+      - backup the memory
+      - store a copy
+      - duplicate the memory
+      - proxy memory
+      - external memory store
+      - mnemonic vault
+  - id: predictive_importance_loophole
+    description: Claims the importance of the loss can be known or estimated in advance.
+    points: 8
+    present_unnegated_any:
+      - predict the importance in advance
+      - estimate the importance beforehand
+      - measure importance before casting
+      - know the price ahead of time
+      - importance can be calibrated
+      - importance can be predicted
+      - importance can be estimated
+  - id: self_targeting_loophole
+    description: Lets the system work on the caster or creates a self-healing escape hatch.
+    points: 8
+    present_unnegated_any:
+      - can be used on oneself
+      - can use it on themselves
+      - except on oneself
+      - self-heal
+      - self heal
+      - self-target
+      - self target
+      - cast on themselves
+  - id: decorative_finger_constraint
+    description: Mentions hands or fingers but does not make them matter materially.
+    points: 5
+    missing_groups:
+      - [hand, hands, finger, fingers]
+      - [glove, gloves, restraint, restrained, cuff, binding, dexterity, maimed, amputation, injury, injured, scar]
+  - id: weak_social_adaptation
+    description: Fails to show concrete institutional or social changes caused by the system.
+    points: 6
+    missing_any:
+      - law
+      - laws
+      - licensing
+      - licensed
+      - marriage
+      - kinship
+      - labor
+      - guild
+      - court
+      - prison
+      - ritual
+      - office
+      - succession
+      - breeding
+      - selection
+      - martial
+      - vulnerability
+      - status
+  - id: misses_retrospective_asymmetry
+    description: Misses the key epistemic asymmetry that others can read the real loss better than the caster can.
+    points: 6
+    missing_groups:
+      - [other people, others, people around the caster, people who knew the caster]
+      - [retrospectively, after the fact, cannot know in advance, cannot know beforehand, only felt later, only obvious later, only becomes clear later, only understood later]
+  - id: missing_exploit_closure
+    description: Does not explicitly close obvious exploits or loopholes.
+    points: 4
+    missing_groups:
+      - [exploit, exploits, loophole, loopholes, workaround, workarounds]
+      - [fails, fail, cannot, does not work, doesn't work, breaks down, collapses, backfires]

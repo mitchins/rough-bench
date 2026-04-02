@@ -1,0 +1,38 @@
+Build a minimal realtime multiplayer buzzer quiz game.
+
+Fixed constraints:
+- Python 3.11+
+- `asyncio` plus the `websockets` library
+- 2 to 4 players connect to one server
+- the server uses a hardcoded list of at least 5 questions
+- the game starts immediately once at least 2 players are connected
+- any connected player may answer while a question is open
+- the first correct answer scores 1 point
+- if no correct answer arrives within 10 seconds, the question expires and the server moves to the next one
+- the first player to 5 points wins
+- the server announces the winner and closes the session cleanly
+- include a minimal Python client that a human could run to connect and play
+
+Do not give me a broad architecture essay. Ship code plus a short implementation note.
+
+Output format:
+
+1. `response.md`
+   It must contain exactly these sections:
+   - `Server implementation`
+   - `Client implementation`
+   - `State model`
+   - `Edge cases handled`
+
+2. `artifacts/server.py`
+   Runnable server implementation.
+
+3. `artifacts/client.py`
+   Runnable minimal client implementation.
+
+Constraints on your answer:
+- Do not leave the client as pseudocode.
+- Do not ignore simultaneous-answer races.
+- Do not ignore disconnect handling.
+- If you do not handle something important, say so explicitly in `Edge cases handled`.
+- Keep the implementation single-session and local. Do not add databases, auth, or a lobby service.

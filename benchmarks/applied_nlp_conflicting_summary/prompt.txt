@@ -1,0 +1,21 @@
+You are reconciling conflicting source notes from a small data-processing lab.
+
+Write exactly these sections:
+## Confirmed Facts
+## Unclear / Contested
+## Conservative Synthesis
+## Next Checks
+
+Requirements:
+- Keep confirmed facts separate from uncertain ones.
+- Do not overclaim a root cause.
+- Preserve the throughput improvement if it is supported.
+- Treat tokenizer drift as a suspicion unless the evidence actually settles it.
+- Give concrete next checks, not generic advice.
+
+Sources:
+- S1: The ingest job processed 18,000 rows and found 212 label conflicts.
+- S2: Two late-arriving shards contributed duplicate rows, and one shard had empty token arrays.
+- S3: Throughput improved 14% after switching to disk-backed merging.
+- S4: One reviewer suspected tokenizer drift.
+- S5: The logs only confirm tag-length mismatches.

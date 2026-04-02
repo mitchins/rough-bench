@@ -1,0 +1,35 @@
+id: design_magic_system_tractable_constraints
+title: Magic system design under hard constraints
+domain: creative_reasoning
+family: design
+counted: true
+prompt: "Design a magic system using all of these constraints:\n\n1. Casting requires the caster to genuinely forget something permanently and irreversibly.\n2. The magnitude of the effect scales with the importance of what was forgotten, but importance cannot be predicted in advance; it is only felt retrospectively by other people who knew the caster.\n3. Magic cannot be used on oneself.\n4. Magic is physically expressed through the hands and fingers.\n5. Society has materially adapted to this magic.\n\nWrite the answer with exactly these sections:\n\n## Core System\n## Constraint Fidelity\n## Why The Finger Constraint Matters\n## Social Adaptation\n## Power Asymmetry\n## Three Non-Obvious Consequences\n## Two Obvious Exploits And Why They Fail\n## One Story Problem This Creates\n\nRequirements:\n- Do not add loopholes, exemptions, reversibility, memory anchors, proxy memories, or training-based workarounds that soften the constraints.\n- Under Social Adaptation, give three concrete institutional, legal, material, or customary changes.\n- Under Power Asymmetry, show at least one concrete asymmetry in status, authority, labor, law, kinship, or vulnerability that follows from the system.\n- Keep it tractable for a novelist: the system should generate hard problems, not offer easy plot-solving powers.\n- Do not explain your process."
+intent: Score whether the model can preserve hard creative constraints, reason into non-obvious consequences, and produce materially adapted social structures without laundering away the difficulty.
+latent_requirements:
+  - preserve the permanent-forgetting, retrospective-importance, and no-self-targeting constraints without softening them
+  - make the hand or finger expression materially consequential rather than decorative
+  - show that society changed in concrete institutional or customary ways because of the system
+  - include at least one real power asymmetry without prescribing a single political conclusion
+  - generate story pressure rather than a reliable plot-solving utility system
+hard_failures:
+  - adds escape hatches such as reversible memory loss, memory anchors, or predictive importance estimation
+  - treats hands or fingers as aesthetic garnish instead of a real embodied constraint
+  - leaves society mostly unchanged or decorative
+  - designs a system that mostly solves problems instead of creating them
+strong_signals:
+  - explicit constraint fidelity with no loopholes
+  - concrete hand or finger consequences such as restraint, injury, dexterity, gloves, or binding
+  - concrete institutional adaptation and at least one power asymmetry
+  - non-obvious consequences that depend on the retrospective social valuation rule
+penalties:
+  - missing required structure
+  - reversible memory cost
+  - memory anchor loophole
+  - predictive importance loophole
+  - self-targeting loophole
+  - decorative finger constraint
+  - weak social adaptation
+  - misses retrospective asymmetry
+  - missing exploit closure
+expected_artifacts: []
+judge_instructions: Reward constraint fidelity and causal follow-through, not coolness. The response should accept the hard parts of the system, make the finger constraint matter materially, and show concrete social adaptation without relying on a single canned hierarchy.

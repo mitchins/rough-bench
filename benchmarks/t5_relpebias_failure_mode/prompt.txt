@@ -1,0 +1,23 @@
+I have ported a T5-style decoder to a new framework. The model uses learned relative position bias with the standard T5 bucket scheme (32 buckets, max distance 128). The bucket function was reimplemented during porting.
+
+Observed behavior:
+  - Sequences <= 24 tokens: perplexity ~3.2, outputs look correct
+  - Sequences >= 25 tokens: perplexity spikes to ~47, outputs degrade sharply
+  - The threshold is consistent across different content — 24 tokens is always fine, 25 tokens always degrades
+  - Training and validation used sequences of <= 20 tokens and showed no issues
+
+Do not suggest training on longer sequences. That is not available as a solution here.
+
+Diagnose the failure. Required sections:
+
+1. Candidate Failure Modes
+   List the plausible causes. Be specific about mechanism, not just category.
+
+2. Top Candidate
+   Name the most likely cause. Explain mechanically why it produces a sharp threshold at a specific length rather than smooth degradation.
+
+3. Isolation Plan
+   How do you confirm the hypothesis? Include at least one check that does not require a full forward pass.
+
+4. Fix
+   What is the concrete change? Be specific about what was likely wrong and what the correct implementation looks like.

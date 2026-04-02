@@ -1,0 +1,55 @@
+You are designing the core mechanics for a card game called BLIGHT.
+
+FIXED CONSTRAINTS — do not change these:
+- 2–4 players, 45–75 minutes target play time
+- Each player has a 40-card deck, built by drafting from a shared pool
+- Shared central board: 5×5 grid of field tiles, ownership assigned at setup
+- Three crop types: Grain, Root, Vine
+- Each crop has a different blight vulnerability profile and a different yield/scoring profile
+- Blight spreads across the field grid at the end of each round
+- Blight spread is card-driven, not dice-driven
+- A shared Blight Deck exists; cards drawn from it each round govern spread behavior for that round
+- Fixed season length: you define the round count
+- Players score on harvested crops at season end
+- Scoring must use at least two components, and at least one component must be relative across players rather than purely absolute
+- At least one mechanic must involve trading or negotiation between players
+
+YOUR DESIGN TASKS:
+
+1. BLIGHT SPREAD MECHANIC
+   How does blight spread across the grid?
+   Be precise: what triggers it, what governs direction and rate,
+   what stops or slows it, and what accelerates it.
+   Define what kinds of cards are in the shared Blight Deck.
+   Give it enough structure that two people could run it consistently.
+
+2. CROP VULNERABILITY AND YIELD PROFILES
+   Define Grain, Root, and Vine mechanically, not just thematically.
+   What makes each one a meaningful choice rather than a dominant pick?
+
+3. HAND AND ACTION ECONOMY
+   What broad card categories exist?
+   How many actions does a player take per turn?
+   What is the core decision a player makes on their turn?
+
+4. TRADE AND NEGOTIATION MECHANIC
+   What is traded? When? Under what constraints?
+   What makes the negotiation interesting rather than obviously correct?
+
+5. SCORING
+   How does end-game scoring work?
+   What are the scoring tensions?
+   Make the relative scoring component explicit.
+
+6. STRESS TEST YOUR OWN DESIGN
+   Name the most likely degenerate strategy in your design as built.
+   Be specific: what does the player do, turn by turn or round by round, to execute it?
+   Then tell me: does your design close that door, and how?
+   If it does not close it, say so and explain what the cost would be to close it.
+
+CONSTRAINTS ON YOUR ANSWER:
+- Do not produce a complete rulebook
+- Do not name every card
+- Do not describe art, theme flavour, or component materials
+- Focus on mechanic logic and interaction
+- The stress test section is not optional and not a formality

@@ -1,0 +1,1 @@
+Design me a Python scraper for <X>. Ensure it's persistent and resumable.

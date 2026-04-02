@@ -1,0 +1,42 @@
+Here is a simplified training loop and inference function for a sequence-to-sequence image captioning model.
+
+Assume:
+- `self.tokenizer.encode(captions)` returns token ids in the form `[BOS, ..., EOS]`
+- the encoder contains BatchNorm layers
+- the decoder contains dropout
+
+Find every real training/inference mismatch.
+For each mismatch, explain:
+1. what the bug is
+2. what it causes during inference
+3. how severe it is (`critical`, `moderate`, or `minor`)
+4. the fix
+
+List only real mismatches.
+Do not list style issues, missing features, or things that are different but correct
+(for example, greedy decoding versus beam search).
+
+```python
+# Training
+def forward(self, image, captions):
+    vis_feat = self.encoder(image)          # (B, 256, 768)
+    proj = self.proj(vis_feat)              # (B, 256, 640)
+    tokens = self.tokenizer.encode(captions)
+    input_ids = tokens[:, :-1]              # teacher forcing
+    target_ids = tokens[:, 1:]
+    logits = self.decoder(input_ids, proj)
+    return F.cross_entropy(logits.view(-1, self.vocab_size), target_ids.view(-1))
+
+# Inference
+def generate(self, image, max_len=64):
+    vis_feat = self.encoder(image)
+    proj = self.proj(vis_feat)
+    ids = [self.tokenizer.eos_id()]
+    for _ in range(max_len):
+        logits = self.decoder(torch.tensor([ids]), proj)
+        next_id = logits[0, -1].argmax()
+        if next_id == self.tokenizer.eos_id():
+            break
+        ids.append(next_id.item())
+    return self.tokenizer.decode(ids[1:])
+```

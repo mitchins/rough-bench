@@ -1,0 +1,26 @@
+id: lang_japanese_translation_kaze_no_tayori
+title: Japanese idiom translation with 風の便り
+domain: language_translation
+family: language_japanese
+counted: true
+intent: Score whether the model localizes a Japanese VN-style line containing 風の便り into natural English without literalizing the idiom, while preserving indirect hearsay and the basic tone of the line.
+latent_requirements:
+  - translate 風の便り idiomatically rather than literally
+  - preserve that the information was heard indirectly
+  - keep the line natural in English rather than annotated or explained
+  - output only the translated line
+hard_failures:
+  - translates 風の便り literally as wind or breeze
+  - explains the idiom instead of just translating
+  - drops the hearsay nuance entirely
+strong_signals:
+  - uses a natural hearsay phrase such as heard or word is
+  - preserves that the person is still in that town
+  - sounds like a line of dialogue rather than a gloss
+penalties:
+  - literal wind translation
+  - missing hearsay
+  - drops location or stillness
+  - meta explanation
+expected_artifacts: []
+judge_instructions: Reward natural localization over literal translation. A plain but idiomatic line such as "I heard you're still in that town" should score well. Literal wind language should score badly.

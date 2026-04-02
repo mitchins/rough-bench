@@ -1,0 +1,43 @@
+id: tool_planning_migration_plan_concrete
+title: Rewrite a vague API migration into a concrete task spec
+domain: tool_planning
+family: tool_planning
+counted: true
+intent: Score whether the model can turn a hand-wavy database + API migration request into a bounded, executable task spec with concrete assumptions, scope, non-goals, file layouts, phased milestones, and acceptance criteria. Prompt-only, no sandbox required.
+latent_requirements:
+  - infer that the first phase should be a local migration layer, not a cloud deployment
+  - preserve the live-traffic constraint by planning a graceful rollover window
+  - design a reversible migration so rollbacks do not require data restoration
+  - separate the data-schema layer from the API-adaptation layer
+  - define concrete file/module paths and migration naming conventions
+  - identify concrete go/no-go criteria rather than vague "test coverage"
+  - avoid lock-in to specific migration tools or ORM frameworks
+hard_failures:
+  - turns the response into clarifying questions instead of making assumptions and proceeding
+  - writes a generic DevOps or infrastructure runbook rather than a task spec for a coding agent
+  - omits acceptance criteria, rollback strategy, or go/no-go gates
+  - expands scope into multi-region deployment, database replication, or zero-downtime monitoring before handling the local migration
+  - fails to address the live-traffic constraint
+strong_signals:
+  - bounded first-phase scope with explicit local-first assumptions
+  - explicit non-goals that keep the project focused on the migration, not auxiliary infrastructure
+  - concrete migration layers and ordering: schema changes, adapter layer, verification
+  - clear rollback and reversal strategy within each phase
+  - deliverables and acceptance criteria that a coding agent could actually execute against
+penalties:
+  - corporate DevOps voice or infrastructure theater
+  - clarification dodge
+  - missing live-traffic constraint acknowledgment
+  - missing rollback or reversal strategy
+  - missing acceptance criteria or go/no-go gates
+  - missing non-goals
+  - missing repo/file layout
+  - missing ordered milestones
+  - missing deliverables
+  - scope sprawl into multi-region, replication, or zero-downtime guarantees
+  - gratuitous ORM, migration-tool, or framework lock-in
+  - premature monitoring or analytics scope
+  - vague "comprehensive testing" language without concrete acceptance criteria
+expected_artifacts:
+  - task spec or execution brief
+judge_instructions: Reward bounded, reversible migration planning with local-first assumptions. The response should make clear assumptions about the schema shape, API surface, and traffic window, protect scope from infrastructure sprawl, and define concrete go/no-go criteria. Strong answers should feel like a brief a coding agent could execute without a follow-up architecture review.

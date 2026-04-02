@@ -1,0 +1,56 @@
+id: swe_realtime_buzzer_server
+title: Realtime buzzer quiz server with contested state
+domain: swe_networking
+family: swe
+counted: true
+intent: Score whether the model can ship a small realtime multiplayer system that handles shared contested state, race conditions, disconnects, and clean shutdown instead of only the happy path.
+latent_requirements:
+  - explicit session state instead of ad-hoc shared variables
+  - deterministic resolution when simultaneous answers compete
+  - question timeout and progression logic
+  - graceful disconnect handling during a live game
+  - clean shutdown of client connections when the session ends
+  - honest self-audit of handled and unhandled edge cases
+hard_failures:
+  - only describes the server without shipping runnable code artifacts
+  - no runnable client artifact
+  - no explicit state model
+  - leaves simultaneous answers unresolved
+  - crashes or wedges on disconnect
+strong_signals:
+  - explicit named states for waiting, live question, and game over
+  - answer-award path guarded by a lock or equivalent single-winner mechanism
+  - unanswered questions expire after a fixed timeout and advance
+  - player disconnects remove the player cleanly and either continue or end deterministically
+  - winner announcement closes all websocket connections cleanly
+  - section four admits what is not handled instead of pretending the server is complete
+penalties:
+  - missing required structure
+  - missing server artifact
+  - missing client artifact
+  - no state machine
+  - race condition unaddressed
+  - disconnect not handled
+  - timeout missing
+  - dirty shutdown
+  - client is pseudocode
+expected_artifacts:
+  - artifacts/server.py
+  - artifacts/client.py
+visible_constraints:
+  - use Python with asyncio and the websockets library
+  - support 2 to 4 players in one session
+  - start the game when at least 2 players are connected
+  - use a hardcoded question list with at least 5 questions
+  - first correct answer scores a point
+  - if no correct answer arrives within 10 seconds, expire the question and move on
+  - first player to 5 points wins
+  - announce the winner and close the session cleanly
+  - produce a minimal client that a human can run
+hidden_stressors:
+  - two answers arriving nearly simultaneously for the same question
+  - a correct answer arriving while the server is already advancing state
+  - player disconnect during a live question
+  - late join attempt after the game has started
+  - lingering websocket connections after game over
+judge_instructions: Read the server artifact before trusting the prose. The primary checks are whether only one answer can win a question, whether disconnects are handled without leaving the game in an undefined state, and whether game over closes connections cleanly. Reward honest scope boundaries more than fake completeness.

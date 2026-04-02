@@ -1,0 +1,111 @@
+signals:
+  - id: boundary_capitalization_root_cause
+    description: Identifies sentence-initial capitalization as the signal source that is making non-names look like entities.
+    groups:
+      - [sentence-initial, sentence initial, sentence start, start of sentence, beginning of sentence, sentence boundary]
+      - [capitalization, capitalisation, capitalized, capitalised, uppercase]
+      - [proper noun, entity, ner, name]
+  - id: position_aware_fix
+    description: Proposes a position-aware guard around sentence-initial replacements.
+    groups:
+      - [sentence-initial, sentence start, start of sentence, first token, position-aware, boundary-aware]
+      - [skip, avoid, guard, validate, only replace if, do not replace, don't replace]
+  - id: syntax_or_entity_validation
+    description: Adds syntax-aware or entity-aware validation rather than trusting a raw replacement pass.
+    any:
+      - dependency parse
+      - dependency parser
+      - pos tag
+      - pos tags
+      - noun phrase
+      - character lexicon
+      - allowlist
+      - recurring entity
+      - appears mid-sentence
+      - appears elsewhere
+  - id: summary_consistency
+    description: Notes that the same fix or mapping must apply consistently to both source and summary.
+    groups:
+      - [summary]
+      - [same mapping, same replacement, consistently, consistency, both, also]
+  - id: literary_specificity
+    description: Notes why literary prose is harder than newswire because of titles, epithets, or similar structures.
+    any:
+      - literary prose
+      - fiction
+      - titles
+      - epithets
+      - honorifics
+      - newswire
+      - first enchantress
+  - id: validation_strategy
+    description: Proposes a concrete regression or sanity-check strategy.
+    any:
+      - regression set
+      - regression test
+      - test case
+      - sanity check
+      - manual review
+      - spot check
+      - grammar check
+      - pos check
+      - dependency check
+      - source-summary consistency
+penalties:
+  - id: misses_boundary_capitalization_root_cause
+    description: Does not name sentence-initial capitalization as the main failure mechanism.
+    points: 8
+    missing_groups:
+      - [sentence-initial, sentence initial, sentence start, start of sentence, beginning of sentence, sentence boundary]
+      - [capitalization, capitalisation, capitalized, capitalised, uppercase]
+      - [proper noun, entity, ner, name]
+  - id: generic_better_ner_fix
+    description: Falls back to model-swapping or regex tweaking instead of diagnosing the structural trigger.
+    points: 5
+    present_unnegated_any:
+      - use a better ner model
+      - better ner model
+      - use spacy
+      - use spaCy
+      - higher confidence threshold
+      - confidence threshold
+      - fine-tune the ner
+      - better regex
+      - tweak the regex
+  - id: misses_position_aware_fix
+    description: Does not propose a sentence-position-aware guard or replacement rule.
+    points: 5
+    missing_groups:
+      - [sentence-initial, sentence start, start of sentence, first token, position-aware, boundary-aware]
+      - [skip, avoid, guard, validate, only replace if, do not replace, don't replace]
+  - id: misses_summary_consistency
+    description: Does not note that the source and summary need the same fix or mapping.
+    points: 4
+    missing_groups:
+      - [summary]
+      - [same mapping, same replacement, consistently, consistency, both, also]
+  - id: misses_literary_specificity
+    description: Ignores why literary prose is harder than ordinary newswire NER.
+    points: 4
+    missing_any:
+      - literary prose
+      - fiction
+      - titles
+      - epithets
+      - honorifics
+      - newswire
+      - first enchantress
+  - id: no_validation_strategy
+    description: Gives no concrete validation or regression strategy.
+    points: 3
+    missing_any:
+      - regression set
+      - regression test
+      - test case
+      - sanity check
+      - manual review
+      - spot check
+      - grammar check
+      - pos check
+      - dependency check
+      - source-summary consistency

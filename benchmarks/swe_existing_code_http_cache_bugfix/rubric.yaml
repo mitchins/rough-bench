@@ -1,0 +1,115 @@
+signals:
+  - id: required_structure_present
+    description: The response contains the three required sections.
+    all:
+      - bugs fixed
+      - patch summary
+      - deferred serious issues
+  - id: patched_artifact
+    description: Produces the patched module artifact.
+    artifact_any:
+      - http_cache.py
+  - id: api_preserved
+    description: Keeps the public API shape instead of replacing the module.
+    artifact_text_all:
+      - class HTTPCache
+      - def _cache_key
+      - async def get_json
+  - id: query_key_fixed
+    description: The cache key now incorporates canonical query handling rather than path only.
+    artifact_text_groups:
+      - [parse_qsl, parsed.query, urlencode, canonical_query, query_pairs]
+      - [_cache_key]
+  - id: stale_entries_not_served
+    description: Expired entries are evicted or refetched instead of being returned as fresh.
+    artifact_text_groups:
+      - [expires_at, monotonic]
+      - [self._entries.pop, del self._entries, expired_keys]
+      - [await fetcher, response = await fetcher]
+  - id: auth_cache_risk_flagged_or_fixed
+    description: Flags or fixes the authenticated-request cache-context risk explicitly.
+    any:
+      - authorization
+      - cookie
+      - authenticated
+      - auth
+  - id: cross_user_cache_risk_flagged_or_fixed
+    description: Flags or fixes the cross-user leak / partitioning problem explicitly.
+    any:
+      - partition
+      - cross-user
+      - shared cache
+      - shared across users
+      - multi-user
+      - user-specific
+      - per-user
+      - do not cache
+  - id: growth_risk_flagged_or_fixed
+    description: Flags or mitigates the dead capacity limit and the need for cleanup or eviction.
+    groups:
+      - [max_entries, capacity limit, over-capacity, max size]
+      - [evict_expired, prune expired, opportunistic cleanup, evict oldest, eviction policy, lru]
+  - id: bounded_patch_honesty
+    description: The response keeps the patch bounded and names at least one deferred issue honestly.
+    groups:
+      - [deferred serious issues]
+      - [not fixed, deferred, out of scope, did not implement]
+penalties:
+  - id: missing_required_structure
+    description: The response does not contain the required three-section note.
+    points: 2
+    missing_groups:
+      - [bugs fixed]
+      - [patch summary]
+      - [deferred serious issues]
+  - id: missing_artifact
+    description: No patched module artifact was produced.
+    points: 3
+    missing_artifacts_any:
+      - http_cache.py
+  - id: api_broken
+    description: The patch does not preserve the required public API surface.
+    points: 4
+    missing_artifact_text_all:
+      - class HTTPCache
+      - def _cache_key
+      - async def get_json
+  - id: query_bug_unfixed
+    description: The cache key still does not visibly incorporate query handling.
+    points: 7
+    missing_artifact_text_groups:
+      - [parse_qsl, parsed.query, urlencode, canonical_query, query_pairs]
+      - [_cache_key]
+  - id: stale_entry_bug_unfixed
+    description: The patch does not visibly evict or refetch expired entries.
+    points: 7
+    missing_artifact_text_groups:
+      - [expires_at, monotonic]
+      - [self._entries.pop, del self._entries, expired_keys]
+      - [await fetcher, response = await fetcher]
+  - id: auth_context_unaddressed
+    description: Does not explicitly name authenticated or cookie-scoped cache context.
+    points: 3
+    missing_any:
+      - authorization
+      - cookie
+      - authenticated
+      - auth
+  - id: cross_user_leak_unaddressed
+    description: Does not explicitly name the cross-user leak / partitioning problem in a shared cache.
+    points: 5
+    missing_any:
+      - partition
+      - cross-user
+      - shared cache
+      - shared across users
+      - multi-user
+      - user-specific
+      - per-user
+      - do not cache
+  - id: growth_risk_unaddressed
+    description: Does not flag or mitigate both the dead capacity limit and a cleanup / eviction story.
+    points: 3
+    missing_groups:
+      - [max_entries, capacity limit, over-capacity, max size]
+      - [evict_expired, prune expired, opportunistic cleanup, evict oldest, eviction policy, lru]

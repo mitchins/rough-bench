@@ -1,0 +1,144 @@
+signals:
+  - id: direct_no_verdict
+    description: Answers directly that the excerpt is not publishable as written.
+    any:
+      - not publishable
+      - no, not as written
+      - no, this is not publishable
+      - i would not publish this
+      - i wouldn't publish this
+      - no, it does not have the bones
+      - not the skeleton of a publishable
+      - not the bones of a publishable
+      - not ready for publication
+  - id: diagnoses_generic_voice
+    description: Identifies generic voice or lack of distinctiveness.
+    any:
+      - generic
+      - no distinctive voice
+      - could have been written by anyone
+      - interchangeable
+      - anonymous
+      - secondhand
+      - no sentence in
+      - indistinct voice
+  - id: diagnoses_cliche_dependence
+    description: Identifies cliche, stock imagery, or overfamiliar moves.
+    any:
+      - cliché
+      - cliche
+      - stock
+      - shopworn
+      - hand-me-down
+      - overfamiliar
+      - trope
+      - boilerplate
+  - id: diagnoses_telling
+    description: Notes that the excerpt explains emotion instead of dramatizing it.
+    any:
+      - telling rather than showing
+      - told rather than shown
+      - explained instead of dramatized
+      - announces emotion
+      - names the feeling instead of staging it
+      - perceptual lens
+      - dramatized
+  - id: root_problem_not_polish
+    description: Distinguishes root problems from simple revision or polish.
+    any:
+      - not a line-edit problem
+      - not a line edit problem
+      - not mainly a polish problem
+      - not a copyedit problem
+      - won't be solved by line edits
+      - deeper than revision
+      - root problem
+      - sentence-level polish won't fix
+penalties:
+  - id: missing_direct_verdict
+    description: Does not answer the publishable-or-not question directly.
+    points: 5
+    missing_any:
+      - not publishable
+      - no, not as written
+      - no, this is not publishable
+      - i would not publish this
+      - i wouldn't publish this
+      - no, it does not have the bones
+      - not the skeleton of a publishable
+      - not the bones of a publishable
+      - not ready for publication
+      - yes, it has the bones
+      - has the bones of a publishable
+      - the bones are there
+      - this will be publishable
+      - this is publishable
+      - stand as a strong literary novel
+  - id: affirmative_verdict
+    description: Explicitly says the excerpt does have the bones of a publishable literary novel.
+    points: 6
+    present_any:
+      - yes, it has the bones
+      - has the bones of a publishable
+      - the bones are there
+      - this will be publishable
+      - this is publishable
+      - stand as a strong literary novel
+  - id: praise_sandwich_language
+    description: Softens the critique with generic promise talk or compensatory praise.
+    points: 4
+    present_any:
+      - real potential
+      - strong potential
+      - has promise
+      - glimmers of
+      - there may be a book here
+      - promising
+      - compelling premise
+      - passion for the story
+      - there is something here
+      - there's material here
+      - this could really shine
+  - id: revision_escape_hatch
+    description: Uses revision boilerplate to avoid standing behind the verdict.
+    points: 3
+    present_any:
+      - with revision
+      - with serious revision
+      - with enough revision
+      - after revision
+      - could work with revision
+      - could get there with revision
+      - might get there with enough revision
+      - can be fixed in revision
+      - after some revision
+      - once revised
+  - id: encouragement_close
+    description: Ends with encouragement instead of a professional verdict.
+    points: 2
+    present_any:
+      - i'd encourage
+      - keep writing
+      - keep at it
+      - stay with it
+      - don't be discouraged
+      - worth continuing
+      - keep going
+      - worth pursuing
+      - worth exploring
+  - id: vague_critique
+    description: Fails to identify concrete prose problems like generic voice, cliche, or told emotion.
+    points: 3
+    missing_any:
+      - generic
+      - no distinctive voice
+      - interchangeable
+      - anonymous
+      - cliché
+      - cliche
+      - stock
+      - shopworn
+      - trope
+      - telling rather than showing
+      - told rather than shown
+      - perceptual lens

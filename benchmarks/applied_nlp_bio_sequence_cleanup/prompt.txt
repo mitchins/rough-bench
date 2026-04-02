@@ -1,0 +1,22 @@
+Repair the BIO tag sequences.
+
+For each item, give `corrected_tags` and `error_type`.
+
+Write exactly these sections:
+## Corrections
+## Error Audit
+
+Requirements:
+- Use the exact item ids.
+- Keep already-valid sequences unchanged.
+- Fix illegal BIO starts and broken continuation spans.
+- Name the dominant error type for each item.
+- Do not give generic NER advice.
+
+Items:
+- B1: tokens = ["Limp", "walked", "home"], tags = ["I-PER", "O", "O"]
+- B2: tokens = ["Dr.", "Mara", "Singh", "called"], tags = ["O", "B-PER", "I-PER", "O"]
+- B3: tokens = ["Northwind", "Labs", "announced", "the", "deal"], tags = ["B-ORG", "O", "O", "O", "O"]
+- B4: tokens = ["the", "First", "Enchantress", "smiled"], tags = ["O", "B-PER", "O", "O"]
+- B5: tokens = ["Kotar", "met", "Arlen", "outside", "Ark"], tags = ["B-PER", "O", "I-PER", "O", "B-LOC"]
+- B6: tokens = ["The", "clinic", "in", "Oslo", "reopened"], tags = ["O", "B-ORG", "O", "B-LOC", "O"]

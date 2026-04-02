@@ -1,0 +1,30 @@
+id: ml_t5_seq2seq_data_collator_mismatch
+title: ROUGE stuck at 0.0 with T5 Seq2SeqTrainer
+domain: ml_engineering
+family: ml_engineering
+counted: false
+intent: Score whether the model identifies the seq2seq data-collator mismatch behind zero ROUGE despite compute_metrics being called, and provides the correct fix without wandering into generic ROUGE or distributed debugging.
+latent_requirements:
+  - identify DataCollatorWithPadding as wrong for this seq2seq evaluation setup
+  - replace it with DataCollatorForSeq2Seq
+  - mention predict_with_generate=True
+  - explain label padding or -100 handling on the decoder side
+  - explain why training loss can still decrease while eval ROUGE stays broken
+hard_failures:
+  - treats this as a generic ROUGE or metrics-debugging problem
+  - blames distributed training or DeepSpeed even though the prompt does not describe that setup
+  - does not identify the collator mismatch
+strong_signals:
+  - names DataCollatorWithPadding as the root cause
+  - gives the correct fix with DataCollatorForSeq2Seq
+  - mentions predict_with_generate and label_pad_token_id or -100 handling
+  - explains the training-vs-eval asymmetry
+penalties:
+  - misses the collator root cause
+  - misses the correct collator fix
+  - misses predict_with_generate
+  - misses decoder label handling
+  - misses training-vs-eval asymmetry
+  - generic debug detour
+expected_artifacts: []
+judge_instructions: Reward precise seq2seq diagnosis. A response that does not explicitly identify DataCollatorWithPadding as the root cause should score badly, even if it offers otherwise sensible HuggingFace debugging advice.

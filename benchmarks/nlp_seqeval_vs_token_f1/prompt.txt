@@ -1,0 +1,14 @@
+My BERT-based BIO tagger on a character name extraction task reports:
+
+- Token-level F1: 0.89
+- Seqeval span-F1: 0.61
+
+Training data: ~50,000 sentences from fantasy fiction.
+Label schema: B-CHAR, I-CHAR, O.
+Class distribution: approximately 6% B-CHAR, 9% I-CHAR, 85% O.
+
+(a) Is this a good model?
+(b) What does the gap between token F1 and span F1 tell you about the
+    specific failure mode, mechanically, not just generically?
+(c) How would you diagnose which error type is dominant?
+    Name what you would compute, not just "inspect the errors."

@@ -1,0 +1,100 @@
+signals:
+  - id: bos_eos_start_mismatch
+    description: Identifies that inference starts from EOS while training conditions on BOS-first prefixes.
+    groups:
+      - [bos, beginning-of-sequence, begin-of-sequence, start token, start-of-sequence]
+      - [eos, end-of-sequence]
+      - [mismatch, wrong, instead of, starts with, initialized with, initial token]
+  - id: first_step_distribution_shift
+    description: Explains that the decoder has not been trained to condition on EOS as the first generation prefix.
+    any:
+      - out of distribution
+      - never seen eos as the first token
+      - never seen eos as a prefix
+      - first-step distribution
+      - first step distribution
+      - corrupted from step 1
+      - corrupts the distribution
+      - trained to start from bos
+  - id: eval_mode_mismatch
+    description: Identifies missing eval mode and the effect on dropout or BatchNorm.
+    groups:
+      - [eval mode, model.eval(), self.eval(), eval()]
+      - [dropout, batchnorm, batch norm, training mode]
+  - id: no_grad_hygiene
+    description: Notes missing torch.no_grad as an inference-side issue.
+    any:
+      - torch.no_grad
+      - no_grad
+      - gradient graph
+      - unnecessary gradients
+  - id: bos_ranked_most_severe
+    description: Ranks the BOS versus EOS mismatch as the most severe issue.
+    groups:
+      - [bos, beginning-of-sequence, start token, eos]
+      - [critical, most severe, highest severity, severe]
+  - id: concrete_fixes
+    description: Gives concrete fixes for the real mismatches.
+    groups:
+      - [bos_id, bos token, initialize with bos, start with bos, use bos]
+      - [model.eval(), self.eval(), eval mode]
+  - id: rejects_beam_false_positive
+    description: Explicitly avoids treating greedy versus beam search as a mismatch.
+    groups:
+      - [beam search, greedy decoding, greedy vs beam, beam vs greedy]
+      - [not a mismatch, valid difference, not the bug, not the issue]
+penalties:
+  - id: misses_bos_eos_start_mismatch
+    description: Does not identify the BOS versus EOS start-token mismatch.
+    points: 8
+    missing_groups:
+      - [bos, beginning-of-sequence, begin-of-sequence, start token, start-of-sequence]
+      - [eos, end-of-sequence]
+      - [mismatch, wrong, instead of, starts with, initialized with, initial token]
+  - id: misses_first_step_distribution_shift
+    description: Identifies the wrong token superficially but does not explain the inference distribution mismatch.
+    points: 6
+    missing_any:
+      - out of distribution
+      - never seen eos as the first token
+      - never seen eos as a prefix
+      - first-step distribution
+      - first step distribution
+      - corrupted from step 1
+      - corrupts the distribution
+      - trained to start from bos
+  - id: denies_bos_eos_issue
+    description: Explicitly says the BOS versus EOS handling is fine or not a mismatch.
+    points: 4
+    present_unnegated_any:
+      - no issue with bos/eos handling
+      - no issue with bos eos handling
+      - bos/eos handling is fine
+      - bos eos handling is fine
+      - known pattern though not a mismatch
+  - id: misses_eval_mode_mismatch
+    description: Misses that inference never switches the modules into eval mode.
+    points: 4
+    missing_groups:
+      - [eval mode, model.eval(), self.eval(), eval()]
+      - [dropout, batchnorm, batch norm, training mode]
+  - id: wrong_severity_order
+    description: Does not rank the BOS versus EOS mismatch as the most severe issue.
+    points: 3
+    missing_head_groups:
+      - [bos, beginning-of-sequence, start token, eos]
+      - [critical, most severe, highest severity, severe]
+  - id: false_positive_beam_search_mismatch
+    description: Treats greedy decoding versus beam search as one of the mismatch bugs.
+    points: 4
+    present_unnegated_any:
+      - beam search
+      - greedy decoding
+      - greedy vs beam
+      - beam vs greedy
+  - id: vague_fixes
+    description: Does not provide concrete fixes for the real mismatches.
+    points: 3
+    missing_groups:
+      - [bos_id, bos token, initialize with bos, start with bos, use bos]
+      - [model.eval(), self.eval(), eval mode]

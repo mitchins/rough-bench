@@ -1,0 +1,30 @@
+id: applied_nlp_annotation_quality_gate
+title: Annotation quality gate for messy exports
+domain: applied_nlp
+family: applied_nlp
+counted: true
+intent: Score whether the model can audit a messy annotation export by choosing accept, fix, drop, or review per row instead of treating the input as a generic NLP essay.
+latent_requirements:
+  - makes a concrete quality decision for every row
+  - distinguishes accept, fix, drop, and review
+  - catches span drift and label mismatches
+  - gives a brief audit summary at the end
+hard_failures:
+  - omits the per-row gate
+  - treats all rows as acceptable
+  - ignores span drift or label mismatch
+  - turns the task into generic NER advice
+strong_signals:
+  - uses exact item ids
+  - makes a clear decision for each row
+  - flags vague or suspicious rows for review
+  - preserves exact spans when fixing a row
+penalties:
+  - missing quality-gate table
+  - item coverage incomplete
+  - everything accepted
+  - misses span drift
+  - generic advice
+  - no audit summary
+expected_artifacts: []
+judge_instructions: Reward explicit QA decisions. The answer should decide accept/fix/drop/review row by row and should not flatten the export into generic annotation advice.

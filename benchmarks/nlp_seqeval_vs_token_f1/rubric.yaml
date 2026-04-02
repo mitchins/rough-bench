@@ -1,0 +1,115 @@
+signals:
+  - id: o_token_inflation
+    description: Names O-token majority-class inflation as the reason token F1 looks deceptively high.
+    groups:
+      - [o token, o-token, o class, majority class, 85% o, dominant o]
+      - [inflated, inflation, dominates, majority, swamps, overwhelms]
+  - id: exact_span_strictness
+    description: Explains that seqeval span scoring requires exact span boundaries rather than near misses.
+    groups:
+      - [exact span, exact match, strict span, entire span, exact boundary]
+      - [seqeval, span f1, span-level]
+  - id: boundary_error_mechanism
+    description: Explains that modest boundary mistakes can destroy a whole span while barely moving token metrics.
+    any:
+      - start or end wrong
+      - one wrong token breaks the span
+      - truncate spans
+      - over-extend spans
+      - extension errors
+      - truncation errors
+      - boundary drift
+      - partial overlap
+  - id: concrete_diagnostics
+    description: Proposes concrete computations rather than vague error inspection.
+    any:
+      - span precision and recall
+      - partial-match rate
+      - partial match f1
+      - illegal transition
+      - bio transition
+      - i-char without a preceding b-char
+      - i-char without preceding b-char
+      - over-extension
+      - truncation
+      - exact-match vs partial-match
+  - id: literary_multitoken_specificity
+    description: Notes that literary multi-token names, titles, or epithets make boundary errors worse.
+    any:
+      - multi-token names
+      - titles
+      - epithets
+      - fantasy fiction
+      - literary fiction
+      - first enchantress
+      - superior glokta
+      - logen ninefingers
+  - id: not_a_good_model
+    description: Treats span-F1 as the honest model-quality signal and does not call the system good as-is.
+    any:
+      - not a good model
+      - not good enough
+      - misleading
+      - 0.61 is poor
+      - 0.61 is weak
+      - span-f1 is the honest number
+penalties:
+  - id: misses_o_token_inflation
+    description: Does not explain that token F1 is inflated by the dominant O class.
+    points: 8
+    missing_groups:
+      - [o token, o-token, o class, majority class, 85% o, dominant o]
+      - [inflated, inflation, dominates, majority, swamps, overwhelms]
+  - id: treats_model_as_good
+    description: Says or implies the model is good based on token F1.
+    points: 7
+    present_unnegated_any:
+      - this is a good model
+      - yes, it is a good model
+      - yes, this is a good model
+      - overall a good model
+      - strong overall performance
+      - performs well
+      - 0.89 is good
+      - 0.89 is strong
+      - pretty good
+      - acceptable performance
+  - id: misses_exact_span_strictness
+    description: Does not explain that seqeval span F1 requires exact span boundaries.
+    points: 4
+    missing_groups:
+      - [exact span, exact match, strict span, entire span, exact boundary]
+      - [seqeval, span f1, span-level]
+  - id: vague_diagnostics
+    description: Says to inspect errors or look at a confusion matrix without naming concrete computations.
+    points: 4
+    present_unnegated_any:
+      - inspect the errors
+      - inspect errors
+      - look at the errors
+      - check the confusion matrix
+      - analyze misclassifications
+      - manually inspect examples
+  - id: generic_optimization_detour
+    description: Jumps to generic improvement advice instead of diagnosing the metric gap.
+    points: 4
+    present_unnegated_any:
+      - add more training data
+      - use a larger model
+      - add a crf
+      - use a crf layer
+      - tune the hyperparameters
+      - increase the model size
+      - try better embeddings
+  - id: misses_literary_specificity
+    description: Ignores why literary multi-token names or titles exacerbate the problem.
+    points: 3
+    missing_any:
+      - multi-token names
+      - titles
+      - epithets
+      - fantasy fiction
+      - literary fiction
+      - first enchantress
+      - superior glokta
+      - logen ninefingers

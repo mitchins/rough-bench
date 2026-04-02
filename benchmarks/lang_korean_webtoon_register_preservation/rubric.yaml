@@ -1,0 +1,54 @@
+signals:
+  - id: seniority_preserved
+    description: Preserves that the target is a senior.
+    any:
+      - your senior
+      - a senior
+      - sunbae
+      - upperclassman
+  - id: reprimand_tone
+    description: Uses a natural reprimanding English verb phrase.
+    any:
+      - don't mouth off
+      - don't talk to
+      - don't come at
+      - don't snap at
+  - id: colloquial_dialogue_line
+    description: Reads like dialogue rather than a gloss.
+    any:
+      - hey
+      - like that
+      - that tone
+penalties:
+  - id: drops_seniority
+    description: Loses the seniority relationship entirely.
+    points: 4
+    missing_any:
+      - senior
+      - sunbae
+      - upperclassman
+  - id: literal_speech_style_wording
+    description: Literalizes 말투 into stiff speech-style wording.
+    points: 4
+    present_unnegated_any:
+      - with that speech style
+      - with that way of talking
+      - with that manner of speaking
+      - with that speaking style
+  - id: overformal_translation
+    description: Sanitizes the line into formal written English instead of dialogue.
+    points: 4
+    present_unnegated_any:
+      - please do not
+      - kindly refrain
+      - it is inappropriate to
+  - id: meta_explanation
+    description: Explains Korean register or translation choices instead of outputting only the localized line.
+    points: 5
+    present_any:
+      - register
+      - honorific
+      - seniority
+      - in korean
+      - translation
+      - explanation

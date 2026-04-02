@@ -1,0 +1,85 @@
+signals:
+  - id: structure_present
+    description: Uses the requested synthesis sections.
+    groups:
+      - [confirmed facts]
+      - [unclear, contested]
+      - [conservative synthesis]
+      - [next checks]
+  - id: row_and_conflict_counts
+    description: Mentions the 18k rows and 212 conflicts.
+    groups:
+      - [18,000, 18000]
+      - [212]
+      - [conflicts]
+  - id: late_arriving_shards
+    description: Mentions the late-arriving shards and empty token arrays.
+    groups:
+      - [late-arriving shard, late arriving shard, late-arriving shards]
+      - [empty token arrays]
+  - id: throughput_improvement
+    description: Preserves the throughput improvement.
+    groups:
+      - [throughput improved]
+      - [14%, 14 percent]
+      - [disk-backed merging]
+  - id: tokenizer_drift_uncertain
+    description: Keeps tokenizer drift in the uncertain bucket.
+    groups:
+      - [tokenizer drift]
+      - [suspected, uncertain, contested]
+  - id: next_checks_present
+    description: Gives concrete follow-up checks.
+    groups:
+      - [next checks]
+      - [concrete]
+      - [verify, compare, slice, regression]
+penalties:
+  - id: missing_structure
+    description: Does not use the requested synthesis sections.
+    points: 5
+    missing_any:
+      - Confirmed Facts
+      - Unclear / Contested
+      - Conservative Synthesis
+      - Next Checks
+  - id: overclaims_root_cause
+    description: Declares a settled root cause that the sources do not establish.
+    points: 5
+    present_unnegated_any:
+      - tokenizer drift caused it
+      - the root cause is tokenizer drift
+      - proven root cause
+      - definitely caused by
+  - id: ignores_conflict_evidence
+    description: Does not acknowledge the conflicting notes.
+    points: 4
+    missing_any:
+      - contested
+      - unclear
+      - conflicting
+  - id: misses_throughput_improvement
+    description: Omits the throughput improvement detail.
+    points: 3
+    missing_any:
+      - throughput
+      - improved 14%
+      - disk-backed
+  - id: generic_summary
+    description: Summarizes generically without the load-bearing details.
+    points: 3
+    present_unnegated_any:
+      - looks fine overall
+      - basically the same
+      - needs more data
+      - check the logs
+  - id: no_next_checks
+    description: Omits the next-checks section.
+    points: 2
+    missing_any:
+      - next checks
+      - verify
+      - compare
+      - regression
+expected_artifacts: []
+judge_instructions: Reward conservative synthesis over confident narrative closure. The response should keep confirmed facts, uncertainty, and follow-up checks separate.

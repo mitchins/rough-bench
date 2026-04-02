@@ -1,0 +1,131 @@
+signals:
+  - id: required_structure_present
+    description: Uses the required structured sections.
+    groups:
+      - [blight spread mechanic]
+      - [crop vulnerability and yield profiles]
+      - [hand and action economy]
+      - [trade and negotiation mechanic]
+      - [scoring]
+      - [stress test your own design, stress test]
+  - id: spread_deck_designed
+    description: Defines the shared Blight Deck with explicit card types or families.
+    groups:
+      - [blight deck, blight cards, spread cards]
+      - [card type, card types, card family, card families, directional cards, direction cards, wind cards, weather cards, surge cards, rate cards, modifier cards]
+  - id: spread_mechanic_runnable
+    description: Gives the spread mechanic enough structure to run consistently.
+    groups:
+      - [adjacent, orthogonal, north, south, east, west, direction, directions]
+      - [blight level, intensity, severity, one step, two steps, spread rate, distance]
+      - [ruined, cleared, barrier, blocked, fallow, stop spreading, stops spreading, quarantine, water tiles block, prevents blight]
+  - id: crop_differentiation_mechanical
+    description: Makes Grain, Root, and Vine mechanically distinct with real tradeoffs.
+    groups:
+      - [grain]
+      - [root]
+      - [vine]
+      - [yield, score, harvest]
+      - [resistant, resistance, vulnerable, vulnerability, immune, firewall, buffer]
+  - id: relative_scoring_explicit
+    description: Makes the relative scoring component explicit rather than purely absolute.
+    any:
+      - relative scoring
+      - relative score
+      - relative bonus
+      - comparative bonus
+      - rank bonus
+      - majority bonus
+      - most harvested
+      - highest harvest
+      - top 3 get
+      - top three get
+      - ahead of each neighbor
+      - above the table average
+  - id: degenerate_strategy_found
+    description: Finds and names the dominant exploit line, ideally blight-as-weapon.
+    groups:
+      - [degenerate strategy, dominant strategy, exploit line, optimal line, solved line]
+      - [weaponize blight, offensive blight, deliberately spread, contaminate the border, border tiles, adjacent opponent, use blight offensively]
+  - id: degenerate_strategy_addressed
+    description: Explains whether the exploit is closed and what the cost of closing it is.
+    groups:
+      - [close the door, closes the door, does not fully close, not fully closed, leaves it open, cost to close]
+      - [limit, cost, self-blight, self blight, backlash, embargo, cooldown, once per round, source tile]
+  - id: trade_mechanic_has_tension
+    description: Makes trading interesting through leverage, asymmetry, or unenforceable promises.
+    groups:
+      - [trade, negotiation, negotiate]
+      - [asymmetric information, leverage, desperation, promise, future promise, unenforceable, embargo, extort]
+  - id: action_economy_coherent
+    description: Gives a coherent turn structure and action economy.
+    groups:
+      - [actions per turn, two actions, three actions, each turn]
+      - [plant, harvest, clear, trade, play a card]
+penalties:
+  - id: missing_required_structure
+    description: Does not follow the required structured output format.
+    points: 6
+    missing_groups:
+      - [blight spread mechanic]
+      - [crop vulnerability and yield profiles]
+      - [hand and action economy]
+      - [trade and negotiation mechanic]
+      - [scoring]
+      - [stress test your own design, stress test]
+  - id: spread_deck_not_designed
+    description: Mentions card-driven spread without defining the Blight Deck composition.
+    points: 6
+    missing_groups:
+      - [blight deck, blight cards, spread cards]
+      - [card type, card types, card family, card families, directional cards, direction cards, wind cards, weather cards, surge cards, rate cards, modifier cards]
+  - id: missing_relative_scoring_component
+    description: Never makes the mandatory relative scoring component explicit.
+    points: 6
+    missing_any:
+      - relative scoring
+      - relative score
+      - relative bonus
+      - comparative bonus
+      - rank bonus
+      - majority bonus
+      - most harvested
+      - highest harvest
+      - top 3 get
+      - top three get
+      - ahead of each neighbor
+      - above the table average
+  - id: misses_blight_weaponization
+    description: Misses the blight-as-weapon exploit created by shared spread cards and relative scoring.
+    points: 8
+    missing_groups:
+      - [degenerate strategy, dominant strategy, exploit line, optimal line, solved line]
+      - [weaponize blight, offensive blight, deliberately spread, contaminate the border, border tiles, adjacent opponent, use blight offensively]
+  - id: trade_mechanic_trivial
+    description: Trade is generic swapping by mutual agreement with no structural tension.
+    points: 5
+    present_any:
+      - players may trade by mutual agreement
+      - players may trade cards by mutual agreement
+      - players can trade any cards they want
+      - trade any resources they want
+      - trade freely with each other
+  - id: spread_mechanic_vague
+    description: The spread mechanic is too vague to run consistently.
+    points: 4
+    missing_groups:
+      - [adjacent, orthogonal, north, south, east, west, direction, directions]
+      - [blight level, intensity, severity, one step, two steps, spread rate, distance]
+      - [ruined, cleared, barrier, blocked, fallow, stop spreading, stops spreading, quarantine, water tiles block, prevents blight]
+  - id: flavor_pitch_instead_of_mechanic_logic
+    description: Drifts into art, component, or flavor-pitch material instead of mechanic logic.
+    points: 3
+    present_any:
+      - art style
+      - artwork
+      - flavor text
+      - component materials
+      - wooden tokens
+      - miniature
+      - narrative arc
+      - thematic feel

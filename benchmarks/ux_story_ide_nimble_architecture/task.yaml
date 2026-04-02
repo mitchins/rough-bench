@@ -1,0 +1,33 @@
+id: ux_story_ide_nimble_architecture
+title: Story IDE architecture that stays nimble
+domain: ux_product_design
+family: ux_product_design
+counted: true
+prompt: "Design the product architecture for a local-first story-writing IDE.\n\nIt needs:\n- tree or navigator\n- document editor\n- metadata or inspector\n- notes per node\n- AI-assisted completion\n- a document bundle format that scales better than one giant file\n\nDeliver exactly these sections:\n1. Core Information Model\n2. Editor And Navigator Behaviour\n3. Bundle Format\n4. AI Attachment Points\n5. Anti-Bloat Guardrails\n6. First Implementation Slice\n\nRequirements:\n- Keep the design nimble rather than turning it into a giant productivity suite.\n- Distinguish leaf-node editing from non-leaf structural nodes.\n- Separate content from metadata.\n- Do not rely on one giant project file or one opaque database blob.\n- Output only the design memo."
+intent: Score whether the model can design a nimble local-first story IDE with a real information model, bundle reasoning, and anti-bloat guardrails instead of inventing a generic note app or productivity monster.
+latent_requirements:
+  - define leaf versus non-leaf behavior
+  - separate content from metadata
+  - design a concrete bundle format that avoids one giant file
+  - place AI attachment points without making the system an AI-first gimmick
+  - include explicit anti-bloat guardrails
+hard_failures:
+  - reverts to one big project file or opaque blob
+  - never distinguishes leaf and non-leaf node behavior
+  - drifts into collaboration, marketplace, or other productivity-suite sprawl
+  - describes a generic notes app with no bundle reasoning
+strong_signals:
+  - defines navigator/editor/inspector roles cleanly
+  - says leaf nodes are editable documents while non-leaf nodes organize structure
+  - uses a manifest plus per-node files or equivalent bundle layout
+  - names anti-bloat non-goals
+  - proposes a small first implementation slice
+penalties:
+  - giant blob storage
+  - no leaf/non-leaf logic
+  - no bundle reasoning
+  - AI gimmick sprawl
+  - anti-bloat missing
+expected_artifacts:
+  - architecture spec
+judge_instructions: Reward product structure and restraint. The load-bearing checks are leaf/non-leaf behavior, concrete bundle design, and anti-bloat scope discipline.

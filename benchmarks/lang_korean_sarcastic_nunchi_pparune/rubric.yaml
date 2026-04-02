@@ -1,0 +1,77 @@
+signals:
+  - id: sarcasm_preserved
+    description: Preserves that the line is sarcastic rather than complimentary.
+    any:
+      - took you long enough
+      - finally noticed
+      - finally caught on
+      - about time you noticed
+      - look who finally noticed
+  - id: natural_short_line
+    description: Reads like a short line of dialogue rather than a gloss.
+    any:
+      - wow
+      - look who
+      - about time
+      - finally
+  - id: exasperated_cadence
+    description: Keeps the snarky, exasperated cadence of the original line.
+    any:
+      - wow
+      - about time
+      - took you long enough
+      - finally
+penalties:
+  - id: literal_or_earnest_compliment
+    description: Treats the line as a sincere compliment about being perceptive or quick.
+    points: 5
+    present_unnegated_any:
+      - you're perceptive
+      - you catch on fast
+      - you're quick-witted
+      - quick on the uptake
+      - nice catch
+      - good eye
+      - you're sharp
+      - perceptive
+      - nunchi
+  - id: misses_exasperation
+    description: Fails to keep the exasperated, irritated tone of the line.
+    points: 4
+    missing_any:
+      - wow
+      - about time
+      - took you long enough
+      - finally
+      - look who
+  - id: misses_sarcasm
+    description: Fails to produce a sarcasm-preserving English line.
+    points: 4
+    missing_any:
+      - took you long enough
+      - finally noticed
+      - finally caught on
+      - about time you noticed
+      - look who finally noticed
+  - id: meta_explanation
+    description: Explains the Korean phrase instead of outputting only the localized line.
+    points: 5
+    present_any:
+      - idiom
+      - means
+      - phrase
+      - translation
+      - in korean
+      - nunchi
+      - 눈치
+      - explanation
+  - id: overpolite_or_elevated_register
+    description: Makes the line too polite or elevated for a snarky spoken comeback.
+    points: 4
+    present_any:
+      - thank you
+      - appreciate
+      - sir
+      - ma'am
+      - honored
+      - very much

@@ -1,0 +1,76 @@
+signals:
+  - id: cleanup_or_face_translation
+    description: Translates 씻고 와 as wash your face, wash up, clean yourself up, or freshen up.
+    any:
+      - wash your face
+      - wash up
+      - clean yourself up
+      - go clean up
+      - freshen up
+      - go clean yourself up
+      - go wash your face
+      - go wash up
+      - freshen yourself up
+      - go freshen yourself up
+      - wash your face first
+      - clean up first
+      - go freshen up
+  - id: conversational_line
+    description: Reads like natural short dialogue rather than a gloss.
+    any:
+      - go
+      - first
+      - up
+      - freshen
+  - id: imperative_brevity
+    description: Keeps the imperative short and direct.
+    any:
+      - go wash
+      - go clean
+      - wash your face
+      - wash up
+      - freshen up
+penalties:
+  - id: flat_literal_wash
+    description: Translates the line as a flat or unnatural go wash.
+    points: 4
+    present_unnegated_any:
+      - go wash.
+      - go wash first.
+      - go wash yourself
+      - wash yourself
+      - wash and come back
+  - id: over_specific_shower
+    description: Overtranslates the line into shower or bathe language.
+    points: 4
+    present_unnegated_any:
+      - take a shower
+      - go shower
+      - go take a shower
+      - go bathe
+      - take a bath
+      - go take a bath
+  - id: missing_cleanup_nuance
+    description: Fails to capture the cleanup or face-washing nuance from context.
+    points: 4
+    missing_any:
+      - wash your face
+      - wash up
+      - clean yourself up
+      - freshen up
+      - go wash up
+      - wash your face first
+      - clean up first
+      - go freshen up
+  - id: explains_phrase
+    description: Explains the phrase or translation instead of outputting only the line.
+    points: 5
+    present_any:
+      - literal
+      - means
+      - phrase
+      - translation
+      - in korean
+      - explanation
+      - this means
+      - 씻고 와

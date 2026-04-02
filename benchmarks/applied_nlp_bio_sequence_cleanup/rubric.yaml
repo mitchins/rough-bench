@@ -1,0 +1,91 @@
+signals:
+  - id: corrections_table_present
+    description: Uses the requested corrections table format.
+    groups:
+      - [corrections]
+      - [corrected_tags, error_type]
+  - id: b1_fixed
+    description: Fixes the illegal BIO start in B1.
+    groups:
+      - [B1]
+      - [B-PER, Limp, illegal]
+  - id: b2_fixed
+    description: Fixes the broken continuation in B2.
+    groups:
+      - [B2]
+      - [B-PER, I-PER, Dr., Mara, Singh]
+  - id: b3_fixed
+    description: Fixes the truncated ORG span in B3.
+    groups:
+      - [B3]
+      - [B-ORG, I-ORG, Northwind, Labs]
+  - id: b4_fixed
+    description: Fixes the broken span in B4.
+    groups:
+      - [B4]
+      - [B-PER, I-PER, First, Enchantress]
+  - id: b5_fixed
+    description: Fixes the broken continuation in B5.
+    groups:
+      - [B5]
+      - [B-PER, I-PER, Arlen, Ark]
+  - id: b6_preserved
+    description: Keeps the already-valid row unchanged.
+    groups:
+      - [B6]
+      - [The, clinic, Oslo, reopened]
+  - id: error_audit_present
+    description: Includes the requested error audit.
+    groups:
+      - [error audit]
+      - [illegal start, boundary, truncation, preserved]
+penalties:
+  - id: missing_corrections_table
+    description: Does not use the requested correction table.
+    points: 5
+    missing_any:
+      - Corrections
+      - corrected_tags
+      - error_type
+  - id: item_coverage_incomplete
+    description: Leaves out part of the batch.
+    points: 5
+    missing_any:
+      - B1
+      - B2
+      - B3
+      - B4
+      - B5
+      - B6
+  - id: illegal_bio_handling_missing
+    description: Fails to repair illegal BIO starts or broken spans.
+    points: 5
+    present_unnegated_any:
+      - keep I-PER at the start
+      - leave the span broken
+      - no correction needed
+      - just relabel everything as O
+  - id: changed_valid_sequence
+    description: Alters an already-valid sequence unnecessarily.
+    points: 4
+    present_unnegated_any:
+      - B6 corrected
+      - B6: B-
+      - B6 | changed
+  - id: generic_ner_advice
+    description: Gives generic NER advice instead of fixing tags.
+    points: 3
+    present_unnegated_any:
+      - better ner model
+      - use spacy
+      - add more data
+      - train a crf
+  - id: no_error_audit
+    description: Omits the error audit.
+    points: 2
+    missing_any:
+      - error audit
+      - illegal start
+      - boundary
+expected_artifacts: []
+judge_instructions: Reward concrete BIO repair. The important check is whether the answer actually corrects the sequences and preserves the one valid row instead of replacing the task with generic NER commentary.

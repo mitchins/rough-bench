@@ -1,0 +1,28 @@
+My compute_metrics function stops being called when I switch from single-GPU training to `torchrun --nproc-per-node=2` with DeepSpeed. Training loss decreases normally. No exceptions are raised. `evaluation_strategy='steps'` is set and worked fine before.
+
+My Trainer init looks like this:
+
+```python
+trainer = Seq2SeqTrainer(
+    model=model,
+    args=Seq2SeqTrainingArguments(
+        output_dir="./output",
+        evaluation_strategy="steps",
+        eval_steps=500,
+        per_device_train_batch_size=4,
+        per_device_eval_batch_size=2,
+        deepspeed="ds_config.json",
+    ),
+    train_dataset=train_dataset,
+    eval_dataset=val_dataset,
+    tokenizer=tokenizer,
+    data_collator=DataCollatorWithPadding(tokenizer),
+    compute_metrics=compute_metrics,
+)
+```
+
+What are the most likely root causes, in priority order?
+For each, give the concrete fix.
+
+Explain briefly why training can look healthy while eval is broken.
+Do not give generic debugging boilerplate.

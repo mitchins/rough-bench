@@ -1,0 +1,136 @@
+signals:
+  - id: durable_state
+    description: Uses sqlite or another explicit durable local persistence layer.
+    any:
+      - sqlite
+      - sqlite3
+      - durable state
+      - persistent state
+      - checkpoint table
+      - local database
+  - id: resumable_execution
+    description: Mentions resume, checkpoints, or persisted cursors.
+    any:
+      - resumable
+      - resume
+      - checkpoint
+      - persisted cursor
+      - last_seen_id
+      - high-water mark
+  - id: network_hygiene
+    description: Covers retries or backoff, timeouts, and rate limiting.
+    groups:
+      - [retry, retries, backoff, exponential backoff]
+      - [timeout, timeouts]
+      - [rate limit, rate limiting, throttle]
+  - id: idempotent_writes
+    description: Discusses idempotent writes, dedupe, or uniqueness constraints.
+    any:
+      - idempotent
+      - dedup
+      - unique constraint
+      - upsert
+      - content hash
+  - id: observability
+    description: Includes logging or operational visibility.
+    any:
+      - logging
+      - logs
+      - structured logs
+      - audit trail
+  - id: artifact_persistence_impl
+    description: The artifact shows a concrete persistence layer rather than prose-only claims.
+    artifact_text_groups:
+      - [sqlite3.connect, sqlite3]
+      - [create table if not exists checkpoints, checkpoints (, checkpoint table]
+  - id: artifact_resume_impl
+    description: The artifact persists and updates checkpoint or cursor state.
+    artifact_text_groups:
+      - [update_checkpoint, checkpoints, checkpoint]
+      - [cursor, last_seen_id, high-water mark]
+  - id: artifact_idempotency_impl
+    description: The artifact implements idempotent or conflict-safe writes.
+    artifact_text_groups:
+      - [insert into items, save_item, write_item]
+      - [on conflict, upsert, primary key, unique]
+  - id: artifact_ops_impl
+    description: The artifact contains concrete logging plus timeout, throttling, or backoff behavior.
+    artifact_text_groups:
+      - [import logging, logging.getlogger, logger.info, logger.warning, logger.error]
+      - [time.sleep, rate_limit, timeout=, backoff]
+  - id: code_artifact
+    description: Produces a code artifact for the scraper.
+    artifact_any:
+      - scraper.py
+penalties:
+  - id: missing_durable_state
+    description: No durable state store is proposed.
+    points: 5
+    missing_any:
+      - sqlite
+      - sqlite3
+      - durable state
+      - persistent state
+      - local database
+  - id: missing_resume_strategy
+    description: No concrete checkpoint or resume mechanism is proposed.
+    points: 5
+    missing_any:
+      - resumable
+      - resume
+      - checkpoint
+      - persisted cursor
+      - high-water mark
+  - id: missing_network_safeguards
+    description: Omits retries, timeouts, or rate limiting.
+    points: 4
+    missing_groups:
+      - [retry, retries, backoff, exponential backoff]
+      - [timeout, timeouts]
+      - [rate limit, rate limiting, throttle]
+  - id: missing_idempotent_writes
+    description: Does not address idempotency or deduplication.
+    points: 3
+    missing_any:
+      - idempotent
+      - dedup
+      - unique constraint
+      - upsert
+      - content hash
+  - id: missing_logging
+    description: Does not mention logging or visibility.
+    points: 2
+    missing_any:
+      - logging
+      - logs
+      - structured logs
+      - audit trail
+  - id: missing_artifact_persistence_impl
+    description: The code artifact does not demonstrate concrete durable-state implementation.
+    points: 4
+    missing_artifact_text_groups:
+      - [sqlite3.connect, sqlite3]
+      - [create table if not exists checkpoints, checkpoints (, checkpoint table]
+  - id: missing_artifact_resume_impl
+    description: The code artifact does not demonstrate checkpoint or cursor persistence.
+    points: 4
+    missing_artifact_text_groups:
+      - [update_checkpoint, checkpoints, checkpoint]
+      - [cursor, last_seen_id, high-water mark]
+  - id: missing_artifact_idempotency_impl
+    description: The code artifact does not demonstrate conflict-safe or idempotent writes.
+    points: 3
+    missing_artifact_text_groups:
+      - [insert into items, save_item, write_item]
+      - [on conflict, upsert, primary key, unique]
+  - id: missing_artifact_ops_impl
+    description: The code artifact does not demonstrate concrete logging plus throttling, timeout, or backoff behavior.
+    points: 3
+    missing_artifact_text_groups:
+      - [import logging, logging.getlogger, logger.info, logger.warning, logger.error]
+      - [time.sleep, rate_limit, timeout=, backoff]
+  - id: missing_code_artifact
+    description: No scraper code artifact was produced.
+    points: 2
+    missing_artifacts_any:
+      - scraper.py

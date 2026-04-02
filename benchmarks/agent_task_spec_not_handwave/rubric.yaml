@@ -1,0 +1,210 @@
+signals:
+  - id: bounded_poc_scope
+    description: Frames the work as a first working POC or minimal slice rather than a full product roadmap.
+    any:
+      - first working poc
+      - first working version
+      - initial poc
+      - minimal viable
+      - first slice
+      - v1 scope
+      - first pass
+  - id: local_first_constraint
+    description: Preserves the local-first or offline-first constraint.
+    any:
+      - local-first
+      - local first
+      - offline-first
+      - offline first
+      - no cloud backend
+      - local storage
+  - id: bundle_format_design
+    description: Defines a concrete document bundle format rather than leaving storage as one giant file.
+    any:
+      - bundle format
+      - document bundle
+      - one file per node
+      - manifest
+      - index.json
+      - metadata per node
+      - bundle directory
+  - id: explicit_non_goals
+    description: Includes non-goals or explicit out-of-scope items.
+    any:
+      - non-goals
+      - non goals
+      - out of scope
+      - explicitly out of scope
+  - id: repo_layout
+    description: Proposes a repo or project structure.
+    any:
+      - repo layout
+      - repo structure
+      - project structure
+      - directory structure
+      - file layout
+  - id: ordered_milestones
+    description: Gives an ordered implementation sequence.
+    any:
+      - milestones
+      - phase 1
+      - step 1
+      - implementation order
+      - sequence
+      - build order
+  - id: concrete_deliverables
+    description: Names concrete outputs or deliverables, not just themes.
+    any:
+      - deliverables
+      - should produce
+      - outputs
+      - must include
+      - artifacts
+  - id: acceptance_criteria
+    description: Includes testable acceptance criteria or done conditions.
+    any:
+      - acceptance criteria
+      - done when
+      - success criteria
+      - completion criteria
+      - considered complete when
+penalties:
+  - id: corporate_prd_voice
+    description: Sounds like a roadmap or product-management document rather than an execution brief.
+    points: 6
+    present_any:
+      - stakeholders
+      - kpis
+      - okrs
+      - go-to-market
+      - gtm
+      - user personas
+      - market opportunity
+      - monetization
+      - revenue
+      - business objective
+  - id: clarification_dodge
+    description: Turns the task into clarifying questions instead of making assumptions and proceeding.
+    points: 4
+    present_any:
+      - before i proceed
+      - before proceeding
+      - i have a few clarifying questions
+      - a few questions before
+      - to tailor this
+      - i need clarification
+      - questions for you
+  - id: missing_local_first_constraint
+    description: Drops the local-first or offline-first constraint.
+    points: 5
+    missing_any:
+      - local-first
+      - local first
+      - offline-first
+      - offline first
+      - no cloud backend
+      - local storage
+  - id: missing_bundle_format_design
+    description: Fails to define how the document bundle avoids one giant file.
+    points: 5
+    missing_any:
+      - bundle format
+      - document bundle
+      - one file per node
+      - manifest
+      - index.json
+      - metadata per node
+      - bundle directory
+  - id: giant_file_regression
+    description: Reverts the storage design back to one giant project file or flat JSON blob.
+    points: 5
+    present_unnegated_any:
+      - single `project.json` file
+      - single project.json file
+      - flat json bundle
+      - one giant json file
+      - one giant file
+  - id: missing_non_goals
+    description: Omits non-goals or explicit out-of-scope items.
+    points: 4
+    missing_any:
+      - non-goals
+      - non goals
+      - out of scope
+      - explicitly out of scope
+  - id: missing_repo_layout
+    description: Does not propose a repo or directory structure.
+    points: 4
+    missing_any:
+      - repo layout
+      - repo structure
+      - project structure
+      - directory structure
+      - file layout
+  - id: missing_milestones
+    description: Does not give an ordered implementation sequence.
+    points: 4
+    missing_any:
+      - milestones
+      - phase 1
+      - step 1
+      - implementation order
+      - sequence
+      - build order
+  - id: missing_deliverables
+    description: Does not name concrete deliverables.
+    points: 4
+    missing_any:
+      - deliverables
+      - should produce
+      - outputs
+      - must include
+      - artifacts
+  - id: missing_acceptance_criteria
+    description: Does not include testable acceptance criteria.
+    points: 4
+    missing_any:
+      - acceptance criteria
+      - done when
+      - success criteria
+      - completion criteria
+      - considered complete when
+  - id: gratuitous_stack_lock_in
+    description: Locks the brief to specific frameworks, runtimes, or model vendors the prompt never required.
+    points: 4
+    present_any:
+      - react + vite
+      - vite + react
+      - svelte
+      - redux
+      - zustand
+      - ollama
+      - llama 3
+      - electron
+      - tauri
+      - webassembly
+  - id: premature_packaging_scope
+    description: Pushes the first POC into installers, auto-update, or distribution overhead too early.
+    points: 3
+    present_any:
+      - auto-update
+      - appimage
+      - .dmg
+      - .exe
+      - installer
+      - ci pipeline
+  - id: scope_sprawl
+    description: Bloats the first POC with cloud, collaboration, marketplace, or other unnecessary platform features.
+    points: 5
+    present_unnegated_any:
+      - real-time collaboration
+      - realtime collaboration
+      - live collaboration
+      - cloud sync
+      - team workspaces
+      - plugin marketplace
+      - extension marketplace
+      - subscription billing
+      - billing
+      - analytics dashboard
+      - multi-user auth

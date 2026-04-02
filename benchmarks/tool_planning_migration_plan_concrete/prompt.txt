@@ -1,0 +1,30 @@
+We need to migrate our user and account data from Firestore to PostgreSQL while keeping the API live.
+
+Right now:
+- Firestore holds user profiles, auth tokens, and account settings
+- The API is stateless and reads/writes Firestore directly
+- Traffic is steady but not huge: ~100 QPS average
+
+The goal:
+- Move data to PostgreSQL
+- Update the API to read/write PostgreSQL
+- Keep the service running during the migration
+- Be able to roll back if something breaks
+
+We also have concerns about data consistency during the transition. Some of the Firestore documents have nested fields that need to map to SQL tables. And we need to be careful about in-flight transactions.
+
+Rewrite this into a task spec for a coding agent.
+
+Make reasonable assumptions and proceed. Do not turn this into a questionnaire. Do not write a DevOps runbook.
+
+The output should be specific enough to execute but not so overprescribed that it kills implementation judgment.
+
+Include:
+- inferred constraints and assumptions
+- scope for the first working phase
+- non-goals
+- proposed repo layout and file naming
+- implementation milestones
+- concrete deliverables
+- acceptance criteria and go/no-go gates
+- rollback strategy

@@ -1,0 +1,91 @@
+signals:
+  - id: table_structure_present
+    description: Uses the requested sentiment table format.
+    groups:
+      - [sentiment table]
+      - [item_id, sentiment]
+  - id: a1_positive
+    description: Labels A1 as positive.
+    groups:
+      - [A1]
+      - [positive, faster, fixed my crash]
+  - id: a2_mixed
+    description: Labels A2 as mixed.
+    groups:
+      - [A2]
+      - [mixed, logout loop, unusable]
+  - id: a3_neutral
+    description: Labels A3 as neutral.
+    groups:
+      - [A3]
+      - [neutral, dashboard]
+  - id: a4_positive
+    description: Labels A4 as positive.
+    groups:
+      - [A4]
+      - [positive, export works again]
+  - id: a5_mixed
+    description: Labels A5 as mixed.
+    groups:
+      - [A5]
+      - [mixed, support replied quickly, bug is still open]
+  - id: a6_negative
+    description: Labels A6 as negative.
+    groups:
+      - [A6]
+      - [negative, nothing happened]
+  - id: batch_readout_present
+    description: Includes a short batch-level readout.
+    groups:
+      - [batch readout]
+      - [dominant pattern, mixed, neutral]
+penalties:
+  - id: missing_batch_table
+    description: Does not use the requested table format.
+    points: 5
+    missing_any:
+      - Sentiment Table
+      - item_id
+      - sentiment
+  - id: item_coverage_incomplete
+    description: Leaves out part of the batch.
+    points: 5
+    missing_any:
+      - A1
+      - A2
+      - A3
+      - A4
+      - A5
+      - A6
+  - id: all_same_label_collapse
+    description: Collapses all items into one polarity.
+    points: 4
+    present_unnegated_any:
+      - positive for all
+      - negative for all
+      - neutral for all
+  - id: misses_mixed_distinction
+    description: Does not keep mixed items distinct.
+    points: 4
+    present_unnegated_any:
+      - just positive and negative
+      - no mixed
+      - mixed items are really positive
+      - mixed items are really negative
+  - id: generic_sentiment_advice
+    description: Gives generic sentiment-model advice instead of labeling the batch.
+    points: 3
+    present_unnegated_any:
+      - add more training data
+      - use a bigger model
+      - fine-tune a classifier
+      - use bert
+      - improve the dataset
+  - id: no_batch_readout
+    description: Omits the requested batch-level readout.
+    points: 2
+    missing_any:
+      - batch readout
+      - dominant pattern
+expected_artifacts: []
+judge_instructions: Reward item-by-item labeling and a short audit readout. Mixed cases must stay mixed; the task is not solved if the answer flattens the batch into a single polarity.

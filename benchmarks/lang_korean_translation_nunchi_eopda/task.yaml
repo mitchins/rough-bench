@@ -1,0 +1,26 @@
+id: lang_korean_translation_nunchi_eopda
+title: Korean idiom translation with 눈치 없다
+domain: language_translation
+family: language_korean
+counted: false
+intent: Score whether the model localizes 눈치 없다 into natural English that captures social obliviousness or failure to read the room, rather than literalizing 눈치 or flattening it into a generic notice verb.
+latent_requirements:
+  - use the group context to infer social obliviousness rather than literal noticing
+  - preserve that the line is a criticism of missing unspoken cues
+  - translate into natural conversational English
+  - output only the translated line
+hard_failures:
+  - literalizes 눈치 into nunchi, eye measure, or other gloss-like wording
+  - flattens the line into a generic notice verb that misses the social-reading nuance
+  - explains the idiom instead of translating it
+strong_signals:
+  - uses read the room, oblivious, clueless, tactless, tone-deaf, or similar natural phrasing
+  - sounds like a muttered conversational criticism rather than a glossary entry
+  - preserves the implicit social-expectation failure
+penalties:
+  - literal nunchi translation
+  - flat notice translation
+  - missing social-room nuance
+  - meta explanation
+expected_artifacts: []
+judge_instructions: Reward natural localization over literal explanation. A line like "He seriously can't read the room" or "He's so oblivious" should score well. Literal nunchi wording or generic "he didn't notice" translations should score badly.

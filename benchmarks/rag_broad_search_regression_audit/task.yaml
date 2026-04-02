@@ -1,0 +1,37 @@
+id: rag_broad_search_regression_audit
+title: Broad-search retrieval regression after reranking
+domain: retrieval_systems
+family: retrieval_systems
+counted: true
+prompt: "My arXiv-style RAG system shows the following regression after adding rerankers:\n\nBaseline (no reranker):\n  weighted_hit_rate:       0.828\n  broad_macro_hit_rate:    0.600\n\nReranker A (MiniLM cross-encoder, top-5 output):\n  weighted_hit_rate:       0.672\n  broad_macro_hit_rate:    0.100\n\nReranker B (MiniLM bi-encoder reranker, top-5 output):\n  weighted_hit_rate:       0.688\n  broad_macro_hit_rate:    0.150\n\nSystem details:\n  - Retrieval: dense only, all-MiniLM-L6-v2\n  - Top-k before reranking: k=20\n  - Reranker output to user: top-5\n  - Query distribution: ~70% narrow (specific entity/fact), ~30% broad (thematic, multi-document)\n  - Corpus: arXiv abstracts, ~200k documents\n  - Assume the eval set is already labeled broad vs narrow and metrics can be recomputed by slice\n\nI have already tried two rerankers. Do not recommend a better reranker as the primary fix.\n\nGive me a concrete plan to recover broad search without regressing narrow search.\n\nRequired sections:\n1. Diagnosis\n2. Why Broad Search Died\n3. Replacement Strategy\n4. Ablation Plan\n5. Regression Guardrails\n6. Decision Rule"
+intent: Score whether the model can diagnose broad-search regression as candidate-set truncation and semantic over-narrowing, rather than falling back to generic RAG or better-reranker advice.
+latent_requirements:
+  - engage the actual regression numbers rather than treating this as generic retrieval advice
+  - identify k=20 to top-5 compression as a mechanical cause of broad-query recall loss
+  - distinguish broad-query candidate diversity needs from narrow-query precision needs
+  - propose query-type-aware handling rather than a single pipeline change for all queries
+  - define ablations that measure recall or coverage before and after reranking, not just final metrics
+  - give concrete regression guardrails and a concrete ship or no-ship rule
+hard_failures:
+  - recommends a stronger reranker as the primary fix after being told reranking already caused the regression
+  - never addresses the k=20 to top-5 truncation point
+  - proposes one retrieval policy for all queries with no broad-versus-narrow differentiation
+  - gives no ablation plan or no explicit regression guardrails
+strong_signals:
+  - says the reranker is not the main problem and the cutoff is
+  - explains that broad queries die because diverse candidates are discarded before the user sees them
+  - proposes larger k, no rerank, or diversity-preserving rerank for broad queries
+  - measures loss before and after reranking
+  - gives thresholds or explicit decision criteria rather than vague monitoring
+penalties:
+  - missing required structure
+  - reranker as primary fix
+  - k not addressed
+  - ignores broad narrow split
+  - no number engagement
+  - ablation missing or vague
+  - guardrails vague
+  - decision rule missing
+expected_artifacts:
+  - retrieval diagnosis memo
+judge_instructions: Read the diagnosis first. If the answer does not identify the k=20 to top-5 truncation step as part of the broad-search collapse, penalize it before rewarding any retrieval vocabulary. The load-bearing distinction is broad-query diversity versus narrow-query precision, not which retriever buzzword appears.

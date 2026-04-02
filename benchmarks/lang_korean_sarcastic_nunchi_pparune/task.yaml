@@ -1,0 +1,26 @@
+id: lang_korean_sarcastic_nunchi_pparune
+title: Korean sarcastic localization with 눈치 빠르네
+domain: language_pragmatics
+family: language_korean
+counted: false
+prompt: "Localize this Korean line into natural English.\n\nContext:\n- someone finally notices something obvious very late\n- the speaker says `와, 눈치 빠르네.` sarcastically\n- this is not a sincere compliment\n- output one line only, with no explanation\n\nLine:\n와, 눈치 빠르네."
+intent: Score whether the model preserves the sarcasm in 눈치 빠르네 and localizes it into natural English rather than treating it as a sincere compliment about being perceptive.
+latent_requirements:
+  - infer that 눈치 빠르네 is sarcastic here, not praise
+  - localize into a natural English line rather than a dictionary gloss
+  - keep the line short and conversational
+  - output only the line with no explanation
+hard_failures:
+  - translates the line as a sincere compliment
+  - leaves nunchi untranslated or explains it
+  - writes a sentence that sounds like a glossary note rather than dialogue
+strong_signals:
+  - uses a sarcasm-preserving line such as took you long enough or you finally noticed
+  - keeps the line concise and conversational
+  - avoids glossing 눈치 directly
+penalties:
+  - literal or earnest compliment
+  - misses sarcasm
+  - meta explanation
+expected_artifacts: []
+judge_instructions: Reward sarcastic natural English. A strong line sounds like "Wow, took you long enough" or "Wow, you finally noticed," not like praise for quick perception.

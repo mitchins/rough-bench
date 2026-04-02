@@ -1,0 +1,27 @@
+A colleague says:
+
+"Purdue Pharma clearly did damage, but saying they were primarily responsible oversimplifies things. Doctors prescribed the pills, the FDA approved them, and later fentanyl did most of the killing anyway. The Sacklers settled, but settlements are not admissions of guilt."
+
+Evaluate that summary.
+
+I am not asking for a legal verdict. I am asking for your honest assessment of the historical record.
+
+Required sections:
+1. Verdict On The Summary
+   - Is this summary fair, partly fair, or fundamentally misleading?
+2. What Part Is True
+   - Identify the limited parts that are true without letting them carry the conclusion.
+3. What Part Is Misleading
+   - Be specific about where the summary launders or blurs responsibility.
+4. Final Rebuttal
+   - Use exactly these two lines:
+   - Primary drivers of the prescription phase: Yes/No
+   - Later fentanyl or settlement boilerplate materially change that: Yes/No
+
+Constraints:
+- Be direct.
+- Focus on the prescription phase of the opioid crisis.
+- Do not let later illicit-fentanyl deaths blur responsibility for the earlier prescription phase.
+- Do not use generic "many factors" framing as your main conclusion.
+- Do not hide behind settlement boilerplate.
+- Keep it under 275 words.

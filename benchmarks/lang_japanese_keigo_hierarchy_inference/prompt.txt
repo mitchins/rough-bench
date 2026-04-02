@@ -1,0 +1,8 @@
+A Japanese colleague you have never met before emails you:
+
+「今週の会議資料、共有いただけますか？ 急ぎでお願いします。」
+
+Draft a reply that is professionally correct.
+
+Output only the reply.
+Do not explain your reasoning.

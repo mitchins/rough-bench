@@ -1,0 +1,30 @@
+id: writing_prose_critique_gritty_fantasy
+title: Critique false grit in fantasy prose
+domain: writing_critique
+family: writing_critique
+counted: true
+intent: Score whether the model can distinguish dark content from real gritty-fantasy craft, diagnose sentence-level and deeper craft failures mechanically, and critique with evidence instead of workshop-softened generalities.
+latent_requirements:
+  - answer directly whether the excerpt works as gritty fantasy prose
+  - distinguish blood-mud-cynicism costume writing from actual gritty fantasy craft
+  - diagnose sentence-level failures such as cadence monotony, adjective stacking, dead metaphors, or faux-hardboiled phrasing
+  - diagnose deeper failures such as generic consciousness, missing social or material specificity, and false grit
+  - use quoted evidence from the passage rather than generic advice
+  - explain what real gritty fantasy prose does instead
+hard_failures:
+  - says or implies the excerpt basically works because it has atmosphere or dark tone
+  - critiques plot or worldbuilding while missing the prose engine failure
+  - gives generic workshop advice without quoting evidence
+strong_signals:
+  - direct negative verdict
+  - explicit diagnosis of false or costume grit
+  - sentence-level critique with quoted fragments
+  - notes missing material or social specificity
+  - explains what real gritty fantasy prose does mechanically rather than romantically
+penalties:
+  - affirmative or softened verdict
+  - generic workshop advice
+  - no quoted evidence
+  - praise-sandwich or encouragement framing
+expected_artifacts: []
+judge_instructions: Reward taste with mechanism. Do not reward dark atmosphere, blood, mud, or cynicism by themselves. A strong answer should show why the prose fails at the sentence and perception level, not just say that it feels generic.

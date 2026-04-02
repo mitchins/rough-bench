@@ -1,0 +1,116 @@
+signals:
+  - id: required_structure_present
+    description: Uses the required structured sections.
+    groups:
+      - [candidate failure modes]
+      - [top candidate]
+      - [isolation plan]
+      - [fix]
+  - id: relpebias_primary
+    description: Identifies relative position bias bucketing as the primary candidate.
+    groups:
+      - [relative position bias, relative position bucket, relpos, rpe, bucket function, bucket assignment]
+      - [primary, most likely, top candidate]
+  - id: threshold_mechanism
+    description: Explains the sharp threshold as a discrete bucket collapse or invalid bucket transition rather than smooth degradation.
+    groups:
+      - [sharp threshold, discrete, not smooth, abrupt, cliff, threshold]
+      - [same bucket, collapsed bucket, identical bias, invalid bucket, out-of-range bucket, bucket collapse, clamped]
+  - id: positional_not_content
+    description: Uses the content-independent threshold as evidence that the failure is positional rather than semantic.
+    groups:
+      - [content-independent, content independent, regardless of content, same across content, not content-dependent]
+      - [positional, position-dependent, position dependent, positional not semantic]
+  - id: bucket_structure_knowledge
+    description: Shows knowledge of T5's bucket structure rather than generic positional handwaving.
+    any:
+      - 32 buckets
+      - 16 exact
+      - 16 log
+      - first half exact
+      - second half logarithmic
+      - log-spaced buckets
+      - logarithmic buckets
+      - max distance 128
+  - id: direct_isolation_check
+    description: Proposes a direct bucket-function inspection without a full forward pass.
+    groups:
+      - [bucket ids, bucket id, bucket assignments, print buckets, inspect bucket function, positions 0-30, positions 24 and 25]
+      - [without a full forward pass, without forward pass, directly from the bucket function, no forward pass]
+  - id: secondary_candidates_specific
+    description: Lists at least one plausible secondary boundary bug with mechanism.
+    any:
+      - attention mask width mismatch
+      - causal mask bug
+      - off-by-one in the causal mask
+      - kv cache rollover
+      - kv-cache rollover
+      - indexing bug at the boundary
+  - id: fix_specific
+    description: Gives a concrete bucket-function fix.
+    any:
+      - diff against the reference
+      - reference implementation
+      - match the reference implementation
+      - match it exactly
+      - correct the boundary constant
+      - fix the off-by-one
+      - off-by-one
+      - fix the clamp
+      - fix max_distance
+      - fix num_buckets
+      - correct the log bucket computation
+      - correct the bucket assignment function
+penalties:
+  - id: missing_required_structure
+    description: Does not follow the required structured output format.
+    points: 6
+    missing_groups:
+      - [candidate failure modes]
+      - [top candidate]
+      - [isolation plan]
+      - [fix]
+  - id: train_on_longer_sequences
+    description: Recommends training on longer sequences even though the prompt explicitly forbids it.
+    points: 8
+    present_unnegated_any:
+      - train on longer sequences
+      - longer sequence training
+      - train with longer sequences
+      - increase the training sequence length
+      - train on more than 24 tokens
+      - retrain on longer contexts
+  - id: misses_relpebias_primary
+    description: Does not identify relative position bucketing as the primary candidate.
+    points: 8
+    missing_groups:
+      - [relative position bias, relative position bucket, relpos, rpe, bucket function, bucket assignment]
+      - [primary, most likely, top candidate]
+  - id: threshold_shape_unexplained
+    description: Does not explain why the failure is a sharp threshold rather than smooth degradation.
+    points: 6
+    missing_groups:
+      - [sharp threshold, discrete, not smooth, abrupt, cliff, threshold]
+      - [same bucket, collapsed bucket, identical bias, invalid bucket, out-of-range bucket, bucket collapse, clamped]
+  - id: no_direct_isolation_check
+    description: Isolation plan has no direct bucket-function inspection and relies only on full forward-pass checks.
+    points: 5
+    missing_groups:
+      - [bucket ids, bucket id, bucket assignments, print buckets, inspect bucket function, positions 0-30, positions 24 and 25]
+      - [without a full forward pass, without forward pass, directly from the bucket function, no forward pass]
+  - id: fix_is_vague
+    description: Fix is generic positional-encoding advice rather than a concrete bucket-function correction.
+    points: 4
+    missing_any:
+      - diff against the reference
+      - reference implementation
+      - match the reference implementation
+      - match it exactly
+      - correct the boundary constant
+      - fix the off-by-one
+      - off-by-one
+      - fix the clamp
+      - fix max_distance
+      - fix num_buckets
+      - correct the log bucket computation
+      - correct the bucket assignment function

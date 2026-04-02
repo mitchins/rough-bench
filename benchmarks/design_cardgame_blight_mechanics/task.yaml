@@ -1,0 +1,36 @@
+id: design_cardgame_blight_mechanics
+title: Card game mechanic design with blight spread and self-stress-test
+domain: game_design
+family: design
+counted: true
+prompt: "You are designing the core mechanics for a card game called BLIGHT.\n\nFIXED CONSTRAINTS — do not change these:\n- 2–4 players, 45–75 minutes target play time\n- Each player has a 40-card deck, built by drafting from a shared pool\n- Shared central board: 5×5 grid of field tiles, ownership assigned at setup\n- Three crop types: Grain, Root, Vine\n- Each crop has a different blight vulnerability profile and a different yield/scoring profile\n- Blight spreads across the field grid at the end of each round\n- Blight spread is card-driven, not dice-driven\n- A shared Blight Deck exists; cards drawn from it each round govern spread behavior for that round\n- Fixed season length: you define the round count\n- Players score on harvested crops at season end\n- Scoring must use at least two components, and at least one component must be relative across players rather than purely absolute\n- At least one mechanic must involve trading or negotiation between players\n\nYOUR DESIGN TASKS:\n\n1. BLIGHT SPREAD MECHANIC\n   How does blight spread across the grid?\n   Be precise: what triggers it, what governs direction and rate, what stops or slows it, and what accelerates it.\n   Define what kinds of cards are in the shared Blight Deck.\n   Give it enough structure that two people could run it consistently.\n\n2. CROP VULNERABILITY AND YIELD PROFILES\n   Define Grain, Root, and Vine mechanically, not just thematically.\n   What makes each one a meaningful choice rather than a dominant pick?\n\n3. HAND AND ACTION ECONOMY\n   What broad card categories exist?\n   How many actions does a player take per turn?\n   What is the core decision a player makes on their turn?\n\n4. TRADE AND NEGOTIATION MECHANIC\n   What is traded? When? Under what constraints?\n   What makes the negotiation interesting rather than obviously correct?\n\n5. SCORING\n   How does end-game scoring work?\n   What are the scoring tensions?\n   Make the relative scoring component explicit.\n\n6. STRESS TEST YOUR OWN DESIGN\n   Name the most likely degenerate strategy in your design as built.\n   Be specific: what does the player do, turn by turn or round by round, to execute it?\n   Then tell me: does your design close that door, and how?\n   If it does not close it, say so and explain what the cost would be to close it.\n\nCONSTRAINTS ON YOUR ANSWER:\n- Do not produce a complete rulebook\n- Do not name every card\n- Do not describe art, theme flavour, or component materials\n- Focus on mechanic logic and interaction\n- The stress test section is not optional and not a formality"
+intent: Score whether the model can design an interacting game system, notice the dominant exploit its own rules create, and honestly explain whether that exploit is closed or still live.
+latent_requirements:
+  - define a shared Blight Deck with real card composition rather than using cards as a vague excuse for spread variance
+  - make the spread mechanic runnable enough that direction, rate, acceleration, and stopping conditions are answerable from the text
+  - make Grain, Root, and Vine mechanically distinct rather than just different point values
+  - design a relative scoring component that materially interacts with the possibility of weaponizing blight
+  - use the stress test section to attack the design from the player's perspective rather than praising the design as complete
+hard_failures:
+  - mentions a Blight Deck without actually defining what kinds of cards are in it
+  - omits any relative scoring component
+  - treats blight only as a threat to contain and never as an offensive exploit surface
+  - makes the trade mechanic a generic by-mutual-agreement exchange with no tension
+  - uses the stress test section as a formality instead of tracing a dominant loop concretely
+strong_signals:
+  - shared Blight Deck with explicit card families or card types that shape spread behavior
+  - clear crop asymmetry with real tradeoffs in yield, vulnerability, and board use
+  - honest identification of the blight-as-weapon loop or another comparably strong exploit
+  - explicit statement of whether the exploit is actually closed, partially closed, or still live
+  - trade and scoring systems that create leverage rather than decorative interaction
+penalties:
+  - missing required structure
+  - spread deck not designed
+  - missing relative scoring component
+  - misses blight weaponization
+  - trade mechanic trivial
+  - spread mechanic vague
+  - flavor pitch instead of mechanic logic
+expected_artifacts:
+  - design memo
+judge_instructions: Read the stress-test section first. The most important question is whether the model found the offensive blight loop created by a shared Blight Deck and relative scoring, or whether it designed a farming game in a vacuum and never asked how a player would break it.

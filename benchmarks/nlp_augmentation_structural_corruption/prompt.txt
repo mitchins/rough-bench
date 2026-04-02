@@ -1,0 +1,25 @@
+I'm augmenting a fantasy-novel summarisation dataset by replacing character names
+with synthetic alternatives to increase training diversity.
+
+My pipeline is mostly working, but I'm seeing this failure:
+
+Original input:
+"Limp as rags on the floor, the First Enchantress recovered her rightful sense of outrage."
+
+Augmented input:
+"Chris as rags on the floor, the Riley Jordan recovered her rightful sense of outrage."
+
+Original summary:
+"Limp as rags on the floor, the First Enchantress confronts a devastated room."
+
+Augmented summary:
+"Chris as rags on the floor, the Riley Jordan confronts a devastated room."
+
+Diagnose the root cause precisely.
+Then propose a fix that is robust to this class of failure.
+The fix must work for literary prose, not just newswire text.
+
+Write a concise technical note with:
+- Diagnosis
+- Fix
+- Validation

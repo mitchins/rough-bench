@@ -1,0 +1,52 @@
+id: hf_datasets_streaming_rewrite_under_caps
+title: HF Datasets rewrite under hidden memory and time caps
+domain: swe_data_pipelines
+family: swe
+counted: true
+intent: Score whether the model writes a Hugging Face Datasets pipeline that stays disk-backed, deterministic, and bounded under hidden memory and runtime caps instead of greedily materializing the full dataset.
+execution_backed: true
+execution_gated_signals:
+  - streaming_iteration
+  - external_partitioning
+  - deterministic_tiebreak
+  - rewrite_not_in_place
+latent_requirements:
+  - uses a local Hugging Face Datasets disk workflow rather than pandas or full in-memory tables
+  - rewrites to a new output dataset instead of mutating the input in place
+  - partitions or spills intermediate state to disk for dedupe and final ordering
+  - uses deterministic tie-breaking for duplicate resolution
+  - avoids repeated full-dataset rescans and quadratic dedupe patterns
+  - keeps temp storage bounded and cleanable
+hard_failures:
+  - materializes the full dataset
+  - assumes a global in-memory sort on the full corpus
+  - converts the full dataset to pandas
+  - produces nondeterministic duplicate handling
+  - overwrites the input dataset in place
+strong_signals:
+  - uses load_from_disk plus a streaming or iterable path
+  - hashes or partitions records into spill buckets
+  - dedupes within bounded partitions and emits a new dataset
+  - performs a bounded final merge for global ordering
+  - documents tradeoffs around runtime, temp space, and failure recovery
+penalties:
+  - crashes or OOMs under hidden caps
+  - times out on larger hidden fixtures
+  - scales pathologically between size tiers
+  - produces incorrect tie-breaking or unstable output ordering
+expected_artifacts:
+  - rewrite_dataset.py
+  - README.md
+visible_constraints:
+  - the evaluator will provide a local dataset saved with datasets.save_to_disk(input_dir)
+  - the dataset may be much larger than available memory on some hidden runs
+  - the submission must write a new output dataset to output_dir using Hugging Face Datasets
+  - correctness and runtime both matter
+  - dedupe decisions must be deterministic
+hidden_stressors:
+  - memory-capped execution
+  - single-core runtime pressure
+  - duplicate-heavy partitions with late-arriving winning rows
+  - skewed keys and uneven record sizes
+  - larger hidden tiers that punish repeated global passes
+judge_instructions: Reward solutions that use HF Datasets disk IO but resist the greedy defaults. Answers that mention streaming and then fall back to pandas, dataset.sort on the full corpus, or full materialization should still be penalized.

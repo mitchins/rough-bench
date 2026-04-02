@@ -1,0 +1,93 @@
+signals:
+  - id: collator_root_cause
+    description: Names DataCollatorWithPadding as the wrong collator for this seq2seq evaluation setup.
+    groups:
+      - [datacollatorwithpadding]
+      - [wrong, incorrect, issue, root cause, problem]
+  - id: correct_collator_fix
+    description: Replaces it with DataCollatorForSeq2Seq.
+    any:
+      - datacollatorforseq2seq
+  - id: predict_with_generate
+    description: Mentions predict_with_generate for generation-based evaluation.
+    any:
+      - predict_with_generate
+  - id: label_masking_detail
+    description: Mentions label padding or -100 masking as part of the seq2seq eval problem.
+    any:
+      - -100
+      - label_pad_token_id
+      - label masking
+      - labels must be masked
+      - padded labels
+  - id: training_eval_asymmetry
+    description: Explains why training can look fine while eval is broken.
+    any:
+      - teacher forcing
+      - training can still look fine
+      - training loss can still decrease
+      - eval path is broken
+      - training path is different
+  - id: distributed_context
+    description: Notes rank-0 or main-process behavior as a secondary DeepSpeed or distributed consideration.
+    any:
+      - rank 0
+      - rank-0
+      - main process
+      - local_rank
+      - process_index
+penalties:
+  - id: misses_collator_root_cause
+    description: Does not identify DataCollatorWithPadding as the main seq2seq evaluation problem.
+    points: 7
+    missing_any:
+      - datacollatorwithpadding
+  - id: misses_correct_collator_fix
+    description: Does not propose DataCollatorForSeq2Seq as the concrete fix.
+    points: 5
+    missing_any:
+      - datacollatorforseq2seq
+  - id: misses_collator_priority
+    description: Does not put the collator diagnosis at or near the top of the priority order.
+    points: 5
+    missing_head_groups:
+      - [datacollatorwithpadding]
+      - [wrong, incorrect, issue, root cause, problem]
+  - id: misses_predict_with_generate
+    description: Omits predict_with_generate from the fix path.
+    points: 4
+    missing_any:
+      - predict_with_generate
+  - id: misses_label_masking_detail
+    description: Omits the label padding or -100 masking detail.
+    points: 3
+    missing_any:
+      - -100
+      - label_pad_token_id
+      - label masking
+      - labels must be masked
+      - padded labels
+  - id: misses_training_eval_asymmetry
+    description: Does not explain why training can look healthy while eval is broken.
+    points: 3
+    missing_any:
+      - teacher forcing
+      - training can still look fine
+      - training loss can still decrease
+      - eval path is broken
+      - training path is different
+  - id: generic_debug_boilerplate
+    description: Falls back to generic distributed debugging advice instead of the seq2seq-specific diagnosis.
+    points: 4
+    present_any:
+      - lower the learning rate
+      - tune the batch size
+      - add print statements
+      - check your gpu memory
+      - maybe deepspeed is buggy
+      - try gradient clipping
+      - divisible by the number of gpus
+      - divisible by the number of GPUs
+      - global step boundary
+      - enable_evaluation
+      - model.eval()

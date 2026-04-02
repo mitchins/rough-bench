@@ -1,0 +1,80 @@
+signals:
+  - id: idiomatic_hearsay
+    description: Uses an idiomatic hearsay phrase rather than literal wind language.
+    any:
+      - i heard
+      - i've heard
+      - i hear
+      - i was told
+      - they say
+      - word is
+      - word reached me
+      - heard through the grapevine
+      - rumor has it
+      - apparently
+      - from what i hear
+      - from what i've heard
+      - so i hear
+      - sounds like
+  - id: location_preserved
+    description: Preserves that the person is still in that town or still there.
+    any:
+      - still in that town
+      - still in town
+      - still there
+      - that town
+      - still out there
+  - id: natural_line
+    description: Reads like a line of dialogue rather than a gloss.
+    any:
+      - you're
+      - you were
+      - i heard
+      - word is
+      - apparently
+      - sounds like
+penalties:
+  - id: literal_wind_translation
+    description: Literalizes 風の便り into wind or breeze language.
+    points: 5
+    present_unnegated_any:
+      - wind
+      - breeze
+      - gale
+      - on the wind
+      - carried on the wind
+  - id: missing_hearsay
+    description: Drops the indirect-hearsay nuance.
+    points: 4
+    missing_any:
+      - i heard
+      - i hear
+      - word is
+      - word reached me
+      - heard through the grapevine
+      - rumor has it
+      - apparently
+      - from what i hear
+      - from what i've heard
+      - so i hear
+      - sounds like
+  - id: drops_location_or_stillness
+    description: Omits that the person is still in that town or still there.
+    points: 3
+    missing_any:
+      - still
+      - that town
+      - there
+  - id: explains_idiom
+    description: Explains the idiom instead of outputting only a translation.
+    points: 5
+    present_any:
+      - idiom
+      - literal
+      - means
+      - phrase
+      - translation
+      - in japanese
+      - 風の便り
+      - this means
+      - explanation

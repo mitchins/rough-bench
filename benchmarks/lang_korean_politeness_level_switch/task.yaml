@@ -1,0 +1,26 @@
+id: lang_korean_politeness_level_switch
+title: Korean workplace reply with politeness-level switch
+domain: language_pragmatics
+family: language_korean
+counted: true
+intent: Score whether the model infers the real politeness move in a Korean workplace message and replies in a naturally appropriate register instead of collapsing into either stiff textbook formality or flat banmal.
+latent_requirements:
+  - infer that the speaker is junior and the other person is senior from the wording
+  - reply in a natural workplace-polite register rather than full banmal
+  - avoid overformal customer-service Korean
+  - output only the reply, not an explanation
+hard_failures:
+  - replies in full banmal
+  - explains the politeness reasoning instead of just replying
+  - uses very stiff office-email style instead of a natural chat/workplace register
+strong_signals:
+  - uses a concise deferential workplace reply
+  - avoids full banmal while still sounding natural in chat
+  - keeps the reply short and action-oriented
+penalties:
+  - full banmal reply
+  - overformal office register
+  - meta explanation
+  - unnatural verbosity
+expected_artifacts: []
+judge_instructions: Reward pragmatic correctness over textbook politeness. Penalize answers that flatten this to either rude banmal or stiff formal office prose. The target is a natural junior-to-senior workplace reply in chat.

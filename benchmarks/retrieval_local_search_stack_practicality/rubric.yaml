@@ -1,0 +1,89 @@
+signals:
+  - id: required_structure_present
+    description: Uses the requested comparison sections.
+    groups:
+      - [option review]
+      - [ranking]
+      - [recommended path]
+      - [failure modes to watch, failure modes]
+  - id: auth_fragility_called_out
+    description: Calls out auth-expiry or backend-change fragility for browser wrappers.
+    any:
+      - auth expiry
+      - session expiry
+      - cookie
+      - browser wrapper
+      - backend changes
+      - fragile
+  - id: multi_user_vs_single_user_distinguished
+    description: Distinguishes multi-user service options from single-machine tools.
+    groups:
+      - [multi-user, multi user, multiple users, multiple clients]
+      - [single-user, single user, one machine, desktop-only, desktop only]
+  - id: operational_ranking
+    description: Ranks by reliability, maintenance surface, or churn rather than just features.
+    any:
+      - reliability
+      - maintenance surface
+      - churn
+      - breakage
+      - operational practicality
+  - id: practical_recommendation
+    description: Makes a concrete recommendation, ideally the internal web app path.
+    any:
+      - option c
+      - internal web app
+      - local retrieval plus an api-backed answer model
+      - recommend c
+      - i would choose c
+  - id: failure_modes_concrete
+    description: Names concrete breakage modes to monitor.
+    any:
+      - auth expiry
+      - api churn
+      - backend changes
+      - model endpoint outage
+      - maintenance burden
+penalties:
+  - id: browser_wrapper_recommendation
+    description: Recommends browser wrappers as the practical default.
+    points: 7
+    present_unnegated_any:
+      - option a is the best
+      - recommend option a
+      - i would choose a
+      - browser wrappers are the best
+  - id: feature_list_comparison
+    description: Compares by features, stars, or convenience without operational ranking.
+    points: 4
+    present_unnegated_any:
+      - most features
+      - best ui
+      - most polished
+      - github stars
+      - popular
+  - id: auth_fragility_ignored
+    description: Never mentions auth or backend fragility for browser-wrapper approaches.
+    points: 5
+    missing_any:
+      - auth expiry
+      - session expiry
+      - cookie
+      - browser wrapper
+      - backend changes
+      - fragile
+  - id: multi_user_practicality_ignored
+    description: Fails to distinguish multi-user serviceability from single-machine tooling.
+    points: 4
+    missing_groups:
+      - [multi-user, multi user, multiple users, multiple clients]
+      - [single-user, single user, one machine, desktop-only, desktop only]
+  - id: recommendation_missing
+    description: Never states a concrete recommended path.
+    points: 4
+    missing_any:
+      - option c
+      - internal web app
+      - local retrieval plus an api-backed answer model
+      - recommend c
+      - i would choose c

@@ -1,0 +1,97 @@
+signals:
+  - id: required_structure_present
+    description: Uses the requested architecture sections.
+    groups:
+      - [core information model]
+      - [editor and navigator behaviour, editor and navigator behavior]
+      - [bundle format]
+      - [ai attachment points]
+      - [anti-bloat guardrails, anti bloat guardrails]
+      - [first implementation slice]
+  - id: leaf_nonleaf_logic
+    description: Distinguishes editable leaf nodes from non-leaf structural nodes.
+    any:
+      - leaf nodes
+      - non-leaf
+      - non leaf
+      - structural nodes
+      - folders are not editable documents
+  - id: concrete_bundle_design
+    description: Defines a real bundle layout instead of one giant file.
+    any:
+      - manifest
+      - one file per node
+      - bundle directory
+      - metadata.json
+      - index.json
+      - per-node files
+  - id: content_metadata_split
+    description: Separates content from metadata.
+    any:
+      - content
+      - metadata
+      - separate metadata
+      - inspector
+  - id: ai_attachment_points_grounded
+    description: Places AI features at grounded attachment points.
+    any:
+      - completion on the active node
+      - node notes
+      - scene-level completion
+      - selected text
+      - context assembly
+  - id: anti_bloat_present
+    description: Includes anti-bloat non-goals or explicit scope guardrails.
+    any:
+      - non-goals
+      - out of scope
+      - no collaboration
+      - no plugin system
+      - keep it nimble
+penalties:
+  - id: giant_blob_storage
+    description: Reverts the design to one giant project file or opaque blob.
+    points: 6
+    present_unnegated_any:
+      - one giant file
+      - single project file
+      - one database blob
+      - one sqlite blob
+      - flat json file
+  - id: no_leaf_nonleaf_logic
+    description: Never distinguishes leaf and non-leaf node behavior.
+    points: 5
+    missing_any:
+      - leaf nodes
+      - non-leaf
+      - non leaf
+      - structural nodes
+      - folders are not editable documents
+  - id: no_bundle_reasoning
+    description: Does not define a concrete bundle format.
+    points: 5
+    missing_any:
+      - manifest
+      - one file per node
+      - bundle directory
+      - metadata.json
+      - index.json
+      - per-node files
+  - id: ai_gimmick_sprawl
+    description: Turns the product into an AI platform instead of a nimble writing IDE.
+    points: 4
+    present_unnegated_any:
+      - autonomous agents
+      - agent marketplace
+      - multi-agent
+      - workflow engine
+      - prompt marketplace
+  - id: anti_bloat_missing
+    description: Omits anti-bloat scope guardrails.
+    points: 4
+    missing_any:
+      - non-goals
+      - out of scope
+      - no collaboration
+      - no plugin system
+      - keep it nimble

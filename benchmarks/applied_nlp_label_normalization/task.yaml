@@ -1,0 +1,30 @@
+id: applied_nlp_label_normalization
+title: Noisy label normalization for triage export
+domain: applied_nlp
+family: applied_nlp
+counted: true
+intent: Score whether the model can normalize messy triage labels into a fixed taxonomy and mark borderline rows for review instead of inventing a new label space.
+latent_requirements:
+  - maps every raw label to one canonical category
+  - uses the requested canonical label set
+  - flags vague rows for review instead of pretending they are crisp
+  - gives a brief batch-level audit readout
+hard_failures:
+  - invents new labels
+  - omits the review flag
+  - fails to normalize the raw labels into the given taxonomy
+  - treats the task like generic advice instead of row-by-row normalization
+strong_signals:
+  - uses exact item ids
+  - normalizes into the fixed canonical set
+  - marks the vague row as review-worthy
+  - includes a batch readout about the ambiguous tail
+penalties:
+  - missing normalization table
+  - item coverage incomplete
+  - invented label set
+  - missing review flag
+  - generic advice
+  - no batch readout
+expected_artifacts: []
+judge_instructions: Reward strict label normalization and explicit review handling. The task is about mapping noisy labels into a stable taxonomy, not brainstorming extra classes.

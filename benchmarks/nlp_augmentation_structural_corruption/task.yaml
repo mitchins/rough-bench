@@ -1,0 +1,30 @@
+id: nlp_augmentation_structural_corruption
+title: Name augmentation corrupts sentence structure
+domain: nlp_engineering
+family: nlp_engineering
+counted: true
+intent: Score whether the model diagnoses sentence-initial capitalization and literary title structure as the real cause of a broken name-replacement augmenter, rather than hand-waving about better NER models or regexes.
+latent_requirements:
+  - identify sentence-initial capitalization as the trigger that makes Limp look like a proper name
+  - propose a position-aware or syntax-aware guard rather than generic model swapping
+  - note that the same corruption must be fixed consistently in both source and summary
+  - account for literary prose where titles and epithets are easier to misclassify than in newswire text
+  - propose a concrete validation or regression strategy
+hard_failures:
+  - recommends a better NER model or regex without identifying the sentence-boundary capitalization failure
+  - misses that the summary side is being corrupted too
+  - treats the problem like ordinary newswire NER instead of literary prose
+strong_signals:
+  - names sentence-start capitalization as the real signal source
+  - proposes skipping or validating sentence-initial replacements unless they are supported elsewhere
+  - mentions literary titles or epithets such as the First Enchantress
+  - adds a validation strategy such as a regression set or POS or dependency sanity checks
+penalties:
+  - misses capitalization root cause
+  - generic better NER fix
+  - misses position-aware guard
+  - misses summary consistency
+  - misses literary specificity
+  - no validation strategy
+expected_artifacts: []
+judge_instructions: Reward precise diagnosis over generic NLP advice. The core issue is that a literary augmenter is over-trusting sentence-initial capitalization and title-like noun phrases as entity evidence. A strong answer should name that mechanism directly, propose a position-aware or syntax-aware fix, carry the mapping consistently into the summary side, and suggest a concrete validation strategy.

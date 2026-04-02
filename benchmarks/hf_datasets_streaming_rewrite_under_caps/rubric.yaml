@@ -1,0 +1,75 @@
+signals:
+  - id: datasets_disk_io
+    description: Uses Hugging Face Datasets disk entry and exit points.
+    artifact_text_all:
+      - load_from_disk
+      - save_to_disk
+  - id: streaming_iteration
+    description: Uses an iterable or streaming path instead of relying on full materialization.
+    artifact_text_any:
+      - to_iterable_dataset
+      - IterableDataset
+      - iter(batch_size=
+  - id: external_partitioning
+    description: Spills or partitions intermediate state to disk for bounded dedupe.
+    artifact_text_groups:
+      - [bucket, partition, tempfile, TemporaryDirectory, sqlite3]
+      - [jsonl, spill, merge, heapq]
+  - id: deterministic_tiebreak
+    description: Implements the exact duplicate resolution order.
+    artifact_text_groups:
+      - [score]
+      - [updated_at]
+      - [example_id]
+  - id: rewrite_not_in_place
+    description: Writes a new output dataset rather than mutating the input dataset in place.
+    artifact_text_groups:
+      - [output_dir]
+      - [save_to_disk]
+  - id: cli_artifact
+    description: Produces a real CLI artifact with explicit input and output paths.
+    artifact_text_groups:
+      - [argparse, ArgumentParser]
+      - [input_dir]
+      - [output_dir]
+penalties:
+  - id: greedy_materialization
+    description: Materializes the dataset into pandas or a giant in-memory list.
+    points: 6
+    present_artifact_text_any:
+      - .to_pandas(
+      - pd.DataFrame(
+      - pandas.DataFrame(
+      - list(dataset)
+      - dataset[:]
+  - id: global_dataset_sort
+    description: Relies on Dataset.sort on the full corpus instead of an external-memory strategy.
+    points: 5
+    present_artifact_text_any:
+      - dataset.sort(
+      - load_from_disk(args.input_dir).sort(
+  - id: missing_streaming_path
+    description: No iterable or streaming path is visible in the artifact.
+    points: 5
+    missing_artifact_text_any:
+      - to_iterable_dataset
+      - IterableDataset
+      - iter(batch_size=
+  - id: missing_spill_strategy
+    description: No bounded spill, partition, or disk-backed dedupe strategy is visible.
+    points: 5
+    missing_artifact_text_groups:
+      - [bucket, partition, tempfile, TemporaryDirectory, sqlite3]
+      - [jsonl, spill, merge, heapq]
+  - id: missing_tiebreak_logic
+    description: The exact tie-break fields are not visible in the artifact.
+    points: 4
+    missing_artifact_text_groups:
+      - [score]
+      - [updated_at]
+      - [example_id]
+  - id: missing_cli_artifact
+    description: No concrete rewrite CLI artifact was produced.
+    points: 2
+    missing_artifacts_any:
+      - rewrite_dataset.py

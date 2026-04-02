@@ -1,0 +1,36 @@
+id: ux_multirole_service_hub_ia
+title: Information architecture for a multi-role local service hub
+domain: ux_product_design
+family: ux_product_design
+counted: true
+prompt: "Design the information architecture and responsive layout logic for a local service app called DogHub.\n\nDogHub handles three services:\n- Dog walking\n- Washing and grooming\n- Training sessions\n\nUsers can be:\n- Clients (booking services for their dogs)\n- Workers (providing one or more of the above services)\n- Both client and worker on the same account\n\nDo not design branding or visual style.\nDo not write copy.\nFocus entirely on structure, navigation, role logic, layout, and cognitive load.\n\nDeliver the following:\n\n1. ROLE AND ACCOUNT MODEL\n   How does the system model a user who is both client and worker?\n   Is there one account or two? One profile or two?\n   How does the system know which context to surface at any given moment?\n   What data is shared vs. separated between roles?\n\n2. TOP-LEVEL NAVIGATION AND SITEMAP\n   What are the top-level sections?\n   How does navigation change — or not change — based on active role context?\n   Draw a simple sitemap using indented text or ASCII. No images required.\n\n3. HOME / DASHBOARD LOGIC\n   What does the home screen show for:\n   - A client-only user on mobile\n   - A worker-only user on mobile, 30 minutes before a job\n   - A dual-role user on desktop, managing their week\n   The home screen is not the same for all three. Justify the differences in terms of task urgency, not persona labels.\n\n4. CORE FLOWS — describe the key steps only, no UI detail\n   a. Client books a grooming session\n   b. Worker views and manages today's schedule\n   c. Dual-role user: it is 7am, they have a client booking at 9am and they are also scheduled to walk someone else's dog at 10am. What does the app surface? In what order? Why?\n\n5. RESPONSIVE BEHAVIOUR\n   What specifically changes between mobile and desktop, and why?\n   Anchor each change to a task context, not to screen size alone.\n   \"Workers are often mid-job on mobile\" is a task context.\n   \"Smaller screen\" is not a justification.\n\n6. COGNITIVE LOAD RISKS\n   Name the three biggest cognitive load risks this IA creates or must manage.\n   For each: what is the risk, where does it manifest, and what structural decision in your IA reduces it?\n\nCONSTRAINTS:\n- Do not split this into separate apps unless you argue the case explicitly and address the cost of that decision for dual-role users\n- Do not assume users want to mentally \"switch modes\" just because roles differ\n- Workers are frequently mobile, time-pressured, and mid-task\n- Clients need trust signals, clarity on upcoming services, and dog-level detail\n- Some users will have both a client booking and a worker shift on the same day\n- Complexity should be hidden from the user, not hidden from the design"
+intent: Score whether the model can conceptualize a multi-role service product without fragmenting identity, collapsing into dashboard soup, or treating responsive design as mere layout collapse.
+latent_requirements:
+  - keep one human identity coherent even when the user is both client and worker
+  - prioritize tasks by urgency and current operational context rather than persona labels
+  - distinguish operational surfaces from management surfaces in the navigation
+  - justify responsive changes by task context, not screen size alone
+  - identify real cognitive-load risks and reduce them with IA choices rather than visual-design promises
+hard_failures:
+  - splits client and worker into separate apps, separate accounts, or a primary role switcher
+  - answers the 7am dual-role scenario as two separate role panels instead of one chronological morning surface
+  - gives the same home screen logic to all three user contexts
+  - substitutes branding or visual-style ideas for structure
+strong_signals:
+  - one account with context-aware surfacing rather than identity fragmentation
+  - operational top-level surfaces with management one level down
+  - worker mobile home optimized for the next 60 minutes of action
+  - unified chronological handling of the 9am client booking and 10am worker shift
+  - cognitive-load analysis tied to explicit structural decisions
+penalties:
+  - missing required structure
+  - persona fragmentation
+  - no unified dual-role morning timeline
+  - same dashboard for everyone
+  - navigation by noun list
+  - responsive as layout-only
+  - cognitive load as marketing
+  - visual design fluff
+expected_artifacts:
+  - IA design memo
+judge_instructions: Reward structural reasoning over UX vocabulary. The two most important checks are whether the response preserves one identity across roles and whether the 7am dual-role scenario is handled as a unified chronological surface rather than a role switch.

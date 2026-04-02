@@ -1,0 +1,158 @@
+signals:
+  - id: required_structure_present
+    description: Uses the required structured sections.
+    groups:
+      - [overall result]
+      - [mix-adjusted result, mix adjusted result]
+      - [diagnosis]
+      - [ship decision]
+      - [next checks]
+  - id: control_overall_computed
+    description: Computes the control overall activation rate correctly.
+    groups:
+      - [control overall, control activation rate, control overall activation, control]
+      - [600]
+  - id: variant_overall_computed
+    description: Computes the variant overall activation rate correctly.
+    groups:
+      - [variant overall, variant activation rate, variant overall activation, variant]
+      - [770]
+  - id: mix_adjusted_variant_computed
+    description: Computes the variant rate under the control segment mix.
+    groups:
+      - [control mix, control segment mix, fixed mix, reweight, re-weight, mix-adjusted, mix adjusted, adjusted rate]
+      - [580/10000, 580 / 10000, 580 out of 10000, 580, 0.058]
+  - id: all_segments_down
+    description: Notes that every segment is worse in the variant.
+    groups:
+      - [every segment, each segment, all four segments]
+      - [down, lower, worse, regressed, declined]
+  - id: mix_shift_diagnosed
+    description: Names the effect as composition shift, traffic mix shift, or Simpson's paradox.
+    any:
+      - simpson
+      - composition effect
+      - composition artifact
+      - traffic mix
+      - segment mix
+      - mix shift
+      - distribution shift
+  - id: randomization_issue_flagged
+    description: Flags assignment or targeting as suspicious under a supposed 50/50 split.
+    any:
+      - randomization
+      - assignment
+      - targeting
+      - bucketing
+      - exposure bug
+      - exposure bias
+      - allocation bug
+      - sample ratio mismatch
+      - split was not random
+      - selection bias
+      - traffic-routing logic
+      - traffic routing logic
+  - id: do_not_ship
+    description: Recommends not shipping from the current evidence.
+    any:
+      - do not ship
+      - don't ship
+      - should not ship
+      - should not roll out
+      - no-ship
+      - not enough to ship
+  - id: next_checks_concrete
+    description: Gives at least two concrete follow-up checks or actions.
+    groups:
+      - [assignment logs, bucketing logs, experiment config, exposure logs, targeting rules, rerandomize, re-randomize, audit the traffic-routing logic, traffic-routing logic, traffic routing logic, funnel leakage]
+      - [rerun, rerun the test, stratify, stratified, rebalance, balanced split, fixed mix, hold mix constant, new experiment, explicitly balances, conditional rollout, feature flag, conversion path]
+penalties:
+  - id: missing_required_structure
+    description: Does not follow the required structured output format.
+    points: 4
+    missing_groups:
+      - [overall result]
+      - [mix-adjusted result, mix adjusted result]
+      - [diagnosis]
+      - [ship decision]
+      - [next checks]
+  - id: control_overall_missing_or_wrong
+    description: Does not compute the control overall activation rate correctly.
+    points: 2
+    missing_groups:
+      - [control overall, control activation rate, control overall activation, control]
+      - [600]
+  - id: variant_overall_missing_or_wrong
+    description: Does not compute the variant overall activation rate correctly.
+    points: 2
+    missing_groups:
+      - [variant overall, variant activation rate, variant overall activation, variant]
+      - [770]
+  - id: mix_adjustment_missing_or_wrong
+    description: Does not recompute the variant under the control segment mix correctly.
+    points: 8
+    missing_groups:
+      - [control mix, control segment mix, fixed mix, reweight, re-weight, mix-adjusted, mix adjusted, adjusted rate]
+      - [580/10000, 580 / 10000, 580 out of 10000, 580, 0.058]
+  - id: ignores_segment_regressions
+    description: Fails to note that every segment is individually worse in the variant.
+    points: 4
+    missing_groups:
+      - [every segment, each segment, all four segments]
+      - [down, lower, worse, regressed, declined]
+  - id: no_mix_shift_diagnosis
+    description: Does not diagnose the aggregate win as a composition or mix-shift artifact.
+    points: 4
+    missing_any:
+      - simpson
+      - composition effect
+      - composition artifact
+      - traffic mix
+      - segment mix
+      - mix shift
+      - distribution shift
+  - id: randomization_issue_missed
+    description: Does not flag assignment, targeting, or bucketing as suspicious under a supposed 50/50 split.
+    points: 3
+    missing_any:
+      - randomization
+      - assignment
+      - targeting
+      - bucketing
+      - exposure bug
+      - exposure bias
+      - allocation bug
+      - sample ratio mismatch
+      - split was not random
+      - selection bias
+      - traffic-routing logic
+      - traffic routing logic
+  - id: wrong_mix_adjusted_direction
+    description: Claims the adjusted variant is still above control or gives the wrong adjusted result.
+    points: 8
+    present_unnegated_any:
+      - 6.8%
+      - 6.80%
+      - 0.068
+      - still higher than the control
+      - above control
+      - above the control
+      - higher than control
+      - 0.8%
+      - 0.8 percentage points
+  - id: ships_on_aggregate
+    description: Recommends shipping based on the raw aggregate or treats the raw aggregate as the real win.
+    points: 8
+    present_unnegated_any:
+      - ship it
+      - should ship
+      - ship the variant
+      - roll it out
+      - launch the variant
+      - overall win is enough
+  - id: next_checks_vague
+    description: Does not give concrete follow-up checks or actions.
+    points: 3
+    missing_groups:
+      - [assignment logs, bucketing logs, experiment config, exposure logs, targeting rules, rerandomize, re-randomize, audit the traffic-routing logic, traffic-routing logic, traffic routing logic, funnel leakage]
+      - [rerun, rerun the test, stratify, stratified, rebalance, balanced split, fixed mix, hold mix constant, new experiment, explicitly balances, conditional rollout, feature flag, conversion path]

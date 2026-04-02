@@ -1,0 +1,39 @@
+id: agent_task_spec_not_handwave
+title: Rewrite a hand-wavy product idea into an agent-executable spec
+domain: agentic_specification
+family: agentic_specification
+counted: true
+intent: Score whether the model can turn a half-formed product idea into a bounded execution brief for a coding agent without collapsing into PM sludge, clarification-dodging, or overbuilt architecture.
+latent_requirements:
+  - infer that the first version should be a bounded local-first POC
+  - preserve the anti-bloat constraint instead of turning the brief into a full product roadmap
+  - define a bundle format that avoids one giant file while staying inspectable
+  - separate must-have scope from explicit non-goals
+  - write in a form a coding agent could execute without a follow-up interview
+hard_failures:
+  - turns the response into a questionnaire instead of making assumptions and proceeding
+  - writes a generic PRD or roadmap instead of an execution brief
+  - expands the scope into sync, collaboration, plugins, billing, or cloud services
+  - omits non-goals, repo structure, or acceptance criteria
+strong_signals:
+  - bounded first-POC scope with local-first assumptions
+  - explicit non-goals that keep the project nimble
+  - concrete repo layout and ordered implementation milestones
+  - deliverables and acceptance criteria that a coding agent could actually execute against
+penalties:
+  - corporate PRD voice
+  - clarification dodge
+  - missing local-first constraint
+  - missing bundle-format design
+  - regresses to one giant project file
+  - missing non-goals
+  - missing repo layout
+  - missing milestones
+  - missing deliverables
+  - missing acceptance criteria
+  - needless tech-stack lock-in
+  - premature packaging and distribution scope
+  - scope sprawl
+expected_artifacts:
+  - execution brief or spec
+judge_instructions: Reward bounded execution planning, not software-architecture theater. The response should make assumptions, protect scope, and define a first working POC with explicit non-goals and done criteria.

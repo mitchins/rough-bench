@@ -1,0 +1,200 @@
+signals:
+  - id: ordered_flow
+    description: Presents the work as an ordered sequence rather than free-form advice.
+    any:
+      - 1.
+      - step 1
+      - phase 1
+      - ordered
+      - sequence
+      - first
+  - id: search_step_present
+    description: Includes an explicit search step.
+    any:
+      - search the repository
+      - ripgrep
+      - rg
+      - search code
+      - search files
+      - find the relevant files
+  - id: inspect_step_present
+    description: Includes an explicit inspection step after search.
+    any:
+      - inspect the relevant files
+      - open the file
+      - read the candidate files
+      - inspect
+      - view the implementation
+  - id: diagnose_step_present
+    description: Includes an explicit diagnosis step grounded in evidence.
+    any:
+      - diagnose
+      - isolate the root cause
+      - root cause
+      - evidence
+      - determine why
+  - id: patch_step_present
+    description: Includes an explicit patch step.
+    any:
+      - patch
+      - edit the minimal files
+      - minimal files
+      - apply the fix
+      - make the change
+  - id: verify_step_present
+    description: Includes an explicit verification step.
+    any:
+      - verify
+      - targeted test
+      - run the test
+      - smoke test
+      - confirm the fix
+  - id: fallback_branch_present
+    description: Includes branches for failure cases.
+    any:
+      - if no results
+      - if search returns nothing
+      - if evidence conflicts
+      - if patch does not apply
+      - fallback
+      - branch
+      - otherwise
+  - id: recovery_plan_present
+    description: Includes rollback or recovery if verification fails.
+    any:
+      - rollback
+      - revert
+      - recovery
+      - back out
+      - restore
+  - id: evidence_based_reasoning
+    description: Uses evidence from the repo or files to justify the patch.
+    any:
+      - because
+      - evidence
+      - from the file
+      - based on what we see
+      - confirm
+      - after inspecting
+  - id: minimal_change_focus
+    description: Keeps the patch minimal rather than proposing a broad rewrite.
+    any:
+      - minimal
+      - smallest
+      - narrow
+      - focused patch
+      - touch only
+      - least invasive
+penalties:
+  - id: generic_advice
+    description: Gives high-level advice instead of an actionable plan.
+    points: 6
+    present_any:
+      - best practices
+      - generally
+      - high level
+      - we should consider
+      - it may be helpful
+      - think about
+  - id: missing_search_step
+    description: Does not include repository search.
+    points: 5
+    missing_any:
+      - search the repository
+      - ripgrep
+      - rg
+      - search code
+      - search files
+      - find the relevant files
+  - id: missing_inspection_step
+    description: Does not include inspection of candidate files.
+    points: 5
+    missing_any:
+      - inspect the relevant files
+      - open the file
+      - read the candidate files
+      - inspect
+      - view the implementation
+  - id: missing_diagnosis_step
+    description: Does not include an evidence-based diagnosis.
+    points: 5
+    missing_any:
+      - diagnose
+      - isolate the root cause
+      - root cause
+      - evidence
+      - determine why
+  - id: missing_patch_step
+    description: Does not include a patch step.
+    points: 5
+    missing_any:
+      - patch
+      - edit the minimal files
+      - minimal files
+      - apply the fix
+      - make the change
+  - id: missing_verification_step
+    description: Does not include verification.
+    points: 5
+    missing_any:
+      - verify
+      - targeted test
+      - run the test
+      - smoke test
+      - confirm the fix
+  - id: missing_fallback_branches
+    description: Does not spell out fallback branches.
+    points: 4
+    missing_any:
+      - if no results
+      - if search returns nothing
+      - if evidence conflicts
+      - if patch does not apply
+      - fallback
+      - branch
+      - otherwise
+  - id: missing_recovery_plan
+    description: Does not say what to do if verification fails.
+    points: 4
+    missing_any:
+      - rollback
+      - revert
+      - recovery
+      - back out
+      - restore
+  - id: no_evidence_based_reasoning
+    description: Recommends a patch without tying it to observed evidence.
+    points: 4
+    present_unnegated_any:
+      - guess
+      - probably
+      - just patch
+      - generic fix
+      - without checking
+  - id: no_tool_actions
+    description: Never gets concrete about tool actions.
+    points: 4
+    missing_any:
+      - search
+      - inspect
+      - patch
+      - verify
+  - id: scope_sprawl
+    description: Bloats the plan beyond the narrow investigation.
+    points: 4
+    present_any:
+      - rewrite the whole subsystem
+      - refactor everything
+      - major redesign
+      - add new features
+      - unrelated cleanup
+  - id: skips_local_inspection
+    description: Jumps to patching without reading the local files first.
+    points: 4
+    present_unnegated_any:
+      - patch first
+      - edit first
+      - apply the fix immediately
+      - skip inspection
+      - no need to inspect
+expected_artifacts: []

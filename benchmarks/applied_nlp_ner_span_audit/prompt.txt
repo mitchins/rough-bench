@@ -1,0 +1,22 @@
+For each snippet, identify the exact entity mentions and give a coarse type from PERSON, ORG, or LOCATION.
+
+Use the exact surface text from the snippet; do not shorten titles or epithets.
+
+Write exactly these sections:
+## Entity Audit
+## Boundary Notes
+
+Requirements:
+- Use the exact item ids.
+- List each entity mention and its type.
+- Keep literary titles and epithets intact when they are part of the span.
+- Give one short boundary note at the end about why exact spans matter.
+- Do not turn this into generic NER advice.
+
+Items:
+- E1: The First Enchantress met Glokta in Ark at dusk.
+- E2: Dr. Singh emailed Team Meridian about the trial.
+- E3: Lady Isolde filed the memo with Northwind Labs.
+- E4: The Bloody-Nine warned Kotar outside Winterkeep.
+- E5: River Ward clinic sent the note to Mara.
+- E6: OpenBridge Systems thanked the board in Oslo.

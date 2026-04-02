@@ -1,0 +1,195 @@
+signals:
+  - id: direct_negative_verdict
+    description: Answers directly that the excerpt does not work as gritty fantasy prose.
+    any:
+      - no, this does not work
+      - no, it does not work
+      - this does not work as gritty fantasy prose
+      - it does not work as gritty fantasy prose
+      - it doesn't work as gritty fantasy prose
+      - does not function as gritty fantasy prose
+      - trying to be gritty fantasy prose but
+      - attempts grit but
+      - falls short
+      - this is not convincing gritty fantasy prose
+      - this is costume grit
+      - this is false grit
+  - id: diagnoses_false_grit
+    description: Identifies false grit, costume grit, or decorative grimdark writing.
+    any:
+      - costume grit
+      - false grit
+      - performative grit
+      - decorative grit
+      - grimdark costume
+      - blood-and-mud shorthand
+      - borrowed grit
+      - dressing itself in grit
+      - simulates grit
+      - performative
+      - decorative, not structural
+      - not earning its tone
+      - ticking boxes for gritty
+      - gritty fantasy handbook
+  - id: diagnoses_sentence_engine
+    description: Identifies sentence-level craft failures like cadence monotony, adjective stacking, dead metaphor, or faux-hardboiled diction.
+    any:
+      - cadence
+      - rhythm
+      - adjective stacking
+      - dead metaphor
+      - faux-hardboiled
+      - faux hard-boiled
+      - sentence engine
+      - sentence-level
+      - sentence level
+  - id: diagnoses_missing_specificity
+    description: Notes missing material, social, or observed specificity.
+    any:
+      - material specificity
+      - social specificity
+      - material reality
+      - social reality
+      - observed detail
+      - generic sensory language
+      - generic consciousness
+      - no specific consciousness
+  - id: quotes_specific_fragments
+    description: Uses quoted evidence from the passage rather than generic workshop talk.
+    any:
+      - sorrow that never learned manners
+      - the saints carried knives
+      - smile was the sort of thing
+      - city was a beast made of chimneys and teeth
+      - furniture dragged across the floor of heaven
+      - torchlight leaked across the alley mouth
+      - rain ran down his face in cold little fingers
+  - id: explains_real_grit_mechanically
+    description: Explains what real gritty fantasy prose does in terms of pressure, specificity, consciousness, or sentence control.
+    any:
+      - social and material pressure
+      - specific consciousness
+      - sentence-level control
+      - sentence level control
+      - pressure of labor
+      - pressure of class
+      - earned by specificity
+      - texture comes from
+      - physical immediacy
+      - sensory precision
+      - grounded observation
+      - precise, immersive detail
+      - prioritizes texture over metaphor
+      - tactile evidence
+  - id: salvage_engine_problem
+    description: Distinguishes a line-edit problem from an underlying prose-engine problem.
+    any:
+      - not a line-edit problem
+      - not a line edit problem
+      - underlying prose engine
+      - prose engine is wrong
+      - line edits won't save
+      - not salvageable by line edits
+penalties:
+  - id: missing_negative_verdict
+    description: Does not answer directly whether the excerpt works as gritty fantasy prose.
+    points: 5
+    missing_any:
+      - no, this does not work
+      - no, it does not work
+      - this does not work as gritty fantasy prose
+      - it does not work as gritty fantasy prose
+      - it doesn't work as gritty fantasy prose
+      - does not function as gritty fantasy prose
+      - trying to be gritty fantasy prose but
+      - attempts grit but
+      - falls short
+      - this is not convincing gritty fantasy prose
+      - yes, this works as gritty fantasy prose
+      - this works as gritty fantasy prose
+      - convincing gritty fantasy prose
+  - id: affirmative_or_softened_verdict
+    description: Says or implies that the excerpt basically works as gritty fantasy prose.
+    points: 6
+    present_any:
+      - yes, this works as gritty fantasy prose
+      - this works as gritty fantasy prose
+      - convincing gritty fantasy prose
+      - strong gritty atmosphere
+      - the atmosphere works
+      - the dark tone works
+      - good gritty voice
+      - effective gritty fantasy voice
+  - id: misses_false_grit
+    description: Fails to identify false grit, costume grit, or decorative grimdark shorthand.
+    points: 5
+    missing_any:
+      - costume grit
+      - false grit
+      - performative grit
+      - decorative grit
+      - grimdark costume
+      - blood-and-mud shorthand
+      - borrowed grit
+      - dressing itself in grit
+      - simulates grit
+      - performative
+      - decorative, not structural
+      - not earning its tone
+      - ticking boxes for gritty
+      - gritty fantasy handbook
+  - id: generic_workshop_advice
+    description: Falls back to generic workshop advice instead of mechanism-level critique.
+    points: 4
+    present_any:
+      - show don't tell
+      - show, don't tell
+      - tighten the prose
+      - raise the stakes
+      - deepen the worldbuilding
+      - more character development
+  - id: no_quoted_evidence
+    description: Critiques in the abstract without quoting specific fragments from the passage.
+    points: 4
+    missing_any:
+      - sorrow that never learned manners
+      - the saints carried knives
+      - smile was the sort of thing
+      - city was a beast made of chimneys and teeth
+      - furniture dragged across the floor of heaven
+      - torchlight leaked across the alley mouth
+      - rain ran down his face in cold little fingers
+  - id: praise_sandwich_language
+    description: Softens the critique with promise talk or encouragement.
+    points: 3
+    present_any:
+      - promising
+      - real potential
+      - moments of potential
+      - strong moments
+      - strong potential
+      - compelling atmosphere
+      - compelling
+      - there is something here
+      - with enough revision
+      - with serious revision
+      - keep going
+      - worth pursuing
+  - id: misses_real_grit_explanation
+    description: Never explains what real gritty fantasy prose does instead at the level of pressure, specificity, or consciousness.
+    points: 3
+    missing_any:
+      - social and material pressure
+      - specific consciousness
+      - sentence-level control
+      - sentence level control
+      - pressure of labor
+      - pressure of class
+      - earned by specificity
+      - texture comes from
+      - physical immediacy
+      - sensory precision
+      - grounded observation
+      - precise, immersive detail
+      - prioritizes texture over metaphor
+      - tactile evidence

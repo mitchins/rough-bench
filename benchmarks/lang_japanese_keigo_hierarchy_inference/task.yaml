@@ -1,0 +1,26 @@
+id: lang_japanese_keigo_hierarchy_inference
+title: Japanese business reply with inferred hierarchy
+domain: language_pragmatics
+family: language_japanese
+counted: true
+intent: Score whether the model infers the likely hierarchy in a short Japanese business email and replies with an appropriately professional register rather than flattening everything to generic politeness or explaining the reasoning.
+latent_requirements:
+  - infer that the sender is likely senior or at least not junior from the tone of the request
+  - use humble language for the speaker's own action
+  - keep the reply concise and professional
+  - output only the reply, not an explanation
+hard_failures:
+  - replies in casual or flat language
+  - explains the hierarchy or keigo choice instead of just replying
+  - ignores humble self-reference entirely
+strong_signals:
+  - uses a humble form for sending or sharing the materials
+  - uses a professional business email frame
+  - uses respectful language toward the recipient without overexplaining
+penalties:
+  - casual or flat register
+  - no humble self-action
+  - meta explanation
+  - missing professional business frame
+expected_artifacts: []
+judge_instructions: Reward pragmatic correctness over textbook explanation. Penalize replies that are merely polite in a generic way if they miss humble self-action or drift into commentary about the social reasoning.

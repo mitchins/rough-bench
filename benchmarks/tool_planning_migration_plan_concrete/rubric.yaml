@@ -1,0 +1,264 @@
+signals:
+  - id: bounded_first_phase_scope
+    description: Frames the work as a first migration phase focused on local data movement and adapter layer, not deployment or replication.
+    any:
+      - first phase
+      - migration layer
+      - initial migration
+      - phase 1
+      - v1 scope
+      - adapter layer
+      - local migration
+
+  - id: live_traffic_constraint_acknowledged
+    description: Explicitly acknowledges that the API must remain live during the migration.
+    any:
+      - live traffic
+      - zero downtime
+      - during migration
+      - while service is running
+      - without stopping the service
+      - dual-write
+      - shadow traffic
+
+  - id: rollback_or_reversal_strategy
+    description: Includes a clear strategy to roll back or reverse the migration if needed.
+    any:
+      - rollback
+      - reverse
+      - fallback
+      - recovery
+      - undo
+      - revert
+      - safety valve
+
+  - id: explicit_non_goals
+    description: Includes non-goals or explicit out-of-scope items.
+    any:
+      - non-goals
+      - non goals
+      - out of scope
+      - explicitly out of scope
+      - not in scope
+
+  - id: migration_layer_design
+    description: Defines a concrete abstraction layer or adapter pattern for the migration.
+    any:
+      - data layer
+      - adapter
+      - abstraction layer
+      - repository pattern
+      - data access layer
+      - decoupling
+      - dual-read
+
+  - id: schema_to_sql_mapping
+    description: Explicitly maps Firestore schema or nested structures to SQL tables.
+    any:
+      - table structure
+      - schema mapping
+      - table design
+      - sql tables
+      - database schema
+      - normalization
+      - one-to-many
+
+  - id: repo_and_file_layout
+    description: Proposes a concrete file or module structure for the migration.
+    any:
+      - repo layout
+      - file layout
+      - module structure
+      - directory structure
+      - migration scripts
+      - src/migrations
+      - data/
+
+  - id: ordered_milestones
+    description: Gives an ordered implementation sequence with clear phases.
+    any:
+      - milestone
+      - phase
+      - step
+      - implementation order
+      - sequence
+      - build order
+      - stage
+
+  - id: concrete_deliverables
+    description: Names concrete outputs or code artifacts, not just themes.
+    any:
+      - deliverables
+      - must produce
+      - outputs
+      - code
+      - module
+      - script
+      - test
+
+  - id: acceptance_criteria_and_gates
+    description: Includes testable acceptance criteria or go/no-go conditions.
+    any:
+      - acceptance criteria
+      - go/no-go
+      - done when
+      - success criteria
+      - completion criteria
+      - pass criteria
+      - gate
+
+penalties:
+  - id: corporate_devops_voice
+    description: Sounds like a DevOps runbook or infrastructure document rather than an execution brief.
+    points: 6
+    present_any:
+      - operational excellence
+      - high availability
+      - disaster recovery
+      - rto/rpo
+      - slo
+      - multi-region
+      - replication strategy
+      - infrastructure as code
+
+  - id: clarification_dodge
+    description: Turns the task into clarifying questions instead of making assumptions and proceeding.
+    points: 4
+    present_any:
+      - before i proceed
+      - before proceeding
+      - i have a few clarifying questions
+      - a few questions before
+      - to tailor this
+      - i need clarification
+      - questions for you
+
+  - id: missing_live_traffic_constraint
+    description: Fails to acknowledge or address the live-traffic constraint.
+    points: 5
+    missing_any:
+      - live traffic
+      - zero downtime
+      - during migration
+      - while service is running
+      - without stopping the service
+      - dual-write
+      - shadow traffic
+
+  - id: missing_rollback_strategy
+    description: Does not include a rollback or reversal strategy.
+    points: 5
+    missing_any:
+      - rollback
+      - reverse
+      - fallback
+      - recovery
+      - undo
+      - revert
+      - safety valve
+
+  - id: missing_non_goals
+    description: Omits non-goals or explicit out-of-scope items.
+    points: 3
+    missing_any:
+      - non-goals
+      - non goals
+      - out of scope
+      - explicitly out of scope
+
+  - id: missing_repo_layout
+    description: Does not propose a file or module structure for the migration.
+    points: 3
+    missing_any:
+      - repo layout
+      - file layout
+      - module structure
+      - directory structure
+      - migration scripts
+
+  - id: missing_milestones
+    description: Does not give an ordered implementation sequence.
+    points: 3
+    missing_any:
+      - milestone
+      - phase
+      - step
+      - implementation order
+      - sequence
+      - build order
+
+  - id: missing_deliverables
+    description: Does not name concrete deliverables or code artifacts.
+    points: 3
+    missing_any:
+      - deliverables
+      - must produce
+      - outputs
+      - code
+      - module
+      - script
+
+  - id: missing_acceptance_criteria
+    description: Does not include testable acceptance criteria or go/no-go gates.
+    points: 4
+    missing_any:
+      - acceptance criteria
+      - go/no-go
+      - done when
+      - success criteria
+      - completion criteria
+      - pass criteria
+      - gate
+
+  - id: scope_sprawl
+    description: Bloats the first phase with multi-region, replication, or zero-downtime monitoring.
+    points: 5
+    present_unnegated_any:
+      - multi-region migration
+      - cross-region replication
+      - real-time replication
+      - zero-downtime guarantee
+      - canary deployment
+      - blue-green deployment
+      - analytics and monitoring
+      - observability
+
+  - id: gratuitous_framework_lock_in
+    description: Locks the brief to specific ORM, migration tool, or cloud provider.
+    points: 4
+    present_any:
+      - sqlalchemy
+      - django orm
+      - prisma
+      - liquibase
+      - flyway
+      - alembic
+      - terraform
+      - aws dms
+      - cloud dataflow
+
+  - id: vague_testing_language
+    description: Uses vague "comprehensive testing" or "full test coverage" without concrete criteria.
+    points: 3
+    present_unnegated_any:
+      - comprehensive testing
+      - full test coverage
+      - all edge cases
+      - thorough testing
+      - complete coverage
+    missing_any:
+      - acceptance criteria
+      - pass criteria
+      - success criteria
+
+  - id: premature_monitoring_scope
+    description: Pushes monitoring, alerts, or analytics into the first phase.
+    points: 3
+    present_any:
+      - monitoring dashboard
+      - alerting
+      - prometheus
+      - grafana
+      - honeycomb
+      - datadog
+      - analytics

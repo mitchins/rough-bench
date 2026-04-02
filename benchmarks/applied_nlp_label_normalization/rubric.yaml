@@ -1,0 +1,90 @@
+signals:
+  - id: normalization_table_present
+    description: Uses the requested normalization table format.
+    groups:
+      - [normalization table]
+      - [canonical_label, needs_review]
+  - id: l1_account
+    description: Maps L1 to account.
+    groups:
+      - [L1]
+      - [account, sign in, password]
+  - id: l2_billing
+    description: Maps L2 to billing.
+    groups:
+      - [L2]
+      - [billing, invoice]
+  - id: l3_documentation
+    description: Maps L3 to documentation.
+    groups:
+      - [L3]
+      - [documentation, help article, typo]
+  - id: l4_feature_request
+    description: Maps L4 to feature_request.
+    groups:
+      - [L4]
+      - [feature_request, dark mode, add]
+  - id: l5_bug
+    description: Maps L5 to bug.
+    groups:
+      - [L5]
+      - [bug, freeze, export]
+  - id: l6_other_review
+    description: Maps L6 to other and marks it for review.
+    groups:
+      - [L6]
+      - [other, review, general feedback]
+  - id: batch_readout_present
+    description: Includes a short batch readout.
+    groups:
+      - [batch readout]
+      - [noisy, clean, ambiguous]
+penalties:
+  - id: missing_normalization_table
+    description: Does not use the requested normalization table.
+    points: 5
+    missing_any:
+      - Normalization Table
+      - canonical_label
+      - needs_review
+  - id: item_coverage_incomplete
+    description: Leaves out part of the batch.
+    points: 5
+    missing_any:
+      - L1
+      - L2
+      - L3
+      - L4
+      - L5
+      - L6
+  - id: invented_label_set
+    description: Invents labels outside the canonical taxonomy.
+    points: 4
+    present_unnegated_any:
+      - escalation
+      - refund
+      - ui
+      - sync
+      - question
+  - id: missing_review_flag
+    description: Omits the review flag on vague rows.
+    points: 3
+    missing_any:
+      - needs_review
+  - id: generic_advice
+    description: Gives generic labeling advice instead of normalization.
+    points: 3
+    present_unnegated_any:
+      - use a better model
+      - add more training data
+      - fine-tune a classifier
+      - improve the taxonomy
+  - id: no_batch_readout
+    description: Omits the batch readout.
+    points: 2
+    missing_any:
+      - batch readout
+      - noisy
+      - clean
+expected_artifacts: []
+judge_instructions: Reward closed-taxonomy normalization and explicit review flags. The answer should normalize each raw label rather than inventing extra classes or leaving the vague row unmarked.

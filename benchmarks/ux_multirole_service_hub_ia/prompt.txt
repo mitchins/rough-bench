@@ -1,0 +1,64 @@
+Design the information architecture and responsive layout logic for a local
+service app called DogHub.
+
+DogHub handles three services:
+- Dog walking
+- Washing and grooming
+- Training sessions
+
+Users can be:
+- Clients (booking services for their dogs)
+- Workers (providing one or more of the above services)
+- Both client and worker on the same account
+
+Do not design branding or visual style.
+Do not write copy.
+Focus entirely on structure, navigation, role logic, layout, and cognitive load.
+
+Deliver the following:
+
+1. ROLE AND ACCOUNT MODEL
+   How does the system model a user who is both client and worker?
+   Is there one account or two? One profile or two?
+   How does the system know which context to surface at any given moment?
+   What data is shared vs. separated between roles?
+
+2. TOP-LEVEL NAVIGATION AND SITEMAP
+   What are the top-level sections?
+   How does navigation change — or not change — based on active role context?
+   Draw a simple sitemap using indented text or ASCII. No images required.
+
+3. HOME / DASHBOARD LOGIC
+   What does the home screen show for:
+   - A client-only user on mobile
+   - A worker-only user on mobile, 30 minutes before a job
+   - A dual-role user on desktop, managing their week
+   The home screen is not the same for all three. Justify the differences
+   in terms of task urgency, not persona labels.
+
+4. CORE FLOWS — describe the key steps only, no UI detail
+   a. Client books a grooming session
+   b. Worker views and manages today's schedule
+   c. Dual-role user: it is 7am, they have a client booking at 9am
+      and they are also scheduled to walk someone else's dog at 10am.
+      What does the app surface? In what order? Why?
+
+5. RESPONSIVE BEHAVIOUR
+   What specifically changes between mobile and desktop, and why?
+   Anchor each change to a task context, not to screen size alone.
+   "Workers are often mid-job on mobile" is a task context.
+   "Smaller screen" is not a justification.
+
+6. COGNITIVE LOAD RISKS
+   Name the three biggest cognitive load risks this IA creates or must manage.
+   For each: what is the risk, where does it manifest, and what structural
+   decision in your IA reduces it?
+
+CONSTRAINTS:
+- Do not split this into separate apps unless you argue the case explicitly
+  and address the cost of that decision for dual-role users
+- Do not assume users want to mentally "switch modes" just because roles differ
+- Workers are frequently mobile, time-pressured, and mid-task
+- Clients need trust signals, clarity on upcoming services, and dog-level detail
+- Some users will have both a client booking and a worker shift on the same day
+- Complexity should be hidden from the user, not hidden from the design

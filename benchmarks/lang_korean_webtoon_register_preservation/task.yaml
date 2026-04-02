@@ -1,0 +1,27 @@
+id: lang_korean_webtoon_register_preservation
+title: Korean webtoon translation with seniority-loaded reprimand
+domain: language_translation
+family: language_korean
+counted: false
+prompt: "Localize this Korean webtoon line into natural English.\n\nContext:\n- one character is scolding another for talking rudely to an older senior\n- preserve the reprimanding tone and the seniority dynamic\n- keep it like a line of dialogue, not a glossary\n- output one line only, with no explanation\n\nLine:\n야, 선배한테 그딴 말투로 들이박지 마."
+intent: Score whether the model localizes a reprimanding Korean webtoon line into natural English while preserving the seniority dynamic and rough conversational tone instead of literalizing the speech-style wording.
+latent_requirements:
+  - preserve that the target is a senior figure, not just any person
+  - translate 들이박지 마 as a reprimanding don't-mouth-off / don't-come-at move
+  - avoid literal speech-style wording
+  - output only one localized line
+hard_failures:
+  - drops the seniority dynamic
+  - translates 말투 too literally as speech style or manner of speaking
+  - explains Korean register instead of localizing the line
+strong_signals:
+  - uses a natural reprimand like don't mouth off or don't talk to your senior like that
+  - keeps the line conversational and sharp
+  - preserves the senior reference explicitly
+penalties:
+  - drops seniority
+  - literal speech-style wording
+  - overformal translation
+  - meta explanation
+expected_artifacts: []
+judge_instructions: Reward natural webtoon-style English with the seniority dynamic intact. The best outputs sound like living dialogue, not like a glossary for 말투 or a sanitized workplace memo.

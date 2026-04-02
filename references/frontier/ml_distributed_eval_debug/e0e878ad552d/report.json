@@ -1,0 +1,122 @@
+{
+  "subjects_file": "subjects/frontier_reference_subjects.yaml",
+  "benchmarks_dir": "/Users/mitchellcurrie/Projects/rough-bench/benchmarks",
+  "judge_mode": "rule",
+  "subjects": [
+    {
+      "subject_id": "gpt_5_4_mini_xhigh",
+      "title": "GPT-5.4 mini xhigh",
+      "provider": "openai",
+      "base_url": "",
+      "model": "gpt-5.4-mini-2026-03-17",
+      "reasoning_effort": "xhigh",
+      "notes": "Frontier OpenAI reference subject for sanity checks on hard diagnostic tasks.",
+      "report": {
+        "roughbench_demerits": 22,
+        "roughbench_score": 22,
+        "suite_max_demerits": 26,
+        "suite_demerit_pct": 84.6,
+        "lower_is_better": true,
+        "judged_at": "2026-03-31T03:58:27.455775+00:00",
+        "summary": "1 of 1 task(s) triggered penalties; 0 signal(s) passed.",
+        "task_results": [
+          {
+            "task_id": "ml_distributed_eval_debug",
+            "title": "Distributed eval silence with Seq2SeqTrainer and DeepSpeed",
+            "total_penalty": 22,
+            "max_penalty_possible": 26,
+            "demerit_pct": 84.6,
+            "triggered_penalties": [
+              {
+                "id": "misses_collator_root_cause",
+                "points": 7,
+                "description": "Does not identify DataCollatorWithPadding as the main seq2seq evaluation problem."
+              },
+              {
+                "id": "misses_correct_collator_fix",
+                "points": 5,
+                "description": "Does not propose DataCollatorForSeq2Seq as the concrete fix."
+              },
+              {
+                "id": "misses_predict_with_generate",
+                "points": 4,
+                "description": "Omits predict_with_generate from the fix path."
+              },
+              {
+                "id": "misses_label_masking_detail",
+                "points": 3,
+                "description": "Omits the label padding or -100 masking detail."
+              },
+              {
+                "id": "misses_training_eval_asymmetry",
+                "points": 3,
+                "description": "Does not explain why training can look healthy while eval is broken."
+              }
+            ],
+            "passed_signals": [],
+            "judge_summary": "No submission files found for this task. Triggered penalties: misses_collator_root_cause (+7), misses_correct_collator_fix (+5), misses_predict_with_generate (+4), misses_label_masking_detail (+3), misses_training_eval_asymmetry (+3).",
+            "artifacts_seen": []
+          }
+        ]
+      }
+    },
+    {
+      "subject_id": "claude_sonnet_4_6",
+      "title": "Claude Sonnet 4.6",
+      "provider": "anthropic",
+      "base_url": "",
+      "model": "claude-sonnet-4-6",
+      "reasoning_effort": "",
+      "notes": "Frontier Anthropic reference subject for sanity checks on hard diagnostic tasks.",
+      "report": {
+        "roughbench_demerits": 3,
+        "roughbench_score": 3,
+        "suite_max_demerits": 26,
+        "suite_demerit_pct": 11.5,
+        "lower_is_better": true,
+        "judged_at": "2026-03-31T03:58:53.883426+00:00",
+        "summary": "1 of 1 task(s) triggered penalties; 5 signal(s) passed.",
+        "task_results": [
+          {
+            "task_id": "ml_distributed_eval_debug",
+            "title": "Distributed eval silence with Seq2SeqTrainer and DeepSpeed",
+            "total_penalty": 3,
+            "max_penalty_possible": 26,
+            "demerit_pct": 11.5,
+            "triggered_penalties": [
+              {
+                "id": "misses_training_eval_asymmetry",
+                "points": 3,
+                "description": "Does not explain why training can look healthy while eval is broken."
+              }
+            ],
+            "passed_signals": [
+              {
+                "id": "collator_root_cause",
+                "description": "Names DataCollatorWithPadding as the wrong collator for this seq2seq evaluation setup."
+              },
+              {
+                "id": "correct_collator_fix",
+                "description": "Replaces it with DataCollatorForSeq2Seq."
+              },
+              {
+                "id": "predict_with_generate",
+                "description": "Mentions predict_with_generate for generation-based evaluation."
+              },
+              {
+                "id": "label_masking_detail",
+                "description": "Mentions label padding or -100 masking as part of the seq2seq eval problem."
+              },
+              {
+                "id": "distributed_context",
+                "description": "Notes rank-0 or main-process behavior as a secondary DeepSpeed or distributed consideration."
+              }
+            ],
+            "judge_summary": "Triggered penalties: misses_training_eval_asymmetry (+3). Passed signals: collator_root_cause, correct_collator_fix, predict_with_generate, label_masking_detail, distributed_context.",
+            "artifacts_seen": []
+          }
+        ]
+      }
+    }
+  ]
+}

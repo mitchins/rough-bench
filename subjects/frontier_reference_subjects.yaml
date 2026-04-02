@@ -1,0 +1,17 @@
+subjects:
+  - id: gpt_5_4_mini_xhigh
+    title: GPT-5.4 mini xhigh
+    provider: openai
+    model: gpt-5.4-mini-2026-03-17
+    api_key_env: OPENAI_API_KEY
+    reasoning_effort: xhigh
+    max_tokens: 3000
+    notes: Frontier OpenAI reference subject for sanity checks on hard diagnostic tasks.
+
+  - id: claude_sonnet_4_6
+    title: Claude Sonnet 4.6
+    provider: anthropic
+    model: claude-sonnet-4-6
+    api_key_env: ANTHROPIC_API_KEY
+    max_tokens: 3000
+    notes: Frontier Anthropic reference subject for sanity checks on hard diagnostic tasks.

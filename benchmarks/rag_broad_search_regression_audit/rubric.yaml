@@ -1,0 +1,155 @@
+signals:
+  - id: required_structure_present
+    description: Uses the required structured sections.
+    groups:
+      - [diagnosis]
+      - [why broad search died]
+      - [replacement strategy]
+      - [ablation plan]
+      - [regression guardrails]
+      - [decision rule]
+  - id: number_engagement
+    description: Engages the actual metrics and not just generic retrieval advice.
+    any:
+      - weighted_hit_rate
+      - broad_macro_hit_rate
+      - 0.828
+      - 0.600
+      - 0.672
+      - 0.100
+      - 0.688
+      - 0.150
+  - id: k_truncation_root_cause
+    description: Identifies k=20 to top-5 truncation or candidate compression as a root cause.
+    groups:
+      - [k=20, top-k before reranking, top k before reranking, 20 candidates, retrieve 20]
+      - [top-5, top 5, 5 returned, only five returned, only 5 returned]
+      - [truncate, truncation, cutoff, compression, collapse, discard 15, throws away 15, narrows too early]
+  - id: broad_narrow_asymmetry
+    description: Distinguishes broad-query diversity needs from narrow-query precision needs.
+    groups:
+      - [broad query, broad queries, broad search, thematic, multi-document]
+      - [narrow query, narrow queries, narrow search, specific entity, fact]
+      - [different policy, separate handling, query-type-aware, query type aware, query routing, route queries, split policy, split by query type, separate path]
+  - id: diversity_preserving_fix
+    description: Proposes a diversity-preserving or higher-k strategy for broad queries.
+    any:
+      - increase k for broad
+      - larger k for broad
+      - no reranking for broad
+      - skip reranking for broad
+      - mmr
+      - maximal marginal relevance
+      - diversity-preserving
+      - preserve diversity
+      - expose more than five
+      - return more than five
+      - broader candidate set
+  - id: pre_post_rerank_measurement
+    description: Proposes measuring loss before and after reranking rather than only final metrics.
+    groups:
+      - [pre-rerank, pre rerank, before reranking, before rerank]
+      - [post-rerank, post rerank, after reranking, after rerank]
+      - [candidate recall, retained coverage, coverage loss, retention, recall at 20, recall at 5]
+  - id: ablation_plan_concrete
+    description: Gives an ordered ablation plan with explicit success criteria.
+    groups:
+      - [step 1, first, then, next, ablation]
+      - [success criteria, threshold, compare against baseline, baseline, if broad_macro_hit_rate, if weighted_hit_rate]
+  - id: guardrails_specific
+    description: States specific regression guardrails rather than vague monitoring.
+    any:
+      - within 0.01
+      - within 0.02
+      - no worse than baseline
+      - weighted_hit_rate >= 0.828
+      - broad_macro_hit_rate >= 0.600
+      - narrow slice
+      - narrow macro
+      - narrow hit rate
+  - id: decision_rule_concrete
+    description: Gives a concrete shipping or no-shipping rule.
+    any:
+      - ship only if
+      - do not ship unless
+      - rollout only if
+      - only ship if
+      - otherwise do not ship
+penalties:
+  - id: missing_required_structure
+    description: Does not follow the required structured output format.
+    points: 6
+    missing_groups:
+      - [diagnosis]
+      - [why broad search died]
+      - [replacement strategy]
+      - [ablation plan]
+      - [regression guardrails]
+      - [decision rule]
+  - id: reranker_as_primary_fix
+    description: Recommends a better reranker as the primary fix after the prompt says rerankers already caused the regression.
+    points: 8
+    present_unnegated_any:
+      - use a better reranker
+      - stronger reranker
+      - try colbert
+      - use colbert
+      - add a cross-encoder
+      - use a cross-encoder
+      - stronger cross-encoder
+      - use reciprocal rank fusion
+      - use rrf
+      - better bi-encoder reranker
+  - id: k_not_addressed
+    description: Does not identify k=20 to top-5 candidate truncation as part of the broad recall loss.
+    points: 7
+    missing_groups:
+      - [k=20, top-k before reranking, top k before reranking, 20 candidates, retrieve 20]
+      - [top-5, top 5, 5 returned, only five returned, only 5 returned]
+      - [truncate, truncation, cutoff, compression, collapse, discard 15, throws away 15, narrows too early]
+  - id: ignores_broad_narrow_split
+    description: Proposes a single pipeline change without differentiating broad and narrow query handling.
+    points: 6
+    missing_groups:
+      - [broad query, broad queries, broad search, thematic, multi-document]
+      - [narrow query, narrow queries, narrow search, specific entity, fact]
+      - [different policy, separate handling, query-type-aware, query type aware, query routing, route queries, split policy, split by query type, separate path]
+  - id: no_number_engagement
+    description: Treats this as a generic RAG problem and does not engage the given regression numbers.
+    points: 4
+    missing_any:
+      - weighted_hit_rate
+      - broad_macro_hit_rate
+      - 0.828
+      - 0.600
+      - 0.672
+      - 0.100
+      - 0.688
+      - 0.150
+  - id: ablation_missing_or_vague
+    description: Gives no ordered ablation plan or no per-step success criteria.
+    points: 4
+    missing_groups:
+      - [step 1, first, then, next, ablation]
+      - [success criteria, threshold, compare against baseline, baseline, if broad_macro_hit_rate, if weighted_hit_rate]
+  - id: guardrails_vague
+    description: Does not state specific regression guardrails against baseline.
+    points: 3
+    missing_any:
+      - within 0.01
+      - within 0.02
+      - no worse than baseline
+      - weighted_hit_rate >= 0.828
+      - broad_macro_hit_rate >= 0.600
+      - narrow slice
+      - narrow macro
+      - narrow hit rate
+  - id: decision_rule_missing
+    description: Gives no concrete shipping criterion.
+    points: 3
+    missing_any:
+      - ship only if
+      - do not ship unless
+      - rollout only if
+      - only ship if
+      - otherwise do not ship
