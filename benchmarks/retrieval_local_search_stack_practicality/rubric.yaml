@@ -79,11 +79,22 @@ penalties:
       - [multi-user, multi user, multiple users, multiple clients]
       - [single-user, single user, one machine, desktop-only, desktop only]
   - id: recommendation_missing
-    description: Never states a concrete recommended path.
+    description: Never states a concrete recommended path for option C.
     points: 4
     missing_any:
-      - option c
-      - internal web app
-      - local retrieval plus an api-backed answer model
-      - recommend c
       - i would choose c
+      - choose c
+      - recommend c
+      - recommend option c
+  - id: ignores_answer_quality_ceiling
+    description: Does not acknowledge the answer quality ceiling of local-only model setups.
+    points: 4
+    missing_any:
+      - quality ceiling
+      - answer quality
+      - retrieval depth
+      - weaker model
+      - model quality
+      - capability gap
+      - less capable
+      - quality tradeoff

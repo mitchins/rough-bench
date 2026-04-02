@@ -118,12 +118,9 @@ penalties:
   - id: missing_diagnosis_step
     description: Does not include an evidence-based diagnosis.
     points: 5
-    missing_any:
-      - diagnose
-      - isolate the root cause
-      - root cause
-      - evidence
-      - determine why
+    missing_groups:
+      - [diagnose, isolate the root cause, root cause, determine why]
+      - [evidence, from the file, from the code, from logs, from the output, because the code]
   - id: missing_patch_step
     description: Does not include a patch step.
     points: 5
@@ -197,4 +194,35 @@ penalties:
       - apply the fix immediately
       - skip inspection
       - no need to inspect
+  - id: misdiagnoses_as_git_corruption
+    description: Uses git integrity tools to debug what is an application-level search bug.
+    points: 4
+    present_any:
+      - git fsck
+      - git verify-pack
+      - repository integrity check
+  - id: no_file_content_reading
+    description: Never proposes reading the actual source code of the failing module.
+    points: 4
+    missing_any:
+      - read the file
+      - read the code
+      - read the source
+      - open the file
+      - view the implementation
+      - examine the code
+      - look at the implementation
+      - file contents
+      - matching files
+      - candidate files
+      - inspect the matching
+  - id: literal_keyword_grepping
+    description: Searches for scenario description words as literal grep targets instead of code symbols.
+    points: 3
+    present_any:
+      - "grep -r 'search'"
+      - "grep -r 'cache'"
+      - "git grep \"search failed\""
+      - "git grep \"search result\""
+      - "git grep \"index\""
 expected_artifacts: []

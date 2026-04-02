@@ -71,10 +71,10 @@ penalties:
   - id: missing_entity_types
     description: Omits the coarse entity types.
     points: 3
-    missing_any:
-      - PERSON
-      - ORG
-      - LOCATION
+    missing_groups:
+      - [PERSON]
+      - [ORG]
+      - [LOCATION]
   - id: generic_ner_advice
     description: Gives generic NER advice instead of an audit.
     points: 3

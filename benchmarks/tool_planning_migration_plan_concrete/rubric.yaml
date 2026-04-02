@@ -134,28 +134,18 @@ penalties:
       - questions for you
 
   - id: missing_live_traffic_constraint
-    description: Fails to acknowledge or address the live-traffic constraint.
+    description: Fails to address the live-traffic constraint with a concrete strategy.
     points: 5
-    missing_any:
-      - live traffic
-      - zero downtime
-      - during migration
-      - while service is running
-      - without stopping the service
-      - dual-write
-      - shadow traffic
+    missing_groups:
+      - [live traffic, zero downtime, during migration, while service is running, without stopping the service, keep the service running]
+      - [dual-write, dual-read, dual write, dual read, shadow traffic, adapter, abstraction layer, data access layer, cutover, switchover, feature flag, read from both, write to both]
 
   - id: missing_rollback_strategy
     description: Does not include a rollback or reversal strategy.
     points: 5
-    missing_any:
-      - rollback
-      - reverse
-      - fallback
-      - recovery
-      - undo
-      - revert
-      - safety valve
+    missing_groups:
+      - [rollback, reverse, fallback, undo, revert, safety valve]
+      - [firestore, previous, original, back to, restore, switch back]
 
   - id: missing_non_goals
     description: Omits non-goals or explicit out-of-scope items.
@@ -179,36 +169,23 @@ penalties:
   - id: missing_milestones
     description: Does not give an ordered implementation sequence.
     points: 3
-    missing_any:
-      - milestone
-      - phase
-      - step
-      - implementation order
-      - sequence
-      - build order
+    missing_groups:
+      - [milestone, phase, implementation order, build order, stage]
+      - [data migration, adapter, schema, dual-write, cutover, firestore, postgresql, sql]
 
   - id: missing_deliverables
     description: Does not name concrete deliverables or code artifacts.
     points: 3
-    missing_any:
-      - deliverables
-      - must produce
-      - outputs
-      - code
-      - module
-      - script
+    missing_groups:
+      - [deliverables, must produce, outputs, artifact]
+      - [adapter, migration script, data access layer, test, schema, table]
 
   - id: missing_acceptance_criteria
     description: Does not include testable acceptance criteria or go/no-go gates.
     points: 4
-    missing_any:
-      - acceptance criteria
-      - go/no-go
-      - done when
-      - success criteria
-      - completion criteria
-      - pass criteria
-      - gate
+    missing_groups:
+      - [acceptance criteria, go/no-go, done when, success criteria, completion criteria, pass criteria]
+      - [row count, consistency, latency, queries, data, match]
 
   - id: scope_sprawl
     description: Bloats the first phase with multi-region, replication, or zero-downtime monitoring.
@@ -262,3 +239,9 @@ penalties:
       - honeycomb
       - datadog
       - analytics
+  - id: vcs_as_database_rollback
+    description: Proposes git checkout or version control as a database migration rollback mechanism.
+    points: 4
+    present_groups:
+      - [git checkout, git revert, git reset]
+      - [rollback, revert, restore, undo]

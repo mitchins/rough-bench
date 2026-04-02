@@ -89,5 +89,17 @@ penalties:
       - audit summary
       - review
       - fix
+  - id: no_confidence_distinction
+    description: Does not acknowledge that some QA decisions are clear while others are judgment calls.
+    points: 3
+    missing_any:
+      - sparse
+      - too sparse
+      - judgment call
+      - borderline
+      - less certain
+      - low confidence
+      - ambiguous label
+      - unclear
 expected_artifacts: []
 judge_instructions: Reward explicit quality-gate decisions. The response should decide accept/fix/drop/review row by row and should not hide behind generic NLP commentary.

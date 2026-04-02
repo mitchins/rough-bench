@@ -14,49 +14,72 @@ signals:
     groups:
       - [A2]
       - [mixed, logout loop, unusable]
-  - id: a3_neutral
-    description: Labels A3 as neutral.
+  - id: a3_negative
+    description: Labels A3 as negative despite surface-positive phrasing.
     groups:
       - [A3]
-      - [neutral, dashboard]
-  - id: a4_positive
-    description: Labels A4 as positive.
+      - [negative, sarcasm, sarcastic, ironic, frustrated]
+  - id: a4_neutral
+    description: Labels A4 as neutral.
     groups:
       - [A4]
-      - [positive, export works again]
+      - [neutral, dashboard]
   - id: a5_mixed
     description: Labels A5 as mixed.
     groups:
       - [A5]
       - [mixed, support replied quickly, bug is still open]
   - id: a6_negative
-    description: Labels A6 as negative.
+    description: Labels A6 as negative despite hedging.
     groups:
       - [A6]
+      - [negative, mixed, expected more, hedging]
+  - id: a7_mixed
+    description: Labels A7 as mixed given the backhanded framing.
+    groups:
+      - [A7]
+      - [mixed, backhanded, skeptical, undercut, grudging, qualified]
+  - id: a8_negative
+    description: Labels A8 as negative.
+    groups:
+      - [A8]
       - [negative, nothing happened]
+  - id: sarcasm_or_irony_noted
+    description: Notes sarcasm, irony, or surface-vs-intent mismatch somewhere in the batch.
+    any:
+      - sarcasm
+      - sarcastic
+      - ironic
+      - irony
+      - air quotes
+      - surface tone
+      - surface-positive
+      - surface reads
+      - backhanded
+      - tongue-in-cheek
   - id: batch_readout_present
     description: Includes a short batch-level readout.
     groups:
       - [batch readout]
-      - [dominant pattern, mixed, neutral]
+      - [dominant pattern, distribution, split, spread, mostly]
 penalties:
   - id: missing_batch_table
     description: Does not use the requested table format.
     points: 5
     missing_any:
       - Sentiment Table
-      - item_id
-      - sentiment
   - id: item_coverage_incomplete
     description: Leaves out part of the batch.
     points: 5
-    missing_any:
-      - A1
-      - A2
-      - A3
-      - A4
-      - A5
-      - A6
+    missing_groups:
+      - [A1]
+      - [A2]
+      - [A3]
+      - [A4]
+      - [A5]
+      - [A6]
+      - [A7]
+      - [A8]
   - id: all_same_label_collapse
     description: Collapses all items into one polarity.
     points: 4
@@ -72,6 +95,30 @@ penalties:
       - no mixed
       - mixed items are really positive
       - mixed items are really negative
+  - id: misses_sarcasm_cue
+    description: Does not identify sarcastic or ironic tone in items with obvious air-quotes.
+    points: 4
+    missing_any:
+      - sarcasm
+      - sarcastic
+      - ironic
+      - irony
+      - sardonic
+      - tongue-in-cheek
+      - faux positive
+      - snark
+      - air quotes
+  - id: misses_backhanded_tone
+    description: Does not identify backhanded or skeptical tone in qualified praise.
+    points: 3
+    missing_any:
+      - backhanded
+      - skeptical
+      - undercut
+      - damning with faint praise
+      - grudging
+      - qualified praise
+      - faint praise
   - id: generic_sentiment_advice
     description: Gives generic sentiment-model advice instead of labeling the batch.
     points: 3
@@ -84,8 +131,8 @@ penalties:
   - id: no_batch_readout
     description: Omits the requested batch-level readout.
     points: 2
-    missing_any:
-      - batch readout
-      - dominant pattern
+    missing_groups:
+      - [batch readout]
+      - [dominant pattern, distribution, split, spread, mostly]
 expected_artifacts: []
-judge_instructions: Reward item-by-item labeling and a short audit readout. Mixed cases must stay mixed; the task is not solved if the answer flattens the batch into a single polarity.
+judge_instructions: Reward item-by-item labeling, sarcasm detection, and a short audit readout. Mixed cases must stay mixed. Items with sarcastic or backhanded tone must not be labeled as purely positive.

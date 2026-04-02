@@ -81,5 +81,15 @@ penalties:
       - verify
       - compare
       - regression
+  - id: overclaims_shard_causation
+    description: Claims late shards are the definitive or likely cause of all conflicts.
+    points: 3
+    present_unnegated_any:
+      - caused by the late shards
+      - caused by late shards
+      - late shards caused
+      - shards are the cause
+      - shards are responsible for
+      - shards are to blame
 expected_artifacts: []
 judge_instructions: Reward conservative synthesis over confident narrative closure. The response should keep confirmed facts, uncertainty, and follow-up checks separate.

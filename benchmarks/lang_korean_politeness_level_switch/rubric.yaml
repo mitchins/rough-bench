@@ -50,7 +50,8 @@ penalties:
     description: Mixes banmal markers with polite endings instead of committing to a clean polite reply.
     points: 4
     present_groups:
-      - - 응
+      - - 야
+        - 응
         - 오케이
         - 응 알겠습니다
         - 오케이 알겠습니다
@@ -95,3 +96,8 @@ penalties:
       - 말씀 주신
       - 우선 확인해본 뒤 공유드리겠습니다
       - 확인 후 전달드리겠습니다
+  - id: echoes_seniors_banmal
+    description: Repeats the senior's banmal message rather than responding in own register.
+    points: 4
+    present_any:
+      - 이 버그 좀 봐봐

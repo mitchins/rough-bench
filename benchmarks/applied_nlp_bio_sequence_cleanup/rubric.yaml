@@ -87,5 +87,17 @@ penalties:
       - error audit
       - illegal start
       - boundary
+  - id: no_error_pattern_discussion
+    description: Does not discuss the overall error pattern across the batch.
+    points: 3
+    missing_any:
+      - pattern
+      - common error
+      - most errors
+      - majority
+      - boundary repair
+      - boundary errors
+      - truncated spans
+      - overall
 expected_artifacts: []
 judge_instructions: Reward concrete BIO repair. The important check is whether the answer actually corrects the sequences and preserves the one valid row instead of replacing the task with generic NER commentary.
