@@ -1,0 +1,31 @@
+id: lang_korean_register_tone_batch
+title: Korean register and tone preservation batch
+domain: language_pragmatics
+family: language_korean
+counted: true
+prompt_file: prompt.txt
+intent: Score whether the model can preserve distinct Korean registers and tones (sarcasm, scolding, gentle confrontation, dismissal) when localizing into English, rather than flattening everything into neutral prose.
+latent_requirements:
+  - preserve sarcasm in R1 (not a sincere compliment)
+  - preserve seniority dynamic in R2
+  - preserve gentle confrontation in R3
+  - preserve irritated dismissal in R4
+  - keep all lines as natural dialogue
+  - output only translated lines, no explanations
+hard_failures:
+  - treats R1 as a sincere compliment
+  - drops the seniority relationship from R2
+  - makes R3 cruel instead of gently direct
+  - makes R4 polite instead of dismissive
+strong_signals:
+  - R1 sounds snarky and sarcastic
+  - R2 mentions senior or equivalent
+  - R3 calls out the contradiction without cruelty
+  - R4 sounds annoyed and disengaging
+penalties:
+  - sincere compliment for R1
+  - dropped seniority for R2
+  - wrong tone for R3 or R4
+  - meta explanation
+expected_artifacts: []
+judge_instructions: Reward tone-accurate localization. Each item tests a different register. Flattening all lines into the same neutral voice should be penalized. Sarcasm, scolding, gentleness, and irritation should each come through clearly.

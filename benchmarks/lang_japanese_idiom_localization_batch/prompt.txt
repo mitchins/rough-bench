@@ -1,0 +1,23 @@
+You are localizing visual novel dialogue lines from Japanese to English.
+
+For each line below, produce one natural English translation.
+Do not translate idioms literally.
+Preserve the tone and context described.
+Output one translated line per item — no explanations, no notes.
+
+---
+
+J1: 「風の便りで、お前がまだあの町にいると聞いた。」
+Context: One character has tracked down another. They learned the other person's location through indirect channels, not face-to-face.
+
+J2: 「あいつ、会議中ずっと猫をかぶってたくせに。」
+Context: After a meeting, one colleague complains that someone was faking politeness the whole time. They know the person's real personality is abrasive.
+
+J3: 「頼むから空気を読んでくれ。」
+Context: At a tense dinner, someone blurts out something awkward. Another person quietly urges them to pick up on the social cues.
+
+J4: 「あの人、笑顔の裏が腹黒いって、みんな知ってるよ。」
+Context: A character warns another about someone who seems friendly but is actually manipulative. Everyone in the group already knows it.
+
+J5: 「もういいよ、水に流そう。」
+Context: After an argument, one character decides to move on. The tone is tired but sincere — they genuinely want to let it go.

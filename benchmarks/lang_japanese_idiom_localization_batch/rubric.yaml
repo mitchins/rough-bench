@@ -1,0 +1,127 @@
+signals:
+  - id: j1_hearsay
+    description: J1 uses an idiomatic hearsay phrase for 風の便り.
+    groups:
+      - [J1]
+      - [i heard, word is, i hear, heard through, rumor, apparently, sounds like, word reached]
+  - id: j2_fake_act
+    description: J2 conveys the pretending nuance of 猫をかぶる.
+    groups:
+      - [J2]
+      - [act, fake, pretend, playing nice, playing innocent, two-faced, front, mask, goody, butter]
+  - id: j3_read_room
+    description: J3 captures the social awareness of 空気を読む.
+    groups:
+      - [J3]
+      - [read the room, take a hint, pick up on, social cues, can you not, tone, atmosphere]
+  - id: j4_scheming
+    description: J4 conveys the scheming nature of 腹黒い.
+    groups:
+      - [J4]
+      - [two-faced, scheming, manipulative, shady, sneaky, conniving, backstab, underhanded, snake]
+  - id: j5_let_go
+    description: J5 conveys the forgiveness of 水に流す.
+    groups:
+      - [J5]
+      - [let it go, move on, forget it, forgive, water under the bridge, behind us, drop it, over it]
+penalties:
+  - id: item_coverage_incomplete
+    description: Leaves out part of the batch.
+    points: 5
+    missing_any:
+      - J1
+      - J2
+      - J3
+      - J4
+      - J5
+  - id: literal_wind_j1
+    description: Literalizes 風の便り as wind or breeze.
+    points: 4
+    present_unnegated_any:
+      - on the wind
+      - carried by wind
+      - wind-borne
+      - breeze
+      - gale
+      - tidings of the wind
+  - id: missing_hearsay_j1
+    description: Drops the indirect-hearsay nuance from J1.
+    points: 3
+    missing_groups:
+      - [J1]
+      - [i heard, word is, i hear, heard through, rumor, apparently, sounds like, word reached]
+  - id: literal_cat_j2
+    description: Literalizes 猫をかぶる as wearing a cat.
+    points: 4
+    present_unnegated_any:
+      - wearing a cat
+      - wore a cat
+      - put on a cat
+      - cat mask
+      - hiding behind a cat
+  - id: missing_pretense_j2
+    description: Drops the pretending nuance from J2.
+    points: 3
+    missing_groups:
+      - [J2]
+      - [act, fake, pretend, playing nice, playing innocent, two-faced, front, mask, goody, butter, sweet-talk, angel]
+  - id: literal_air_j3
+    description: Literalizes 空気を読む as reading air.
+    points: 4
+    present_unnegated_any:
+      - read the air
+      - reading the air
+      - sense the air
+      - feel the air
+  - id: missing_social_cue_j3
+    description: Drops the social awareness nuance from J3.
+    points: 3
+    missing_groups:
+      - [J3]
+      - [read the room, take a hint, pick up, social cue, tone, atmosphere, can you not, come on]
+  - id: literal_belly_j4
+    description: Literalizes 腹黒い as black belly or stomach.
+    points: 4
+    present_unnegated_any:
+      - black belly
+      - black stomach
+      - dark belly
+      - dark stomach
+      - belly is black
+  - id: missing_scheming_j4
+    description: Drops the scheming nuance from J4.
+    points: 3
+    missing_groups:
+      - [J4]
+      - [two-faced, scheming, manipulative, shady, sneaky, conniving, backstab, underhanded, snake, devious, rotten]
+  - id: literal_water_j5
+    description: Literalizes 水に流す as flowing/pouring water.
+    points: 4
+    present_unnegated_any:
+      - pour water
+      - flow with water
+      - wash it in water
+      - let the water carry
+      - into the water
+  - id: missing_forgiveness_j5
+    description: Drops the forgive-and-forget nuance from J5.
+    points: 3
+    missing_groups:
+      - [J5]
+      - [let it go, move on, forget it, forgive, water under the bridge, behind us, drop it, over it, done with]
+  - id: explains_idiom
+    description: Explains idioms instead of just translating.
+    points: 5
+    present_any:
+      - idiom
+      - literally means
+      - this phrase
+      - in japanese
+      - translation note
+      - 風の便り
+      - 猫をかぶる
+      - 空気を読む
+      - 腹黒い
+      - 水に流す
+expected_artifacts: []
+judge_instructions: Reward natural English localization across all five items. Each line should sound like dialogue. Literal translations of the Japanese idiom components (wind, cat, air, belly, water) should be penalized. Missing nuance should be penalized per item.

@@ -1,0 +1,126 @@
+signals:
+  - id: k1_social_oblivious
+    description: K1 conveys social obliviousness for 눈치 없다.
+    groups:
+      - [K1]
+      - [read the room, oblivious, clueless, tactless, tone-deaf, thick, dense]
+  - id: k2_face_cleanup
+    description: K2 infers face-washing from 씻고 와 in context.
+    groups:
+      - [K2]
+      - [wash your face, clean up, freshen up, wash up, clean yourself, go wash]
+  - id: k3_loose_lips
+    description: K3 conveys the gossip risk of 입이 가벼워.
+    groups:
+      - [K3]
+      - [loose lips, blabbermouth, big mouth, can't keep, gossip, talks too much, tells everyone, spills]
+  - id: k4_well_connected
+    description: K4 conveys the wide connections of 발이 넓다.
+    groups:
+      - [K4]
+      - [knows everyone, well-connected, connections, network, contacts, people person, plugged in]
+  - id: k5_mood_killed
+    description: K5 conveys the mood-killing effect of 찬물 끼얹다.
+    groups:
+      - [K5]
+      - [killed the mood, buzzkill, ruined, dampened, cold water, party, spoiled, way to ruin, wet blanket, downer, killed the vibe, killed]
+penalties:
+  - id: item_coverage_incomplete
+    description: Leaves out part of the batch.
+    points: 5
+    missing_any:
+      - K1
+      - K2
+      - K3
+      - K4
+      - K5
+  - id: literal_nunchi_k1
+    description: Literalizes 눈치 as nunchi or eye-measure.
+    points: 4
+    present_unnegated_any:
+      - nunchi
+      - eye-measure
+      - eye measure
+      - sense gauge
+      - perception gauge
+  - id: missing_social_k1
+    description: Drops the social obliviousness nuance from K1.
+    points: 3
+    missing_groups:
+      - [K1]
+      - [read the room, oblivious, clueless, tactless, tone-deaf, thick, dense, awkward]
+  - id: literal_wash_k2
+    description: Overtranslates 씻고 와 into shower or bath.
+    points: 3
+    present_unnegated_any:
+      - take a shower
+      - take a bath
+      - go bathe
+      - have a bath
+      - go shower
+  - id: missing_cleanup_k2
+    description: Drops the face-cleanup nuance from K2.
+    points: 3
+    missing_groups:
+      - [K2]
+      - [wash your face, clean up, freshen up, wash up, clean yourself, go wash, splash]
+  - id: literal_mouth_k3
+    description: Literalizes 입이 가벼워 as light mouth.
+    points: 4
+    present_unnegated_any:
+      - light mouth
+      - mouth is light
+      - light-mouthed
+      - lightweight mouth
+  - id: missing_gossip_k3
+    description: Drops the gossip/indiscretion nuance from K3.
+    points: 3
+    missing_groups:
+      - [K3]
+      - [loose lips, blabbermouth, big mouth, can't keep, gossip, tells everyone, spills, talks too much, loud mouth]
+  - id: literal_feet_k4
+    description: Literalizes 발이 넓다 as wide feet.
+    points: 4
+    present_unnegated_any:
+      - wide feet
+      - feet are wide
+      - big feet
+      - broad feet
+      - wide-footed
+  - id: missing_connections_k4
+    description: Drops the well-connected nuance from K4.
+    points: 3
+    missing_groups:
+      - [K4]
+      - [knows everyone, well-connected, connections, network, contacts, people person, plugged in, know everybody]
+  - id: literal_cold_water_k5
+    description: Literalizes 찬물 끼얹다 as pouring cold water literally.
+    points: 4
+    present_unnegated_any:
+      - poured cold water
+      - pour cold water
+      - threw cold water
+      - splash cold water
+      - doused with cold water
+  - id: missing_mood_kill_k5
+    description: Drops the mood-killing nuance from K5.
+    points: 3
+    missing_groups:
+      - [K5]
+      - [killed the mood, killed the vibe, killed, buzzkill, ruined, dampened, spoiled, way to ruin, wet blanket, downer]
+  - id: explains_expression
+    description: Explains expressions instead of just translating.
+    points: 5
+    present_any:
+      - idiom
+      - literally means
+      - this phrase
+      - in korean
+      - translation note
+      - 눈치
+      - 씻고
+      - 입이
+      - 발이
+      - 찬물
+expected_artifacts: []
+judge_instructions: Reward natural English localization across all five items. Each line should sound like webtoon dialogue. Literal translations should be penalized. Missing nuance should be penalized per item.

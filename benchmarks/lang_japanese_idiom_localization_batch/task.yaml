@@ -1,0 +1,28 @@
+id: lang_japanese_idiom_localization_batch
+title: Japanese idiom localization batch
+domain: language_translation
+family: language_japanese
+counted: true
+prompt_file: prompt.txt
+intent: Score whether the model can localize five Japanese idioms into natural English without literalizing them, preserving tone and nuance across a batch rather than relying on knowledge of a single phrase.
+latent_requirements:
+  - translate each idiom idiomatically, not literally
+  - preserve the indirect or figurative nuance of each phrase
+  - keep lines natural and dialogue-appropriate
+  - output only translated lines, no explanations
+hard_failures:
+  - literalizes any idiom (wind, cat, air, belly, water)
+  - explains idioms instead of translating
+  - drops the core nuance from multiple items
+strong_signals:
+  - uses natural hearsay phrasing for J1
+  - uses fake/act language for J2
+  - uses read the room or similar for J3
+  - uses scheming/two-faced language for J4
+  - uses let it go or forgive language for J5
+penalties:
+  - literal idiom translation
+  - missing core nuance
+  - meta explanation
+expected_artifacts: []
+judge_instructions: Reward natural English localization. Each item should sound like a line of dialogue, not a dictionary gloss. Literal translations of the Japanese idiom components should be penalized. Missing items should be penalized.

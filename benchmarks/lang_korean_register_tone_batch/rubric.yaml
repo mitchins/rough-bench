@@ -1,0 +1,119 @@
+signals:
+  - id: r1_sarcasm
+    description: R1 preserves sarcasm rather than treating it as a sincere compliment.
+    any:
+      - took you long enough
+      - finally noticed
+      - finally caught on
+      - about time
+      - look who finally
+      - oh wow
+  - id: r2_seniority
+    description: R2 preserves the seniority relationship.
+    any:
+      - senior
+      - sunbae
+      - upperclassman
+      - elder
+  - id: r3_gentle_contradiction
+    description: R3 calls out the contradiction with gentle directness.
+    groups:
+      - [R3]
+      - [you said, if you're, said you were, you told]
+      - [crying, tears, cry]
+  - id: r4_dismissal
+    description: R4 conveys irritated dismissal.
+    any:
+      - deal with it yourself
+      - handle it yourself
+      - figure it out
+      - do it yourself
+      - don't care
+      - whatever
+      - I'm done
+penalties:
+  - id: item_coverage_incomplete
+    description: Leaves out part of the batch.
+    points: 5
+    missing_any:
+      - R1
+      - R2
+      - R3
+      - R4
+  - id: sincere_compliment_r1
+    description: Treats R1 as a sincere compliment instead of sarcasm.
+    points: 5
+    present_unnegated_any:
+      - you're perceptive
+      - you catch on fast
+      - quick-witted
+      - quick on the uptake
+      - nice catch
+      - good eye
+      - you're sharp
+      - well done
+  - id: misses_sarcasm_r1
+    description: Fails to preserve sarcasm in R1.
+    points: 4
+    missing_groups:
+      - [R1]
+      - [took you long enough, finally noticed, finally caught on, about time, look who finally, oh wow, finally]
+  - id: drops_seniority_r2
+    description: Loses the seniority relationship in R2.
+    points: 4
+    missing_groups:
+      - [R2]
+      - [senior, sunbae, upperclassman, elder, your elder]
+  - id: literal_speech_style_r2
+    description: Literalizes 말투 into stiff speech-style wording.
+    points: 3
+    present_unnegated_any:
+      - with that speech style
+      - with that manner of speaking
+      - with that speaking style
+  - id: missing_contradiction_r3
+    description: Drops the you-said-fine-but-you're-crying contradiction from R3.
+    points: 4
+    missing_groups:
+      - [R3]
+      - [fine, okay, alright, said you were]
+      - [crying, cry, tears]
+  - id: cruel_tone_r3
+    description: Makes R3 cruel or mocking instead of gently direct.
+    points: 3
+    present_unnegated_any:
+      - stop crying
+      - quit crying
+      - stop being dramatic
+      - pathetic
+      - grow up
+  - id: polite_dismissal_r4
+    description: Makes R4 polite instead of irritated and dismissive.
+    points: 4
+    present_unnegated_any:
+      - please handle
+      - kindly manage
+      - would you mind
+      - if you could
+      - i'd appreciate
+  - id: missing_dismissal_r4
+    description: Drops the dismissive tone from R4.
+    points: 3
+    missing_groups:
+      - [R4]
+      - [yourself, on your own, I'm done, don't care, whatever, figure it out, deal with it]
+  - id: explains_register
+    description: Explains Korean register or translation choices instead of translating.
+    points: 5
+    present_any:
+      - register
+      - honorific
+      - in korean
+      - translation note
+      - this phrase means
+      - literally
+      - 눈치
+      - 선배
+      - 괜찮다
+expected_artifacts: []
+judge_instructions: Reward tone-accurate localization. Each item tests a different register — sarcasm, scolding, gentle confrontation, dismissal. Flattening all lines into neutral prose should be penalized.

@@ -1,0 +1,19 @@
+You are localizing Korean webtoon dialogue lines into natural English.
+
+Each line has a specific tone or register that must be preserved.
+Produce one natural English translation per item.
+Do not explain — output only the translated lines.
+
+---
+
+R1: 「와, 눈치 빠르네.」
+Context: Someone finally notices something obvious very late. The speaker says this sarcastically — it is NOT a sincere compliment. Tone: exasperated, snarky.
+
+R2: 「야, 선배한테 그딴 말투로 들이박지 마.」
+Context: One character scolds another for being rude to an older senior. The seniority relationship is the key detail. Tone: scolding, colloquial.
+
+R3: 「괜찮다면서요, 왜 울어요.」
+Context: Someone claimed they were fine, but is now crying. The speaker calls out the contradiction — not cruelly, but with quiet directness. Tone: gentle confrontation.
+
+R4: 「아, 진짜 귀찮다. 알아서 해.」
+Context: A character is fed up and disengages. They tell the other person to handle it themselves. Tone: irritated, dismissive.

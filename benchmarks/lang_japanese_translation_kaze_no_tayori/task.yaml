@@ -2,7 +2,7 @@ id: lang_japanese_translation_kaze_no_tayori
 title: Japanese idiom translation with 風の便り
 domain: language_translation
 family: language_japanese
-counted: true
+counted: false
 intent: Score whether the model localizes a Japanese VN-style line containing 風の便り into natural English without literalizing the idiom, while preserving indirect hearsay and the basic tone of the line.
 latent_requirements:
   - translate 風の便り idiomatically rather than literally

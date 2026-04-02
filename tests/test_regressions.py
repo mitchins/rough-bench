@@ -52,6 +52,18 @@ class BenchmarkRegressionTests(unittest.TestCase):
                 set(),
                 {"seniority_preserved", "reprimand_tone", "colloquial_dialogue_line"},
             ),
+            "lang_japanese_idiom_localization_batch": (
+                set(),
+                {"j1_hearsay", "j2_fake_act", "j3_read_room", "j4_scheming", "j5_let_go"},
+            ),
+            "lang_korean_idiom_localization_batch": (
+                set(),
+                {"k1_social_oblivious", "k2_face_cleanup", "k3_loose_lips", "k4_well_connected", "k5_mood_killed"},
+            ),
+            "lang_korean_register_tone_batch": (
+                set(),
+                {"r1_sarcasm", "r2_seniority", "r3_gentle_contradiction", "r4_dismissal"},
+            ),
         }
 
         for task_id, (expected_penalties, expected_signals) in expectations.items():

@@ -2,7 +2,7 @@ id: lang_japanese_implied_uchi_soto
 title: Japanese client-thread rewrite with uchi/soto correction
 domain: language_pragmatics
 family: language_japanese
-counted: false
+counted: true
 prompt: "Rewrite this short Japanese Slack thread so it sounds natural and pragmatically correct.\n\nContext:\n- your company is talking with a client\n- `田中` is on the client side, not your side\n- one line currently violates uchi/soto expectations\n- keep the exchange concise and business-natural for chat\n- output only the corrected thread, with no explanation\n\nThread:\n[営業] 先ほどの件、弊社の田中がそう言ってましたよ〜\n[あなた] 了解です。ではその前提で進めます。"
 intent: Score whether the model spots the client-side uchi/soto violation, rewrites the thread in natural Japanese, and avoids explaining the cultural rule instead of simply fixing the language.
 latent_requirements:

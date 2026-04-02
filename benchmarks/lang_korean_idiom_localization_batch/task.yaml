@@ -1,0 +1,28 @@
+id: lang_korean_idiom_localization_batch
+title: Korean idiom localization batch
+domain: language_translation
+family: language_korean
+counted: true
+prompt_file: prompt.txt
+intent: Score whether the model can localize five Korean idioms and expressions into natural English without literalizing them, preserving tone and cultural nuance across a batch.
+latent_requirements:
+  - translate each expression idiomatically, not literally
+  - preserve the social or emotional nuance of each phrase
+  - keep lines natural and dialogue-appropriate
+  - output only translated lines, no explanations
+hard_failures:
+  - literalizes any expression (nunchi, feet, mouth, cold water)
+  - explains expressions instead of translating
+  - drops the core nuance from multiple items
+strong_signals:
+  - uses read the room or oblivious for K1
+  - uses wash your face or clean up for K2
+  - uses loose lips or blabbermouth for K3
+  - uses well-connected or knows everyone for K4
+  - uses killed the mood or buzzkill for K5
+penalties:
+  - literal expression translation
+  - missing core nuance
+  - meta explanation
+expected_artifacts: []
+judge_instructions: Reward natural English localization across all five items. Each line should sound like webtoon dialogue. Literal translations of the Korean expression components should be penalized. Missing items should be penalized.

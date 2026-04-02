@@ -1,0 +1,23 @@
+You are localizing Korean webtoon dialogue lines into natural English.
+
+For each line below, produce one natural English translation.
+Do not translate idioms or expressions literally.
+Preserve the tone and context described.
+Output one translated line per item — no explanations, no notes.
+
+---
+
+K1: 「진짜 눈치 없다.」
+Context: At a tense group dinner, one person blurts out something tactless. Everyone else goes silent. A character mutters this about the tactless person.
+
+K2: 「야, 일단 씻고 와.」
+Context: A character comes into the room looking exhausted and tear-streaked. Their face is messy. The other character reacts with this line — it's care disguised as a command.
+
+K3: 「그 사람 진짜 입이 가벼워.」
+Context: Two friends gossip. One warns the other not to share secrets with someone because that person cannot keep anything to themselves.
+
+K4: 「발이 넓으니까 물어봐.」
+Context: Someone needs a contact or recommendation. A friend suggests asking a particular person because they know everyone and have connections everywhere.
+
+K5: 「그 말 한마디에 찬물 끼얹은 거야.」
+Context: At a celebration, someone made a single comment that killed the mood. A bystander describes the effect of that comment.
