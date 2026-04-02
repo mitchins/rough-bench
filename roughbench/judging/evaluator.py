@@ -261,6 +261,7 @@ class RuleBasedJudge:
             passed_signals=passed_signals,
             judge_summary=judge_summary,
             artifacts_seen=output.artifact_names,
+            task_content_hash=task.content_hash,
         )
 
     def _build_summary(

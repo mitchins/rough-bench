@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -140,3 +141,16 @@ class TaskDefinition:
     prompt_path: Path = field(default_factory=Path)
     rubric_path: Path = field(default_factory=Path)
     rubric: Rubric = field(default_factory=Rubric)
+
+    @property
+    def content_hash(self) -> str:
+        """Deterministic SHA-256 of prompt + rubric content.
+
+        Changes if and only if the task definition changes.  Used to
+        detect whether stored results are stale after a rubric update.
+        """
+        h = hashlib.sha256()
+        h.update(self.prompt.encode("utf-8"))
+        if self.rubric_path.exists():
+            h.update(self.rubric_path.read_bytes())
+        return h.hexdigest()[:16]

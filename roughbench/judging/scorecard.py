@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from roughbench import __version__
+
 
 @dataclass(frozen=True)
 class PenaltyHit:
@@ -54,6 +56,7 @@ class TaskScorecard:
     passed_signals: tuple[SignalHit, ...]
     judge_summary: str
     artifacts_seen: tuple[str, ...] = ()
+    task_content_hash: str = ""
 
     @property
     def demerit_pct(self) -> float | None:
@@ -62,7 +65,7 @@ class TaskScorecard:
         return round((self.total_penalty / self.max_penalty_possible) * 100.0, 1)
 
     def to_dict(self) -> dict:
-        return {
+        d: dict = {
             "task_id": self.task_id,
             "title": self.title,
             "total_penalty": self.total_penalty,
@@ -73,6 +76,9 @@ class TaskScorecard:
             "judge_summary": self.judge_summary,
             "artifacts_seen": list(self.artifacts_seen),
         }
+        if self.task_content_hash:
+            d["task_content_hash"] = self.task_content_hash
+        return d
 
     @classmethod
     def from_dict(cls, data: dict) -> "TaskScorecard":
@@ -95,6 +101,7 @@ class TaskScorecard:
             ),
             judge_summary=str(data.get("judge_summary", "")),
             artifacts_seen=tuple(str(item) for item in data.get("artifacts_seen", [])),
+            task_content_hash=str(data.get("task_content_hash", "")),
         )
 
 
@@ -119,6 +126,7 @@ class BenchmarkReport:
 
     def to_dict(self) -> dict:
         return {
+            "roughbench_version": __version__,
             "roughbench_demerits": self.roughbench_demerits,
             "roughbench_score": self.roughbench_score,
             "suite_max_demerits": self.suite_max_demerits,
