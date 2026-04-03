@@ -48,6 +48,32 @@ def _source_root() -> Path:
     return Path(__file__).resolve().parents[1]
 
 
+def _load_project_env() -> None:
+    candidates = [Path.cwd() / ".env", _source_root() / ".env"]
+    seen: set[Path] = set()
+    for path in candidates:
+        resolved = path.resolve()
+        if resolved in seen or not path.is_file():
+            continue
+        seen.add(resolved)
+        for raw_line in path.read_text(encoding="utf-8").splitlines():
+            line = raw_line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if line.startswith("export "):
+                line = line[7:].strip()
+            if "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            key = key.strip()
+            if not key:
+                continue
+            value = value.strip()
+            if value and value[0] == value[-1] and value[0] in {"'", '"'}:
+                value = value[1:-1]
+            os.environ.setdefault(key, value)
+
+
 def _default_path(dirname: str) -> Path:
     cwd_candidate = Path.cwd() / dirname
     if cwd_candidate.exists():
@@ -452,6 +478,7 @@ def _add_background_arguments(parser: argparse.ArgumentParser) -> None:
 
 def main(argv: Sequence[str] | None = None) -> int:
     raw_argv = list(argv) if argv is not None else sys.argv[1:]
+    _load_project_env()
     parser = build_parser()
     args = parser.parse_args(raw_argv)
 
@@ -657,7 +684,8 @@ def _run_compare_subject(
     tasks_to_run = [t for t in tasks if t.id not in existing_task_ids]
 
     print(
-        f"[compare] subject {subject.id}: cache={args.cache}, existing_tasks={len(existing_task_ids)}, tasks_to_run={len(tasks_to_run)}"
+        f"[compare] subject {subject.id}: cache={args.cache}, existing_tasks={len(existing_task_ids)}, tasks_to_run={len(tasks_to_run)}",
+        flush=True,
     )
 
     for task in tasks_to_run:
@@ -729,6 +757,7 @@ def _evaluate_task_with_retries(
                 f"[compare] {subject.id} {task.id} attempt {attempt_number}/{total_attempts} failed: "
                 f"{type(exc).__name__}: {exc}",
                 file=sys.stderr,
+                flush=True,
             )
             if attempt_number >= total_attempts:
                 return None, {
@@ -785,6 +814,7 @@ def _build_compare_subject_payload(
         "base_url": subject.base_url,
         "model": subject.model,
         "reasoning_effort": subject.reasoning_effort,
+        "thinking_type": subject.thinking_type,
         "notes": subject.notes,
         "status": status,
         "requested_task_count": requested_task_count,
@@ -890,10 +920,17 @@ def _runner_for_subject(
     save_dir = None
     if save_runs_dir is not None:
         save_dir = save_runs_dir / subject.storage_name
+    resolved_api_key = subject.resolved_api_key
+    if not resolved_api_key and subject.api_key.startswith("env:"):
+        env_name = subject.api_key.split(":", 1)[1].strip()
+        raise ValueError(
+            f"Subject {subject.id!r} requires environment variable {env_name!r}, "
+            "but it is not set."
+        )
     if subject.provider == "openai":
         return OpenAIRunner(
             model=subject.model,
-            api_key=subject.resolved_api_key,
+            api_key=resolved_api_key,
             temperature=subject.temperature,
             max_tokens=subject.max_tokens,
             reasoning_effort=subject.reasoning_effort,
@@ -902,7 +939,7 @@ def _runner_for_subject(
     if subject.provider == "anthropic":
         return AnthropicRunner(
             model=subject.model,
-            api_key=subject.resolved_api_key,
+            api_key=resolved_api_key,
             temperature=subject.temperature,
             max_tokens=subject.max_tokens,
             save_responses_dir=save_dir,
@@ -910,11 +947,12 @@ def _runner_for_subject(
     return OpenAICompatibleRunner(
         model=subject.model,
         base_url=subject.base_url,
-        api_key=subject.resolved_api_key,
+        api_key=resolved_api_key,
         temperature=subject.temperature,
         max_tokens=subject.max_tokens,
         timeout_seconds=subject.timeout_seconds,
         reasoning_effort=subject.reasoning_effort,
+        thinking_type=subject.thinking_type,
         direct_answer_first=subject.direct_answer_first,
         save_responses_dir=save_dir,
     )
@@ -1174,6 +1212,11 @@ def _print_jobs(args: argparse.Namespace) -> int:
             print(f"{payload['job_id']} [{payload['status']}]")
             print(f"  pid: {payload.get('pid')}")
             print(f"  pid_running: {payload.get('pid_running')}")
+            if payload.get("stale"):
+                print(f"  stale: {payload['stale']}")
+                print(f"  suspected_completed: {payload.get('suspected_completed')}")
+                if payload.get("stale_reason"):
+                    print(f"  stale_reason: {payload['stale_reason']}")
             print(f"  created_at: {payload.get('created_at')}")
             if payload.get("started_at"):
                 print(f"  started_at: {payload['started_at']}")
@@ -1196,9 +1239,10 @@ def _print_jobs(args: argparse.Namespace) -> int:
             print(f"No jobs found in {args.jobs_dir}")
             return 0
         for item in payload:
+            stale_bit = "\tstale=yes" if item.get("stale") else ""
             print(
                 f"{item['job_id']}\t{item['status']}\t"
-                f"pid={item.get('pid')}\talive={item.get('pid_running')}\t"
+                f"pid={item.get('pid')}\talive={item.get('pid_running')}{stale_bit}\t"
                 f"created={item.get('created_at')}"
             )
     return 0
@@ -1269,3 +1313,7 @@ def _print_execution_report(payload: dict) -> None:
         )
     if tier_bits:
         print(f"Tiers: {', '.join(tier_bits)}")
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

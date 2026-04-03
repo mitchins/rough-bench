@@ -78,9 +78,7 @@ def list_jobs(jobs_dir: Path) -> list[dict[str, Any]]:
         return []
     jobs: list[dict[str, Any]] = []
     for metadata_path in sorted(jobs_dir.glob("*/metadata.json")):
-        metadata = load_metadata(metadata_path.parent)
-        metadata["pid_running"] = _pid_running(metadata.get("pid"))
-        jobs.append(metadata)
+        jobs.append(_annotate_job_health(load_metadata(metadata_path.parent)))
     jobs.sort(key=lambda item: item.get("created_at", ""), reverse=True)
     return jobs
 
@@ -88,10 +86,9 @@ def list_jobs(jobs_dir: Path) -> list[dict[str, Any]]:
 def inspect_job(*, jobs_dir: Path, job_id: str, log_lines: int = 20) -> dict[str, Any]:
     job_dir = jobs_dir / job_id
     metadata = load_metadata(job_dir)
-    metadata["pid_running"] = _pid_running(metadata.get("pid"))
     log_path = Path(metadata["log_path"])
     metadata["log_tail"] = _tail_lines(log_path, log_lines)
-    return metadata
+    return _annotate_job_health(metadata)
 
 
 def load_metadata(job_dir: Path) -> dict[str, Any]:
@@ -129,3 +126,28 @@ def _tail_lines(path: Path, limit: int) -> list[str]:
         return []
     lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
     return lines[-limit:]
+
+
+def _annotate_job_health(metadata: dict[str, Any]) -> dict[str, Any]:
+    annotated = dict(metadata)
+    pid_running = _pid_running(annotated.get("pid"))
+    annotated["pid_running"] = pid_running
+    stale = (
+        annotated.get("status") in {"queued", "running"}
+        and not pid_running
+        and annotated.get("finished_at") in {None, ""}
+    )
+    annotated["stale"] = stale
+    if stale:
+        log_tail = annotated.get("log_tail")
+        if not isinstance(log_tail, list):
+            log_tail = _tail_lines(Path(annotated["log_path"]), 50)
+            annotated["log_tail"] = log_tail
+        annotated["stale_reason"] = "job process is no longer alive but metadata was never finalized"
+        annotated["suspected_completed"] = any(
+            line.startswith("RoughBench compare") or line.startswith("RoughBench demerits:")
+            for line in log_tail
+        )
+    else:
+        annotated["suspected_completed"] = False
+    return annotated

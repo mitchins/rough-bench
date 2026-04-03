@@ -35,6 +35,7 @@ class OpenAICompatibleRunner:
     max_tokens: int = 2000
     timeout_seconds: int = 180
     reasoning_effort: str = ""
+    thinking_type: str = ""
     direct_answer_first: bool = False
     save_responses_dir: Path | None = None
     _client: OpenAI | None = field(default=None, init=False, repr=False)
@@ -89,6 +90,10 @@ class OpenAICompatibleRunner:
         }
         if self.reasoning_effort:
             create_kwargs["extra_body"] = build_reasoning_extra_body(self.reasoning_effort)
+        if self.thinking_type:
+            extra_body = dict(create_kwargs.get("extra_body", {}))
+            extra_body["thinking"] = {"type": self.thinking_type}
+            create_kwargs["extra_body"] = extra_body
 
         response = self.client.chat.completions.create(
             **create_kwargs,
@@ -97,6 +102,9 @@ class OpenAICompatibleRunner:
         message = choice.message
         answer_text = normalize_message_content(message.content)
         reasoning_text = normalize_reasoning_content(message)
+        usage = getattr(response, "usage", None)
+        completion_details = getattr(usage, "completion_tokens_details", None)
+        prompt_details = getattr(usage, "prompt_tokens_details", None)
         metadata = {
             "model": self.model,
             "base_url": self.base_url,
@@ -107,6 +115,12 @@ class OpenAICompatibleRunner:
             "content_len": len(answer_text),
             "reasoning_present": bool(reasoning_text),
             "reasoning_len": len(reasoning_text),
+            "request_id": getattr(response, "request_id", None),
+            "prompt_tokens": getattr(usage, "prompt_tokens", None),
+            "completion_tokens": getattr(usage, "completion_tokens", None),
+            "total_tokens": getattr(usage, "total_tokens", None),
+            "reasoning_tokens": getattr(completion_details, "reasoning_tokens", None),
+            "cached_prompt_tokens": getattr(prompt_details, "cached_tokens", None),
         }
         return answer_text, metadata
 
@@ -147,6 +161,7 @@ def from_env(
     max_tokens: int | None = None,
     timeout_seconds: int | None = None,
     reasoning_effort: str | None = None,
+    thinking_type: str | None = None,
     direct_answer_first: bool | None = None,
     save_responses_dir: Path | None = None,
 ) -> OpenAICompatibleRunner:
@@ -175,6 +190,10 @@ def from_env(
             "on",
         }
 
+    resolved_thinking_type = thinking_type
+    if resolved_thinking_type is None:
+        resolved_thinking_type = os.getenv("ROUGHBENCH_THINKING_TYPE", "")
+
     return OpenAICompatibleRunner(
         model=model or os.getenv("ROUGHBENCH_MODEL", DEFAULT_MODEL),
         base_url=base_url or os.getenv("ROUGHBENCH_BASE_URL", DEFAULT_BASE_URL),
@@ -183,6 +202,7 @@ def from_env(
         max_tokens=resolved_max_tokens,
         timeout_seconds=resolved_timeout_seconds,
         reasoning_effort=resolved_reasoning_effort,
+        thinking_type=resolved_thinking_type,
         direct_answer_first=resolved_direct_answer_first,
         save_responses_dir=save_responses_dir,
     )

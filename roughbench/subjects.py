@@ -37,11 +37,15 @@ class SubjectDefinition:
     timeout_seconds: int = 180
     direct_answer_first: bool = False
     reasoning_effort: str = ""
+    thinking_type: str = ""
     notes: str = ""
     storage_name: str = ""
 
     @property
     def resolved_api_key(self) -> str:
+        if self.api_key.startswith("env:"):
+            env_name = self.api_key.split(":", 1)[1].strip()
+            return os.getenv(env_name, "")
         if self.api_key:
             return self.api_key
         if self.api_key_env:
@@ -70,6 +74,7 @@ class SubjectDefinition:
             timeout_seconds=int(data.get("timeout_seconds", 180)),
             direct_answer_first=bool(data.get("direct_answer_first", False)),
             reasoning_effort=str(data.get("reasoning_effort", "")),
+            thinking_type=str(data.get("thinking_type", "")),
             notes=str(data.get("notes", "")),
             storage_name=storage_name,
         )
