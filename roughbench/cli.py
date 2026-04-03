@@ -208,6 +208,12 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Abort compare on the first task failure instead of recording a partial report.",
     )
+    compare_parser.add_argument(
+        "--cache",
+        choices=("resume", "pristine"),
+        required=True,
+        help="Cache policy for compare: 'resume' uses saved progress if present; 'pristine' ignores saved progress and re-runs.",
+    )
     _add_background_arguments(compare_parser)
 
     execute_parser = subparsers.add_parser(
@@ -343,11 +349,6 @@ def _add_run_arguments(parser: argparse.ArgumentParser) -> None:
         "--output",
         type=Path,
         help="Write the JSON report to a file.",
-    )
-    parser.add_argument(
-        "--pristine",
-        action="store_true",
-        help="Ignore saved progress and re-run tasks even if previously persisted.",
     )
     parser.add_argument(
         "--judge-mode",
@@ -625,7 +626,7 @@ def _run_compare_subject(
     progress_path = None
     if subject_save_dir is not None:
         progress_path = subject_save_dir / ".roughbench_compare_subject.json"
-    if progress_path is not None and progress_path.exists() and not getattr(args, "pristine", False):
+    if progress_path is not None and progress_path.exists() and args.cache == "resume":
         try:
             raw = json.loads(progress_path.read_text(encoding="utf-8"))
             report = raw.get("report", {})
