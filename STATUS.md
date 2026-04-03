@@ -214,6 +214,55 @@ These were useful suggestions, but are not currently counted in the current rele
   - do not let that layer become unconstrained free-scoring; it should complement rubric matching, not replace it
 - Multi-subject compare: shipped.
 - Execution-backed Docker path for `hf_datasets_streaming_rewrite_under_caps`: experimental, parked for now rather than expanded.
+
+### LLM Judge Comparison — gpt-5-mini (Copilot CLI) vs GPT-OSS-120B (local)
+
+Comparison run 2026-04-03 against 8 tasks, rule-based scores used as ground truth.
+
+| Task | Rule | gpt-5-mini | Δ | GPT-OSS-120B | Δ |
+|---|---|---|---|---|---|
+| applied_nlp_sentiment_batch | 19/30 | 23/30 | +4 | 12/30 | -7 |
+| applied_nlp_ner_span_audit | 19/22 | 19/22 | 0 ✓ | 19/22 | 0 ✓ |
+| lang_korean_sarcastic_nunchi_pparune | 8/22 | 8/22 | 0 ✓ | 8/22 | 0 ✓ |
+| swe_existing_code_http_cache_bugfix | 34/34 | 34/34 | 0 ✓ | 34/34 | 0 ✓ |
+| analytics_ab_test_mix_shift_decision | 30/46 | 30/46 | 0 ✓ | 27/46 | -3 |
+| tool_planning_search_diagnose_patch | 41/66 | 45/66 | +4 | 41/66 | 0 ✓ |
+| reasoning_settled_blame_purdue_opioid | 18/50 | 24/50 | +6 | 8/50 | **-10** |
+| critique_without_sandwich | 8/23 | 5/23 | -3 | 8/23 | 0 ✓ |
+| **MAE from rule** | | | **2.1** | | **2.5** |
+| **Exact matches** | | | **4/8** | | **5/8** |
+| **Bias direction** | | | over (+3↑ 1↓) | | under (0↑ 3↓) |
+
+**Verdict: `gpt-5-mini` via Copilot CLI is the preferred dev-time draft judge.**
+- Lower MAE, faster (~11 s/task via SDK bridge), free (0 premium requests).
+- Failure mode is slight over-penalisation — a false positive is caught and correctable; false negatives silently hide regressions.
+- The 120B GGUF was unexpectedly lenient on the reasoning task (-10 pts), likely a quantisation degradation on open-ended evaluative judgment. Treat it as a useful long-form commentary tool rather than a scoring authority.
+
+**Recommended dev-time workflow:**
+```bash
+# Fast rubric iteration — zero cost
+roughbench run --responses-dir examples/<task> \
+  --judge-mode llm \
+  --judge-provider copilot-sdk \
+  --judge-model gpt-5-mini
+
+# Stacked: gpt-5-mini draft, rule final (highest precision)
+roughbench run --judge-mode stacked \
+  --draft-judge-provider copilot-sdk \
+  --draft-judge-model gpt-5-mini \
+  --judge-mode rule
+```
+
+### Judge model versioning note
+
+LLM judge scores are sensitive to model version, prompt phrasing, and temperature.
+A few practical rules for reproducibility:
+
+- **Pin the judge model.** Copilot CLI exposes a stable model alias (e.g. `gpt-5-mini`), but the weights behind an alias can roll forward silently. For any comparison you intend to publish or reference later, record the exact model version string returned by the endpoint in the run report.
+- **Copilot vs direct API.** Routing through Copilot CLI adds a convenience wrapper and a usage-pooling layer. For development iteration this is fine and effectively free. For a production baseline run — especially one that will be compared across time — prefer calling the model vendor API directly with an explicit versioned model id (e.g. `gpt-5-mini-2025-07-15`) so the run is independently reproducible without a Copilot seat.
+- **Re-run trigger.** In practice, by the time a judge model alias rolls to a meaningfully different checkpoint, the subject models in the benchmark will also have changed and the suite will need re-running regardless. The versioning risk is real but lower than it looks; the main guard is noting the alias and date in the run report, not elaborate version pinning machinery.
+- **Token budget awareness.** Copilot's free tier imposes a per-request context limit. For tasks with long artifacts or dense rubrics this can silently truncate the judge prompt; watch for suspiciously clean scores (0 penalties) on artifact-heavy tasks when using the free path. The Copilot tier is appropriate for iterative rubric work; the direct API path is appropriate for final baseline runs.
+
 - Future production runtime orchestration for local agents:
   - endpoint/model discovery across local servers such as LM Studio, with cached lookup and a TTL refresh
   - subject scheduling by model so runs are grouped per loaded model instead of thrashing between tasks
