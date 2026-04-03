@@ -253,15 +253,70 @@ roughbench run --judge-mode stacked \
   --judge-mode rule
 ```
 
+### LLM Judge Comparison — Opus-4.6 vs GPT-5.4 (full suite, 42 tasks)
+
+Comparison run 2026-04-03. SmolLM3 3B responses judged by both models via Copilot CLI SDK bridge.
+Rule-based scores used as ground truth. Eight tasks had rubric max drift (rubrics hardened after
+baseline was captured); percentage-point scores used to neutralise that drift.
+
+**Suite-level totals:**
+
+| Judge | Demerits | % of max |
+|---|---|---|
+| Rule (ground truth) | 454/1329 | 34.2% |
+| Opus-4.6 | 607/1497 | 40.5% |
+| GPT-5.4 | 556/1497 | 37.1% |
+
+**Agreement vs rule (per-task, % score basis):**
+
+| | Opus-4.6 | GPT-5.4 |
+|---|---|---|
+| Mean abs % error (MAPctE) | **17.0 pp** | **18.5 pp** |
+| Mean bias | +6.1 pp (over) | +2.4 pp (over) |
+| Within 5 pp of rule | 16/42 | 11/42 |
+
+**Verdict: No material difference at suite level.** Opus-4.6 edges GPT-5.4 by 1.5 pp MAE; GPT-5.4
+is better calibrated (lower bias). Both are broadly interchangeable for characterising a model's
+overall suite score. Neither reliably replaces rule-based on individual tasks — per-task variance
+is high for both (~17–18 pp MAE vs ~2 pp for gpt-5-mini on structured tasks).
+
+Notable shared blind spots:
+- `agent_rubric_false_competence_spec`: both give 0% vs rule's 40% (under-penalise subtle overconfidence)
+- `ml_distributed_eval_debug`: both at 100% vs rule's 65% (over-penalise)
+- `rag_broad_search_regression_audit`: Opus at 100% vs rule's 61%
+
+Notable divergence (where they differ from each other):
+- `t5_relpebias_failure_mode`: Opus −35 pp, GPT −51 pp — GPT significantly more lenient on mechanism-level ML tasks
+- `nlp_augmentation_structural_corruption`: Opus +45 pp, GPT +16 pp — Opus more aggressive on NLP
+- `swe_scraper_persistent_resumable`: Opus exact match, GPT −40 pp — Opus better on SWE artifact tasks
+
+**Production recommendation:** Use Opus-4.6 via Anthropic Batch API for any publishable baseline
+run (lower cost than direct GPT-5.4, batch available within hours). Use Copilot CLI for development
+iteration only — confirmed working at suite scale.
+
+### Projected cost per suite run (42 tasks, ~4 800 in + 250 out tokens/task)
+
+| Judge model | $/run (direct) | $/run (batch) | Batch available |
+|---|---|---|---|
+| claude-opus-4.6 | $3.79 | $1.90 | ✓ Anthropic Messages Batch API |
+| claude-sonnet-4.6 | $0.76 | $0.38 | ✓ |
+| gpt-5.4 | $4.85 | N/A | No batch for chat completions |
+| gpt-5-mini | $0.10 | $0.05 | ✓ OpenAI Batch API |
+| gpt-5-mini (Copilot) | Free | — | Copilot seat only |
+
+At 10 suite runs/week (one per subject model): Opus batch ≈ $19/wk, GPT-5.4 direct ≈ $48/wk.
+Sonnet batch is the best cost/quality balance for routine scoring; Opus for final or publishable runs.
+
 ### Judge model versioning note
 
 LLM judge scores are sensitive to model version, prompt phrasing, and temperature.
 A few practical rules for reproducibility:
 
-- **Pin the judge model.** Copilot CLI exposes a stable model alias (e.g. `gpt-5-mini`), but the weights behind an alias can roll forward silently. For any comparison you intend to publish or reference later, record the exact model version string returned by the endpoint in the run report.
-- **Copilot vs direct API.** Routing through Copilot CLI adds a convenience wrapper and a usage-pooling layer. For development iteration this is fine and effectively free. For a production baseline run — especially one that will be compared across time — prefer calling the model vendor API directly with an explicit versioned model id (e.g. `gpt-5-mini-2025-07-15`) so the run is independently reproducible without a Copilot seat.
-- **Re-run trigger.** In practice, by the time a judge model alias rolls to a meaningfully different checkpoint, the subject models in the benchmark will also have changed and the suite will need re-running regardless. The versioning risk is real but lower than it looks; the main guard is noting the alias and date in the run report, not elaborate version pinning machinery.
-- **Token budget awareness.** Copilot's free tier imposes a per-request context limit. For tasks with long artifacts or dense rubrics this can silently truncate the judge prompt; watch for suspiciously clean scores (0 penalties) on artifact-heavy tasks when using the free path. The Copilot tier is appropriate for iterative rubric work; the direct API path is appropriate for final baseline runs.
+- **Pin the judge model.** Copilot CLI exposes stable aliases (e.g. `gpt-5-mini`, `claude-opus-4.6`), but weights behind an alias can roll forward silently. Record the exact version string returned by the endpoint in the run report.
+- **Copilot vs direct API.** For development iteration the Copilot path is free and adequate. For a publishable baseline prefer calling the vendor API directly with an explicit versioned model id (e.g. `claude-opus-4-6-20260301`) so the run is reproducible without a Copilot seat. Anthropic model versions tend to stay available longer than OpenAI's, but by the time an alias meaningfully changes the suite typically needs re-running anyway.
+- **Re-run trigger.** The versioning risk is lower than it looks: note the alias and date in the run report rather than building elaborate version-pinning machinery. A meaningful judge checkpoint change and a meaningful subject model change will almost always co-occur.
+- **Token budget awareness.** Copilot's free tier can silently truncate long artifact-heavy judge prompts. Watch for suspiciously clean scores (0 penalties) on artifact tasks when using the free path. The Copilot tier is appropriate for rubric iteration; the direct API path is appropriate for final baseline runs.
+- **Batch API for production.** Both Anthropic and OpenAI offer ~50% batch discounts with results delivered within hours. For any run over 20 tasks the batch path is the right default — cost is low enough that saving it for "big" runs is unnecessary friction.
 
 - Future production runtime orchestration for local agents:
   - endpoint/model discovery across local servers such as LM Studio, with cached lookup and a TTL refresh
