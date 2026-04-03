@@ -40,3 +40,15 @@ subjects:
     max_tokens: 10000
     timeout_seconds: 180
     notes: Fast local baseline model; may emit `<think>` blocks and other reasoning-style response wrappers.
+
+  - id: glm_5_1_zai
+    title: GLM-5.1 (Z.AI Coding Plan)
+    base_url: https://api.z.ai/api/coding/paas/v4
+    model: glm-5.1
+    api_key: env:ZAI_API_KEY
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 180
+    reasoning_effort: medium
+    direct_answer_first: false
+    notes: Experimental GLM coding-plan endpoint (Z.AI). Requires account resource package for full runs.
