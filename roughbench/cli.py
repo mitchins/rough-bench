@@ -645,6 +645,7 @@ def _run_compare_subject(
                 payload = raw
                 if subject_save_dir is not None:
                     payload["progress_path"] = str(progress_path)
+                print(f"[compare] subject {subject.id}: found existing complete progress (using cache).")
                 return payload
         except Exception:
             # If progress file is unreadable, fall back to full run.
@@ -654,6 +655,10 @@ def _run_compare_subject(
 
     # Run only tasks that are not already completed in the progress file.
     tasks_to_run = [t for t in tasks if t.id not in existing_task_ids]
+
+    print(
+        f"[compare] subject {subject.id}: cache={args.cache}, existing_tasks={len(existing_task_ids)}, tasks_to_run={len(tasks_to_run)}"
+    )
 
     for task in tasks_to_run:
         scorecard, failure = _evaluate_task_with_retries(
