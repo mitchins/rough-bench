@@ -324,6 +324,47 @@ A few practical rules for reproducibility:
   - load-aware execution: request model A, wait up to roughly 5 minutes for it to load, run its assigned tasks, then request model B and let TTL-based unload/reload happen automatically
   - this should be treated as runner orchestration, not benchmark logic
 
+## Enshrined Judge Policy
+
+The following judges are evaluated and recommended for RoughBench use. The rule-based judge remains the canonical anchor; all LLM judges are supplementary and must be recorded in run metadata (model id, alias, prompt, temp).
+
+Summary table (holistic):
+
+- Opus (Anthropic, via Copilot SDK)
+  - Strengths: detailed judgments, strong on SWE/artifact tasks
+  - Behavior: tends to over-penalize; longer outputs
+  - Cost (measured): ~$1.18 / 42-task run (batch ≈ 50% discount)
+  - Role: final LLM reviewer for stacked/hybrid flows (publishable baselines)
+
+- GPT-5.4 (via Copilot SDK)
+  - Strengths: shorter, cheaper judgments; better calibration on average
+  - Behavior: more lenient on some mechanism-level ML tasks
+  - Cost (measured): ~$0.55 / 42-task run (short-rate); long-rate ~$1.07; batch available
+  - Role: cost-efficient production LLM reviewer (use batch API for recurring scoring)
+
+- gpt-5-mini (via Copilot SDK / Copilot seat)
+  - Strengths: fast, conservative (slight over-penalization), low cost (free via Copilot)
+  - Role: developer draft judge for rapid rubric iteration and regression catching
+
+- GPT-OSS-120B (local, llama.cpp)
+  - Strengths: local commentary, zero monetary cost
+  - Weaknesses: stability, quantization artifacts, occasional false negatives on reasoning
+  - Role: diagnostics and local commentary only; not recommended as primary production judge
+
+Hybrid / Stacked recommendation
+
+1. Rule-based judge is the authoritative anchor for all reported scores.
+2. For development: use gpt-5-mini (Copilot) as the draft judge for fast iteration.
+3. For publishable baselines: run a stacked flow — draft = gpt-5-mini (fast), final LLM reviewer = Opus-4.6 (Anthropic batch) OR GPT-5.4 (batch) if cost constrained.
+4. For recurring production scoring where cost matters: use GPT-5.4 via batch as the LLM reviewer with the rule anchor retained.
+
+Operational implications (short):
+- Always record model alias and returned exact version in run metadata.
+- Trigger manual audits on per-task Δ > 5 percentage points or Δ penalty ≥ 8.
+- Use batch APIs for final runs; Copilot SDK is fine for iteration but do not rely on it for publishable baselines.
+
+This policy is now the recorded judge guidance for RoughBench v1 hardening and release. If you want it duplicated into README.md or a separate JUDGING.md, say which and I'll add it and commit.
+
 ## Recent Checks
 
 - refusal-flavored-incompetence candidates built:
