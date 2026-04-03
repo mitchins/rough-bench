@@ -345,6 +345,11 @@ def _add_run_arguments(parser: argparse.ArgumentParser) -> None:
         help="Write the JSON report to a file.",
     )
     parser.add_argument(
+        "--pristine",
+        action="store_true",
+        help="Ignore saved progress and re-run tasks even if previously persisted.",
+    )
+    parser.add_argument(
         "--judge-mode",
         choices=("rule", "llm", "stacked", "hybrid"),
         default=os.getenv("ROUGHBENCH_JUDGE_MODE", "rule"),
@@ -610,9 +615,46 @@ def _run_compare_subject(
 ) -> dict[str, Any]:
     runner = _runner_for_subject(subject, args.save_runs_dir)
     subject_save_dir = _subject_save_dir(subject, args.save_runs_dir)
+
+    # Resume support: if a progress file exists and --pristine not set, load existing
+    # scorecards and failures and only run missing tasks.
     scorecards: list[TaskScorecard] = []
     failures: list[dict[str, Any]] = []
-    for task in tasks:
+    existing_task_ids: set[str] = set()
+
+    progress_path = None
+    if subject_save_dir is not None:
+        progress_path = subject_save_dir / ".roughbench_compare_subject.json"
+    if progress_path is not None and progress_path.exists() and not getattr(args, "pristine", False):
+        try:
+            raw = json.loads(progress_path.read_text(encoding="utf-8"))
+            report = raw.get("report", {})
+            existing_results = report.get("task_results", [])
+            for item in existing_results:
+                try:
+                    scorecards.append(TaskScorecard.from_dict(item))
+                    existing_task_ids.add(item.get("task_id"))
+                except Exception:
+                    # ignore malformed existing entries
+                    continue
+            failures = raw.get("failures", []) or []
+            # If the existing run already completed everything successfully, return it.
+            if len(existing_results) >= len(tasks) and not failures:
+                # ensure progress_path is included in payload
+                payload = raw
+                if subject_save_dir is not None:
+                    payload["progress_path"] = str(progress_path)
+                return payload
+        except Exception:
+            # If progress file is unreadable, fall back to full run.
+            scorecards = []
+            failures = []
+            existing_task_ids = set()
+
+    # Run only tasks that are not already completed in the progress file.
+    tasks_to_run = [t for t in tasks if t.id not in existing_task_ids]
+
+    for task in tasks_to_run:
         scorecard, failure = _evaluate_task_with_retries(
             task,
             runner,
@@ -644,6 +686,8 @@ def _run_compare_subject(
             scorecards=scorecards,
             failures=failures,
         )
+
+    # Build a combined payload that reflects both previous and newly-computed results.
     return _build_compare_subject_payload(
         subject=subject,
         requested_task_count=len(tasks),
