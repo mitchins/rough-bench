@@ -1,0 +1,181 @@
+:root {
+  --rb-ink: #11211d;
+  --rb-muted: #5e6f69;
+  --rb-border: #d5ddd9;
+  --rb-panel: #f8fbf8;
+  --rb-accent: #0b6b57;
+  --rb-accent-soft: #dff4eb;
+  --rb-warn: #8b5e00;
+  --rb-warn-soft: #fff4d6;
+  --rb-bad: #8a1c1c;
+  --rb-bad-soft: #fde3e3;
+}
+
+.rb-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.rb-top-cards {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin: 1rem 0 1.5rem;
+}
+
+.rb-card,
+.rb-panel {
+  border: 1px solid var(--rb-border);
+  background: var(--rb-panel);
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+.rb-card h3,
+.rb-panel h3 {
+  margin-top: 0;
+  margin-bottom: 0.35rem;
+}
+
+.rb-card-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--rb-ink);
+}
+
+.rb-card-note,
+.rb-muted {
+  color: var(--rb-muted);
+}
+
+.rb-controls {
+  margin: 1rem 0;
+}
+
+.rb-inline-controls {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.rb-inline-controls > div {
+  min-width: 240px;
+}
+
+.rb-controls label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.rb-controls select {
+  width: 100%;
+  max-width: 480px;
+  border: 1px solid var(--rb-border);
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+  background: white;
+}
+
+.rb-two-col {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  margin: 1rem 0;
+}
+
+.rb-table-wrap {
+  overflow-x: auto;
+}
+
+.rb-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.rb-table th,
+.rb-table td {
+  border-bottom: 1px solid var(--rb-border);
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.rb-table th {
+  font-size: 0.84rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--rb-muted);
+}
+
+.rb-badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.18rem 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.rb-badge-clean {
+  background: var(--rb-accent-soft);
+  color: var(--rb-accent);
+}
+
+.rb-badge-tainted {
+  background: var(--rb-warn-soft);
+  color: var(--rb-warn);
+}
+
+.rb-badge-partial,
+.rb-badge-failed {
+  background: var(--rb-bad-soft);
+  color: var(--rb-bad);
+}
+
+.rb-bar-track {
+  background: #edf2ef;
+  border-radius: 999px;
+  height: 10px;
+  overflow: hidden;
+  min-width: 120px;
+}
+
+.rb-bar-fill {
+  background: linear-gradient(90deg, #0b6b57, #34a37e);
+  height: 100%;
+}
+
+.rb-delta-positive {
+  color: var(--rb-accent);
+  font-weight: 700;
+}
+
+.rb-delta-negative {
+  color: var(--rb-bad);
+  font-weight: 700;
+}
+
+.rb-award-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.4rem;
+}
+
+.rb-award-pill {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: var(--rb-accent-soft);
+  color: var(--rb-accent);
+  border: 1px solid #bfe7d7;
+}
+
+#rb-radar svg {
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}

@@ -74,6 +74,13 @@ penalties:
       - this will be publishable
       - this is publishable
       - stand as a strong literary novel
+      - no. it does not
+      - no, it does not
+      - no. it doesn't
+      - no, it doesn't
+      - this is not literary fiction
+      - required for a publishable
+      - an immediate disqualifier
   - id: affirmative_verdict
     description: Explicitly says the excerpt does have the bones of a publishable literary novel.
     points: 6

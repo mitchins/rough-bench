@@ -1,24 +1,26 @@
 subjects:
   - id: gpt_oss_20b_local
     title: GPT-OSS 20B local
+    params_billion: 20
     base_url: http://192.168.1.14:8000/v1
     model: openai/gpt-oss-20b
     api_key: dummy
     temperature: 0.0
     max_tokens: 10000
-    timeout_seconds: 180
+    timeout_seconds: 600
     reasoning_effort: low
     direct_answer_first: true
     notes: Baseline stronger local subject model.
 
   - id: qwen3_4b_local
     title: Qwen3 4B local
+    params_billion: 4
     base_url: http://192.168.4.224:1234/v1
     model: qwen/qwen3-4b-2507
     api_key: dummy
     temperature: 0.0
     max_tokens: 10000
-    timeout_seconds: 180
+    timeout_seconds: 600
     notes: Expected weaker local subject model for surfacing failure modes.
 
   - id: devstral_small_local
@@ -28,19 +30,200 @@ subjects:
     api_key: dummy
     temperature: 0.0
     max_tokens: 10000
-    timeout_seconds: 180
+    timeout_seconds: 600
     notes: Useful smaller coding-oriented local subject model to compare against GPT-OSS 20B and Qwen 4B.
 
   - id: qwen3_4b_thinking_local
     title: Qwen3 4B Thinking local
+    params_billion: 4
     base_url: http://192.168.1.14:8001/v1
     model: Qwen/Qwen3-4B-Thinking-2507
     api_key: dummy
     temperature: 0.0
-    max_tokens: 10000
-    timeout_seconds: 180
+    max_tokens: 20000
+    timeout_seconds: 600
     direct_answer_first: true
     notes: Local vLLM-served Qwen thinking model on the LAN endpoint.
+
+  - id: qwen3_8b_local
+    title: Qwen3 8B local
+    params_billion: 8
+    base_url: http://192.168.1.14:8001/v1
+    model: Qwen/Qwen3-8B
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 600
+    direct_answer_first: true
+    notes: Local vLLM-served Qwen 8B on the hot-swapped LAN endpoint.
+
+  - id: gemma_4_e4b_local
+    title: Gemma 4 E4B local
+    params_billion: 4
+    base_url: http://192.168.1.14:8001/v1
+    model: google/gemma-4-E4B-it
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 2048
+    timeout_seconds: 600
+    notes: Local vLLM-served Gemma 4 E4B on the hot-swapped LAN endpoint.
+
+  - id: smollm3_3b_local
+    title: SmolLM3 3B local
+    params_billion: 3
+    base_url: http://192.168.1.14:8001/v1
+    model: HuggingFaceTB/SmolLM3-3B
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 2048
+    timeout_seconds: 600
+    direct_answer_first: true
+    notes: Local vLLM-served SmolLM3 3B on the hot-swapped LAN endpoint.
+
+  - id: qwen3_5_4b_local
+    title: Qwen3.5 4B local
+    params_billion: 4
+    base_url: http://192.168.1.14:8001/v1
+    model: Qwen/Qwen3.5-4B
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 20000
+    timeout_seconds: 600
+    direct_answer_first: true
+    notes: Local vLLM-served Qwen3.5 4B on the hot-swapped LAN endpoint.
+
+  - id: qwen3_5_9b_local
+    title: Qwen3.5 9B local
+    params_billion: 9
+    base_url: http://192.168.1.14:8001/v1
+    model: Qwen/Qwen3.5-9B
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 20000
+    timeout_seconds: 600
+    direct_answer_first: true
+    notes: Local vLLM-served Qwen3.5 9B on the hot-swapped LAN endpoint.
+
+  - id: glm_4_6v_flash_labpc
+    title: GLM-4.6V-Flash lab-pc (ethernet)
+    base_url: http://192.168.4.3:8000/v1
+    model: zai-org/GLM-4.6V-Flash
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 20000
+    timeout_seconds: 600
+    notes: Local vLLM-served GLM-4.6V-Flash on lab-pc over wired LAN.
+
+  - id: gemma_3_1b_labpc
+    title: Gemma 3 1B lab-pc (ethernet)
+    params_billion: 1
+    base_url: http://192.168.4.3:8000/v1
+    model: google/gemma-3-1b-it
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 600
+    notes: Local vLLM-served Gemma 3 1B on lab-pc over wired LAN. Cheap low-end baseline run.
+
+  - id: lfm_2_5_1_2b_labpc
+    title: LFM 2.5 1.2B lab-pc (ethernet)
+    params_billion: 1.2
+    base_url: http://192.168.4.3:8000/v1
+    model: LiquidAI/LFM2.5-1.2B-Instruct
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 600
+    notes: Local vLLM-served LiquidAI LFM2.5 1.2B on lab-pc over wired LAN. Small-model baseline with large context headroom.
+
+  - id: gemma_3_4b_router
+    title: Gemma 3 4B router
+    params_billion: 4
+    base_url: http://192.168.1.26:8080/v1
+    model: "gemma-3-4b-it [google]"
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 600
+    notes: Router-backed Google Gemma 3 4B via local OpenAI-compatible pass-through.
+
+  - id: gemma_3_12b_router
+    title: Gemma 3 12B router
+    params_billion: 12
+    base_url: http://192.168.1.26:8080/v1
+    model: "gemma-3-12b-it [google]"
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 600
+    notes: Router-backed Google Gemma 3 12B via local OpenAI-compatible pass-through.
+
+  - id: gemma_3_27b_router
+    title: Gemma 3 27B router
+    params_billion: 27
+    base_url: http://192.168.1.26:8080/v1
+    model: "gemma-3-27b-it [google]"
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 600
+    notes: Router-backed Google Gemma 3 27B via local OpenAI-compatible pass-through.
+
+  - id: gemma_3n_e2b_router
+    title: Gemma 3n E2B router
+    params_billion: 2
+    base_url: http://192.168.1.26:8080/v1
+    model: "gemma-3n-e2b-it [google]"
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 600
+    notes: Router-backed Google Gemma 3n E2B via local OpenAI-compatible pass-through.
+
+  - id: gemma_3n_e4b_router
+    title: Gemma 3n E4B router
+    params_billion: 4
+    base_url: http://192.168.1.26:8080/v1
+    model: "gemma-3n-e4b-it [google]"
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 600
+    notes: Router-backed Google Gemma 3n E4B via local OpenAI-compatible pass-through.
+
+  - id: gemma_4_26b_a4b_router
+    title: Gemma 4 26B A4B router
+    params_billion: 4
+    base_url: http://192.168.1.26:8080/v1
+    model: "gemma-4-26b-a4b-it [google]"
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 600
+    notes: Router-backed Google Gemma 4 26B A4B via local OpenAI-compatible pass-through.
+
+  - id: gemma_4_31b_router
+    title: Gemma 4 31B router
+    params_billion: 31
+    base_url: http://192.168.1.26:8080/v1
+    model: "gemma-4-31b-it [google]"
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 600
+    notes: Router-backed Google Gemma 4 31B via local OpenAI-compatible pass-through.
+
+  - id: qwen3_5_2b_labpc
+    title: Qwen3.5 2B lab-pc (ethernet)
+    params_billion: 2
+    base_url: http://192.168.4.3:8000/v1
+    model: Qwen/Qwen3.5-2B
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 50000
+    timeout_seconds: 600
+    direct_answer_first: true
+    notes: Local vLLM-served Qwen3.5 2B on lab-pc over wired LAN. High output cap because the model may sprawl badly.
 
   - id: glm_5_1_zai
     title: GLM-5.1 (Z.AI Coding Plan)
@@ -78,3 +261,75 @@ subjects:
     thinking_type: disabled
     direct_answer_first: false
     notes: GLM-4.5-Air on the Z.AI coding-plan endpoint.
+
+  - id: glm_4_5_zai
+    title: GLM-4.5 (Z.AI Coding Plan)
+    base_url: https://api.z.ai/api/coding/paas/v4
+    model: glm-4.5
+    api_key: env:ZAI_API_KEY
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 180
+    thinking_type: disabled
+    direct_answer_first: false
+    notes: GLM-4.5 on the Z.AI coding-plan endpoint.
+
+  - id: glm_4_5_flash_zai
+    title: GLM-4.5-Flash (Z.AI Coding Plan)
+    base_url: https://api.z.ai/api/coding/paas/v4
+    model: glm-4.5-Flash
+    api_key: env:ZAI_API_KEY
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 180
+    thinking_type: disabled
+    direct_answer_first: false
+    notes: GLM-4.5-Flash on the Z.AI coding-plan endpoint.
+
+  - id: glm_4_6_zai
+    title: GLM-4.6 (Z.AI Coding Plan)
+    base_url: https://api.z.ai/api/coding/paas/v4
+    model: GLM-4.6
+    api_key: env:ZAI_API_KEY
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 180
+    thinking_type: disabled
+    direct_answer_first: false
+    notes: GLM-4.6 on the Z.AI coding-plan endpoint.
+
+  - id: glm_4_7_flash_zai
+    title: GLM-4.7-Flash (Z.AI Coding Plan)
+    base_url: https://api.z.ai/api/coding/paas/v4
+    model: GLM-4.7-Flash
+    api_key: env:ZAI_API_KEY
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 180
+    thinking_type: disabled
+    direct_answer_first: false
+    notes: GLM-4.7-Flash on the Z.AI coding-plan endpoint.
+
+  - id: glm_4_7_flashx_zai
+    title: GLM-4.7-FlashX (Z.AI Coding Plan)
+    base_url: https://api.z.ai/api/coding/paas/v4
+    model: GLM-4.7-FlashX
+    api_key: env:ZAI_API_KEY
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 180
+    thinking_type: disabled
+    direct_answer_first: false
+    notes: GLM-4.7-FlashX on the Z.AI coding-plan endpoint.
+
+  - id: glm_5_turbo_zai
+    title: GLM-5-Turbo (Z.AI Coding Plan)
+    base_url: https://api.z.ai/api/coding/paas/v4
+    model: GLM-5-Turbo
+    api_key: env:ZAI_API_KEY
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 180
+    thinking_type: disabled
+    direct_answer_first: false
+    notes: GLM-5-Turbo on the Z.AI coding-plan endpoint.

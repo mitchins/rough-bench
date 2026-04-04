@@ -76,6 +76,11 @@ penalties:
       - training loss can still decrease
       - eval path is broken
       - training path is different
+      - training looks healthy
+      - training looks fine
+      - eval is broken
+      - training appears normal
+      - training seems fine
   - id: generic_debug_boilerplate
     description: Falls back to generic distributed debugging advice instead of the seq2seq-specific diagnosis.
     points: 4

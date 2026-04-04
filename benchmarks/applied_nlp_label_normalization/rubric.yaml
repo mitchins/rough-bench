@@ -86,5 +86,15 @@ penalties:
       - batch readout
       - noisy
       - clean
+  - id: sign_in_not_account
+    description: Does not use the account label for the sign-in issue (L1).
+    points: 3
+    missing_any:
+      - account
+  - id: freeze_not_bug
+    description: Does not use the bug label for the app-freeze issue (L5).
+    points: 3
+    missing_any:
+      - bug
 expected_artifacts: []
 judge_instructions: Reward closed-taxonomy normalization and explicit review flags. The answer should normalize each raw label rather than inventing extra classes or leaving the vague row unmarked.

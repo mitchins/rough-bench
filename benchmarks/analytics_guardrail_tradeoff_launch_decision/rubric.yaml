@@ -71,8 +71,13 @@ penalties:
       - top-line win but downstream loss
       - completion lift but retention loss
       - support burden
+      - burden on the support
       - lower retained users
+      - fewer retained
+      - net loss of retained
+      - leaky bucket
       - worse downstream quality
+      - downstream cost
   - id: launches_despite_downstream_damage
     description: Recommends launch anyway from the top-line result.
     points: 8
@@ -86,5 +91,5 @@ penalties:
     description: Does not give concrete follow-up checks.
     points: 3
     missing_groups:
-      - [funnel quality, intent quality, user quality, segment, acquisition source]
-      - [replay, session review, support ticket taxonomy, instrument, holdout, rerun]
+      - [funnel quality, intent quality, user quality, segment, acquisition source, acquisition channel]
+      - [replay, session review, support ticket taxonomy, support ticket analysis, categorize support, instrument, holdout, rerun, investigate tickets, ticket analysis, dig into]

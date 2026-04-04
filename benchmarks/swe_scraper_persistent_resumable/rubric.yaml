@@ -106,29 +106,29 @@ penalties:
       - structured logs
       - audit trail
   - id: missing_artifact_persistence_impl
-    description: The code artifact does not demonstrate concrete durable-state implementation.
+    description: The code does not demonstrate concrete durable-state implementation.
     points: 4
-    missing_artifact_text_groups:
-      - [sqlite3.connect, sqlite3]
-      - [create table if not exists checkpoints, checkpoints (, checkpoint table]
+    missing_groups:
+      - [sqlite3.connect, sqlite3, database, db_path, shelve, json.dump]
+      - [create table, checkpoints, checkpoint, save_state, persist]
   - id: missing_artifact_resume_impl
-    description: The code artifact does not demonstrate checkpoint or cursor persistence.
+    description: The code does not demonstrate checkpoint or cursor persistence.
     points: 4
-    missing_artifact_text_groups:
-      - [update_checkpoint, checkpoints, checkpoint]
-      - [cursor, last_seen_id, high-water mark]
+    missing_groups:
+      - [update_checkpoint, checkpoint, resume, restart]
+      - [cursor, last_seen_id, high-water mark, offset, page_token, last_page]
   - id: missing_artifact_idempotency_impl
-    description: The code artifact does not demonstrate conflict-safe or idempotent writes.
+    description: The code does not demonstrate conflict-safe or idempotent writes.
     points: 3
-    missing_artifact_text_groups:
-      - [insert into items, save_item, write_item]
-      - [on conflict, upsert, primary key, unique]
+    missing_groups:
+      - [insert into, save_item, write_item, store_item]
+      - [on conflict, upsert, primary key, unique, if not exists, dedup]
   - id: missing_artifact_ops_impl
-    description: The code artifact does not demonstrate concrete logging plus throttling, timeout, or backoff behavior.
+    description: The code does not demonstrate concrete logging plus throttling, timeout, or backoff behavior.
     points: 3
-    missing_artifact_text_groups:
-      - [import logging, logging.getlogger, logger.info, logger.warning, logger.error]
-      - [time.sleep, rate_limit, timeout=, backoff]
+    missing_groups:
+      - [import logging, logging.getlogger, logger.info, logger.warning, logger.error, log.]
+      - [time.sleep, rate_limit, timeout=, backoff, throttle]
   - id: missing_code_artifact
     description: No scraper code artifact was produced.
     points: 2

@@ -104,6 +104,12 @@ penalties:
       - test case
       - sanity check
       - manual review
+      - stress test
+      - test suite
+      - validate the pipeline
+      - validate against
+      - test vector
+      - test sample
       - spot check
       - grammar check
       - pos check

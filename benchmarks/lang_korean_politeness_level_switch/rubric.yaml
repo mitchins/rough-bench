@@ -101,3 +101,13 @@ penalties:
     points: 4
     present_any:
       - 이 버그 좀 봐봐
+  - id: meta_explanation_not_reply
+    description: Provides a meta-explanation or thinking process instead of an actual Korean reply.
+    points: 5
+    present_any:
+      - thinking process
+      - analyze the request
+      - the user wants me
+      - politeness level should
+      - i should respond
+      - let me think about

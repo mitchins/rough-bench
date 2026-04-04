@@ -18,6 +18,9 @@ dependencies = [
 anthropic = [
   "anthropic>=0.40.0",
 ]
+docs = [
+  "mkdocs-material>=9.5",
+]
 
 [project.scripts]
 roughbench = "roughbench.cli:main"

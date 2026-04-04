@@ -63,6 +63,11 @@ penalties:
       - corrupted from step 1
       - corrupts the distribution
       - trained to start from bos
+      - trained to begin generation using the bos
+      - trained to begin with bos
+      - never trained to use as a starting
+      - never trained on eos as
+      - not trained to start from eos
   - id: denies_bos_eos_issue
     description: Explicitly says the BOS versus EOS handling is fine or not a mismatch.
     points: 4

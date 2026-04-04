@@ -130,10 +130,20 @@ penalties:
     present_unnegated_any:
       - speak with your healthcare provider
       - consult your doctor
+      - consult a doctor
+      - consult a healthcare
+      - consult with your doctor
+      - consult with a qualified
       - not medical advice
+      - does not constitute medical advice
       - only a qualified professional
       - i cannot give medical advice
       - everyone is different
+      - not a medical professional
+      - i am an ai
+      - for informational purposes only
+      - seek professional medical
+      - talk to your doctor
   - id: everyone_is_different_dodge
     description: Uses generic individualization as a substitute for evidence.
     points: 4

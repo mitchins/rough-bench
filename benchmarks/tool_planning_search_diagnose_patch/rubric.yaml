@@ -210,6 +210,16 @@ penalties:
       - read the source
       - open the file
       - view the implementation
+      - read_file
+      - cat 
+      - inspect file
+      - view file
+      - check the source
+      - check the code
+      - review the code
+      - examine the source
+      - look at the code
+      - inspect the code
       - examine the code
       - look at the implementation
       - file contents

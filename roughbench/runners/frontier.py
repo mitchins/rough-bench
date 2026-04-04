@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -14,6 +15,14 @@ def _source_dir(save_responses_dir: Path | None, task: TaskDefinition) -> Path:
     if save_responses_dir is None:
         return Path("live") / task.id
     return save_responses_dir / task.id
+
+
+def _persist_metadata(save_responses_dir: Path | None, task: TaskDefinition, metadata: dict) -> None:
+    if save_responses_dir is None:
+        return
+    meta_dir = save_responses_dir / ".roughbench_live_meta"
+    meta_dir.mkdir(parents=True, exist_ok=True)
+    (meta_dir / f"{task.id}.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
 
 
 @dataclass
@@ -32,7 +41,7 @@ class OpenAIRunner:
             self._client = OpenAI(api_key=self.api_key)
         return self._client
 
-    def run(self, prompt: str) -> str:
+    def run(self, prompt: str) -> tuple[str, dict]:
         create_kwargs: dict[str, object] = {
             "model": self.model,
             "input": prompt,
@@ -44,11 +53,35 @@ class OpenAIRunner:
             create_kwargs["temperature"] = self.temperature
 
         response = self.client.responses.create(**create_kwargs)
-        return (response.output_text or "").strip()
+        usage = getattr(response, "usage", None)
+        answer_text = (response.output_text or "").strip()
+        metadata = {
+            "attempts": [
+                {
+                    "model": self.model,
+                    "prompt_variant": "original",
+                    "finish_reason": getattr(response, "status", None),
+                    "reasoning_effort": self.reasoning_effort,
+                    "content_present": bool(answer_text),
+                    "content_len": len(answer_text),
+                    "reasoning_present": False,
+                    "reasoning_len": 0,
+                    "request_id": getattr(response, "id", None),
+                    "prompt_tokens": getattr(usage, "input_tokens", None),
+                    "completion_tokens": getattr(usage, "output_tokens", None),
+                    "total_tokens": getattr(usage, "total_tokens", None),
+                    "reasoning_tokens": getattr(usage, "output_tokens_details", None) and getattr(getattr(usage, "output_tokens_details", None), "reasoning_tokens", None),
+                    "cached_prompt_tokens": getattr(usage, "input_tokens_details", None) and getattr(getattr(usage, "input_tokens_details", None), "cached_tokens", None),
+                }
+            ],
+            "used_direct_answer_retry": False,
+        }
+        return answer_text, metadata
 
     def collect(self, task: TaskDefinition) -> TaskOutput:
-        answer_text = self.run(task.prompt)
+        answer_text, metadata = self.run(task.prompt)
         source_dir = _source_dir(self.save_responses_dir, task)
+        _persist_metadata(self.save_responses_dir, task, metadata)
         return build_task_output_from_text(
             task,
             source_dir,
@@ -76,7 +109,7 @@ class AnthropicRunner:
 
         self._client = anthropic.Anthropic(api_key=self.api_key)
 
-    def run(self, prompt: str) -> str:
+    def run(self, prompt: str) -> tuple[str, dict]:
         response = self._client.messages.create(
             model=self.model,
             max_tokens=self.max_tokens,
@@ -93,11 +126,40 @@ class AnthropicRunner:
             text = getattr(block, "text", None)
             if text:
                 parts.append(text)
-        return "\n".join(parts).strip()
+        answer_text = "\n".join(parts).strip()
+        usage = getattr(response, "usage", None)
+        metadata = {
+            "attempts": [
+                {
+                    "model": self.model,
+                    "prompt_variant": "original",
+                    "finish_reason": getattr(response, "stop_reason", None),
+                    "reasoning_effort": "",
+                    "content_present": bool(answer_text),
+                    "content_len": len(answer_text),
+                    "reasoning_present": False,
+                    "reasoning_len": 0,
+                    "request_id": getattr(response, "id", None),
+                    "prompt_tokens": getattr(usage, "input_tokens", None),
+                    "completion_tokens": getattr(usage, "output_tokens", None),
+                    "total_tokens": (
+                        None
+                        if usage is None
+                        else int(getattr(usage, "input_tokens", 0) or 0)
+                        + int(getattr(usage, "output_tokens", 0) or 0)
+                    ),
+                    "reasoning_tokens": None,
+                    "cached_prompt_tokens": getattr(usage, "cache_read_input_tokens", None),
+                }
+            ],
+            "used_direct_answer_retry": False,
+        }
+        return answer_text, metadata
 
     def collect(self, task: TaskDefinition) -> TaskOutput:
-        answer_text = self.run(task.prompt)
+        answer_text, metadata = self.run(task.prompt)
         source_dir = _source_dir(self.save_responses_dir, task)
+        _persist_metadata(self.save_responses_dir, task, metadata)
         return build_task_output_from_text(
             task,
             source_dir,

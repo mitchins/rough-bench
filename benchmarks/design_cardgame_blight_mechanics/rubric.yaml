@@ -99,8 +99,8 @@ penalties:
     description: Misses the blight-as-weapon exploit created by shared spread cards and relative scoring.
     points: 8
     missing_groups:
-      - [degenerate strategy, dominant strategy, exploit line, optimal line, solved line]
-      - [weaponize blight, offensive blight, deliberately spread, contaminate the border, border tiles, adjacent opponent, use blight offensively]
+      - [degenerate strategy, dominant strategy, exploit line, optimal line, solved line, abuse, griefing, sabotage]
+      - [weaponize blight, offensive blight, deliberately spread, contaminate the border, border tiles, adjacent opponent, use blight offensively, push blight, steer blight, blight toward opponent, weaponize the grid, blight as a weapon, spread blight]
   - id: trade_mechanic_trivial
     description: Trade is generic swapping by mutual agreement with no structural tension.
     points: 5

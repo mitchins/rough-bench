@@ -154,5 +154,5 @@ penalties:
     description: Does not give concrete follow-up checks or actions.
     points: 3
     missing_groups:
-      - [assignment logs, bucketing logs, experiment config, exposure logs, targeting rules, rerandomize, re-randomize, audit the traffic-routing logic, traffic-routing logic, traffic routing logic, funnel leakage]
-      - [rerun, rerun the test, stratify, stratified, rebalance, balanced split, fixed mix, hold mix constant, new experiment, explicitly balances, conditional rollout, feature flag, conversion path]
+      - [assignment logs, bucketing logs, experiment config, exposure logs, targeting rules, rerandomize, re-randomize, audit the traffic-routing logic, traffic-routing logic, traffic routing logic, funnel leakage, randomization, assignment logic, traffic split, allocation logic, assignment code]
+      - [rerun, rerun the test, stratify, stratified, rebalance, balanced split, fixed mix, hold mix constant, new experiment, explicitly balances, conditional rollout, feature flag, conversion path, restart, redo the experiment, per-segment, segment-level]

@@ -175,9 +175,13 @@ penalties:
     present_any:
       - react + vite
       - vite + react
-      - svelte
-      - redux
-      - zustand
+      - we will use svelte
+      - built with svelte
+      - built in svelte
+      - use redux
+      - built with redux
+      - we will use zustand
+      - built with zustand
       - ollama
       - llama 3
       - electron

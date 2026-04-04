@@ -1,12 +1,18 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import ipaddress
 import os
 from pathlib import Path
 from typing import Iterable
 import re
+from urllib.parse import urlparse
 
 import yaml
+
+
+DEFAULT_TIMEOUT_SECONDS = 180
+DEFAULT_LAN_TIMEOUT_SECONDS = 600
 
 
 def _read_yaml(path: Path) -> dict:
@@ -23,6 +29,28 @@ def _slugify(value: str) -> str:
     return slug or "subject"
 
 
+def is_lan_base_url(base_url: str) -> bool:
+    if not base_url:
+        return False
+    parsed = urlparse(base_url if "://" in base_url else f"http://{base_url}")
+    host = (parsed.hostname or "").strip().casefold()
+    if not host:
+        return False
+    if host == "localhost" or host.endswith(".local"):
+        return True
+    try:
+        address = ipaddress.ip_address(host)
+    except ValueError:
+        return False
+    return address.is_private or address.is_loopback or address.is_link_local
+
+
+def default_timeout_seconds_for_endpoint(*, provider: str, base_url: str) -> int:
+    if provider == "openai-compatible" and is_lan_base_url(base_url):
+        return DEFAULT_LAN_TIMEOUT_SECONDS
+    return DEFAULT_TIMEOUT_SECONDS
+
+
 @dataclass(frozen=True)
 class SubjectDefinition:
     id: str
@@ -34,7 +62,7 @@ class SubjectDefinition:
     api_key_env: str = ""
     temperature: float = 0.0
     max_tokens: int = 2000
-    timeout_seconds: int = 180
+    timeout_seconds: int = DEFAULT_TIMEOUT_SECONDS
     direct_answer_first: bool = False
     reasoning_effort: str = ""
     thinking_type: str = ""
@@ -61,17 +89,25 @@ class SubjectDefinition:
         subject_id = str(data["id"])
         title = str(data.get("title", subject_id))
         storage_name = str(data.get("storage_name", _slugify(subject_id)))
+        provider = str(data.get("provider", "openai-compatible"))
+        base_url = str(data.get("base_url", ""))
+        timeout_seconds = int(
+            data.get(
+                "timeout_seconds",
+                default_timeout_seconds_for_endpoint(provider=provider, base_url=base_url),
+            )
+        )
         return cls(
             id=subject_id,
             title=title,
-            provider=str(data.get("provider", "openai-compatible")),
-            base_url=str(data.get("base_url", "")),
+            provider=provider,
+            base_url=base_url,
             model=str(data["model"]),
             api_key=str(data.get("api_key", "")),
             api_key_env=str(data.get("api_key_env", "")),
             temperature=float(data.get("temperature", 0.0)),
             max_tokens=int(data.get("max_tokens", 2000)),
-            timeout_seconds=int(data.get("timeout_seconds", 180)),
+            timeout_seconds=timeout_seconds,
             direct_answer_first=bool(data.get("direct_answer_first", False)),
             reasoning_effort=str(data.get("reasoning_effort", "")),
             thinking_type=str(data.get("thinking_type", "")),

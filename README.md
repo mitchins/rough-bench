@@ -216,6 +216,39 @@ v0 uses a deterministic local judge so the whole stack is runnable without an ex
 3. Put example local outputs under `examples/<new_task_id>/` if you want them included in `demo`.
 4. Run `python -m roughbench list` and `python -m roughbench demo`.
 
+## Docs POC
+
+There is now a static MkDocs-style visualization POC under `docs/`.
+
+Build the JSON payload from saved compare runs:
+
+```bash
+python scripts/build_docs_data.py
+```
+
+Then serve the site:
+
+```bash
+pip install -e .[docs]
+mkdocs serve
+```
+
+Current POC pages:
+
+- `Overview`
+  - overall leaderboard
+  - efficiency leaderboard with a quality floor
+  - single-model category radar and breakdown
+- `Compare`
+  - side-by-side category comparison
+  - biggest per-task deltas
+- `Methodology`
+  - category and efficiency rules
+
+The site is data-driven from `docs/assets/data/docs_data.json`, so later visual
+axes such as perception / VLM categories can be added without changing the page
+structure.
+
 ## Seed Tasks
 
 - `swe_scraper_persistent_resumable`

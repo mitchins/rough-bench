@@ -36,8 +36,8 @@ penalties:
     description: Does not rewrite both thread lines.
     points: 3
     missing_groups:
-      - [先ほどの件、田中さんがそうおっしゃっていました。, 先ほどの件、田中さんがそう言っていました。]
-      - [承知しました。ではその前提で進めます。, かしこまりました。ではその前提で進めます。]
+      - ["[営業]", "[sales]"]
+      - ["[あなた]", "[you]", "[me]"]
   - id: meta_explanation
     description: Explains uchi/soto or keigo instead of outputting only the corrected thread.
     points: 5

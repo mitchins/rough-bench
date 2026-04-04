@@ -12,8 +12,35 @@ from roughbench.judging.evaluator import (
     _normalize,
     _penalty_triggered_with_artifacts,
     _signal_matches_with_artifacts,
+    _strip_think_blocks,
 )
 from roughbench.tasks.models import PenaltyRule, SignalRule
+
+
+class StripThinkBlocksTests(unittest.TestCase):
+    def test_closed_think_block_is_removed(self) -> None:
+        text = "<think>reasoning here</think>The actual answer."
+        self.assertEqual(_strip_think_blocks(text), "The actual answer.")
+
+    def test_unclosed_think_block_is_removed(self) -> None:
+        text = "<think>reasoning that never closes and goes on forever"
+        self.assertEqual(_strip_think_blocks(text), "")
+
+    def test_text_before_unclosed_think_is_kept(self) -> None:
+        text = "Preamble\n<think>reasoning forever"
+        self.assertEqual(_strip_think_blocks(text), "Preamble")
+
+    def test_no_think_block_passes_through(self) -> None:
+        text = "A normal response without any reasoning."
+        self.assertEqual(_strip_think_blocks(text), text)
+
+    def test_case_insensitive(self) -> None:
+        text = "<Think>Some reasoning</Think>Answer"
+        self.assertEqual(_strip_think_blocks(text), "Answer")
+
+    def test_multiple_think_blocks(self) -> None:
+        text = "<think>first</think>Middle<think>second</think>End"
+        self.assertEqual(_strip_think_blocks(text), "MiddleEnd")
 
 
 class NormalizeTests(unittest.TestCase):

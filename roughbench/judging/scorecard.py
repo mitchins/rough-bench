@@ -112,6 +112,12 @@ class BenchmarkReport:
     summary: str
     task_results: tuple[TaskScorecard, ...]
     suite_max_demerits: int | None = None
+    usage_task_count: int | None = None
+    usage_prompt_tokens: int | None = None
+    usage_completion_tokens: int | None = None
+    usage_total_tokens: int | None = None
+    usage_reasoning_tokens: int | None = None
+    usage_cached_prompt_tokens: int | None = None
     lower_is_better: bool = True
 
     @property
@@ -124,6 +130,12 @@ class BenchmarkReport:
             return None
         return round((self.roughbench_demerits / self.suite_max_demerits) * 100.0, 1)
 
+    @property
+    def demerits_per_1k_total_tokens(self) -> float | None:
+        if self.usage_total_tokens in (None, 0):
+            return None
+        return round((self.roughbench_demerits / self.usage_total_tokens) * 1000.0, 2)
+
     def to_dict(self) -> dict:
         return {
             "roughbench_version": __version__,
@@ -131,6 +143,13 @@ class BenchmarkReport:
             "roughbench_score": self.roughbench_score,
             "suite_max_demerits": self.suite_max_demerits,
             "suite_demerit_pct": self.suite_demerit_pct,
+            "usage_task_count": self.usage_task_count,
+            "usage_prompt_tokens": self.usage_prompt_tokens,
+            "usage_completion_tokens": self.usage_completion_tokens,
+            "usage_total_tokens": self.usage_total_tokens,
+            "usage_reasoning_tokens": self.usage_reasoning_tokens,
+            "usage_cached_prompt_tokens": self.usage_cached_prompt_tokens,
+            "demerits_per_1k_total_tokens": self.demerits_per_1k_total_tokens,
             "lower_is_better": self.lower_is_better,
             "judged_at": self.judged_at,
             "summary": self.summary,

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 from roughbench.judging.scorecard import PenaltyHit, SignalHit, TaskScorecard
@@ -7,6 +8,16 @@ from roughbench.runners.base import TaskOutput
 from roughbench.tasks.models import PenaltyRule, SignalRule, TaskDefinition
 
 HEAD_TEXT_LIMIT = 1000
+
+_THINK_RE = re.compile(r"<think>.*?</think>", re.DOTALL | re.IGNORECASE)
+_UNCLOSED_THINK_RE = re.compile(r"<think>.*", re.DOTALL | re.IGNORECASE)
+
+
+def _strip_think_blocks(text: str) -> str:
+    """Remove <think>…</think> reasoning traces so only the actual answer is scored."""
+    result = _THINK_RE.sub("", text)
+    result = _UNCLOSED_THINK_RE.sub("", result)
+    return result.strip()
 
 
 def _normalize(text: str) -> str:
@@ -19,7 +30,10 @@ def _normalize(text: str) -> str:
         ord("\u2015"): "-",
         ord("\u2212"): "-",
     }
-    return " ".join(text.translate(hyphen_variants).casefold().split())
+    text = text.translate(hyphen_variants).casefold()
+    # Strip thousand-separator commas in numbers (e.g. 3,264 → 3264)
+    text = re.sub(r"(?<=\d),(?=\d{3})", "", text)
+    return " ".join(text.split())
 
 
 def _iter_term_spans(text: str, term: str):
@@ -225,8 +239,10 @@ def _penalty_triggered_with_artifacts(
 
 class RuleBasedJudge:
     def evaluate(self, task: TaskDefinition, output: TaskOutput) -> TaskScorecard:
-        normalized_text = _normalize(output.combined_text)
-        normalized_artifact_text = _normalize(output.artifact_text)
+        cleaned_text = _strip_think_blocks(output.combined_text)
+        cleaned_artifact_text = _strip_think_blocks(output.artifact_text)
+        normalized_text = _normalize(cleaned_text)
+        normalized_artifact_text = _normalize(cleaned_artifact_text)
 
         passed_signals = tuple(
             SignalHit(id=rule.id, description=rule.description)

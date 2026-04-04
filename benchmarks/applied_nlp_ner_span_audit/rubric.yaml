@@ -91,5 +91,15 @@ penalties:
       - exact spans
       - titles
       - epithets
+  - id: secondary_entities_dropped
+    description: Missing secondary named entities from the passage.
+    points: 3
+    missing_any:
+      - glokta
+      - kotar
+      - mara
+      - oslo
+      - team meridian
+      - northwind
 expected_artifacts: []
 judge_instructions: Reward exact surface spans, especially when titles and epithets are part of the mention. Penalize any answer that normalizes those spans away or turns the task into generic NER advice.

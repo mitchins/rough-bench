@@ -96,6 +96,12 @@ penalties:
       - most errors
       - majority
       - boundary repair
+      - error type
+      - error category
+      - systematic
+      - recurring
+      - most common
+      - dominant error
       - boundary errors
       - truncated spans
       - overall

@@ -1,0 +1,27 @@
+site_name: RoughBench
+site_description: Static benchmark explorer for RoughBench runs
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+
+nav:
+  - Overview: index.md
+  - Compare: compare.md
+  - Categories:
+      - Categories Overview: categories/index.md
+      - Build & Systems: categories/build-systems.md
+      - ML & NLP Engineering: categories/ml-nlp-engineering.md
+      - Search & Analytics: categories/search-analytics.md
+      - Language & Localization: categories/language-localization.md
+      - Planning & Product: categories/planning-product.md
+      - Judgment & Creative: categories/judgment-creative.md
+  - Methodology: methodology.md
+
+extra_css:
+  - assets/stylesheets/roughbench.css
+
+extra_javascript:
+  - assets/javascripts/roughbench-docs.js

@@ -76,44 +76,43 @@ penalties:
   - id: no_state_machine
     description: No explicit named state model is visible.
     points: 5
-    missing_artifact_text_groups:
-      - [enum, class gamephase, class sessionstate]
+    missing_groups:
+      - [enum, class gamephase, class sessionstate, state =, game_state]
       - [waiting_for_players, waiting, lobby]
       - [question_open, in_question, accepting_answers]
       - [game_over, finished, complete]
   - id: race_condition_unaddressed
     description: The server does not visibly serialize contested answer resolution.
     points: 6
-    missing_artifact_text_groups:
-      - [asyncio.lock, answer_lock, score_lock, resolution_lock, asyncio.queue, answer_queue]
-      - [current_question_open, question_open, question_resolved, answered_question]
+    missing_groups:
+      - [asyncio.lock, answer_lock, score_lock, resolution_lock, asyncio.queue, answer_queue, lock.acquire, threading.lock]
+      - [current_question_open, question_open, question_resolved, answered_question, first_correct, already_answered]
   - id: disconnect_not_handled
     description: Disconnect handling is not visible in the server implementation.
     points: 5
-    missing_artifact_text_groups:
-      - [connectionclosed, websockets.connectionclosed]
-      - [unregister_player, remove_player, players.pop, players.discard]
+    missing_groups:
+      - [connectionclosed, websockets.connectionclosed, .remove(, disconnected]
+      - [unregister_player, remove_player, players.pop, players.discard, del players, players.remove]
   - id: timeout_missing
     description: No fixed question timeout with progression is visible.
     points: 4
-    missing_artifact_text_groups:
-      - [question_timeout_seconds, 10.0, 10]
-      - [asyncio.sleep, asyncio.wait_for]
-      - [expired, next_question, advance_question]
+    missing_groups:
+      - [question_timeout, 10.0, 10, timeout]
+      - [asyncio.sleep, asyncio.wait_for, sleep(]
+      - [expired, next_question, advance_question, timed out]
   - id: dirty_shutdown
-    description: The artifact does not visibly close websocket connections on shutdown.
+    description: Does not visibly close websocket connections on shutdown.
     points: 3
-    missing_artifact_text_groups:
-      - [shutdown, end_game, close_session]
-      - [await websocket.close, await ws.close, connection.close]
-      - [wait_closed, websocket.wait_closed]
+    missing_groups:
+      - [shutdown, end_game, close_session, close(), cleanup]
+      - [await websocket.close, await ws.close, connection.close, .close(]
   - id: client_is_pseudocode
-    description: The client artifact is missing the minimum structure of runnable websocket client code.
+    description: The client is missing the minimum structure of runnable websocket client code.
     points: 4
-    missing_artifact_text_groups:
-      - [websockets.connect]
-      - [asyncio.run, async def main]
-      - [input(, asyncio.to_thread]
+    missing_groups:
+      - [websockets.connect, connect(]
+      - [asyncio.run, async def main, async def]
+      - [input(, asyncio.to_thread, user input]
   - id: claims_total_completeness
     description: The prose claims the implementation handles all edge cases, which is not expected for a minimal build.
     points: 2
