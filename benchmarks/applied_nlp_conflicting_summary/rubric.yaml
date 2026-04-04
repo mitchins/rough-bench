@@ -91,5 +91,54 @@ penalties:
       - shards are the cause
       - shards are responsible for
       - shards are to blame
+  - id: source_label_parroting
+    description: Uses source labels as list prefixes instead of synthesizing.
+    points: 2
+    present_any:
+      - "s1:"
+      - "s2:"
+      - "s3:"
+      - "s4:"
+      - "s5:"
+  - id: emits_thinking_chain
+    description: Emits visible thinking or reasoning block instead of answering directly.
+    points: 3
+    present_any:
+      - "</think>"
+      - "<think>"
+  - id: misses_tokenizer_drift_discussion
+    description: Fails to name tokenizer drift and flag it as uncertain.
+    points: 3
+    missing_groups:
+      - [tokenizer drift, tokenization drift]
+      - [suspected, suspicion, uncertain, unconfirmed, unsubstantiated, hypothesis, not confirmed, not settled, not established, unverified, not proven, not definitively]
+  - id: self_referential_synthesis
+    description: Talks about its own synthesis instead of synthesizing.
+    points: 2
+    present_any:
+      - the conservative synthesis acknowledges
+      - the synthesis acknowledges
+      - this synthesis acknowledges
+      - this section summarizes
+      - this section provides
+  - id: overclaims_throughput_causation
+    description: Claims a causal mechanism for the throughput improvement beyond what sources state.
+    points: 2
+    present_unnegated_any:
+      - primary driver of throughput
+      - main driver of throughput
+      - caused the throughput improvement
+      - key driver of throughput
+      - directly led to the throughput
+  - id: invents_unsourced_explanation
+    description: Introduces technical concepts not present in any source as causal explanations.
+    points: 2
+    present_unnegated_any:
+      - data retention
+      - retrieval efficiency
+      - network latency
+      - data corruption
+      - system configuration
+      - data alignment
 expected_artifacts: []
 judge_instructions: Reward conservative synthesis over confident narrative closure. The response should keep confirmed facts, uncertainty, and follow-up checks separate.
