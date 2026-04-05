@@ -170,6 +170,10 @@ These were useful suggestions, but are not currently counted in the current rele
 - `analytics_guardrail_tradeoff_launch_decision`: promoted into the counted release set to deepen the analytics family beyond one fixed-mix A/B leaf.
 - `reasoning_asimov_three_laws_trolley_breakdown`: worth keeping as a leaf task in a future narrative/reasoning family. The useful trap is that weak models smuggle in body-count utilitarianism, while the real pressure point is the First Law inaction clause plus the fact that Asimov's stories often treat unresolved Law conflicts as paralysis, pathological reinterpretation, or evasive reframing rather than clean optimization.
 - `worldbuild_voluntary_forgetting`: worth keeping as a leaf task in a future narrative/worldbuilding family. The useful trap is that weak models turn it into "person with exceptional memory" or exposition-heavy lore, while the real pressure point is whether the scene makes the social cost of remembering everything structurally ordinary and whether the follow-up analysis names the load-bearing infrastructure that passive forgetting currently provides.
+- `nutrition_table_from_variable_ingredients`: built as a reference leaf for practical arithmetic fidelity. The useful trap is scaling per-100g nutrition rows to awkward ingredient weights, then keeping totals and per-serving numbers consistent instead of copying source rows or drifting into diet advice.
+- `nutrition_multi_component_meal_servings`: built as a harder sibling nutrition leaf. The useful trap is preserving component boundaries across bread, patties, sauce, and a fixed topping, then still landing on the correct whole-meal and per-serving totals.
+- `smarthome_occupancy_inference_alert`: built as a reference leaf for proportional temporal inference. The useful trap is deciding between intrusion escalation and a low-priority occupancy check when phone presence is unavailable, one sensor is imperfect, and the event pattern looks home-like rather than hostile.
+- `smarthome_conflicting_signals_pet_vs_intrusion`: built as a harder sibling smart-home leaf. The useful trap is integrating pet-device evidence, a weak computer-vision classifier event, and a degraded contact sensor without collapsing into either false alarmism or blind dismissal.
 - `anime_overlay_classifier_ood_pipeline`: still a valid idea, but VLM-specific evaluation is out of phase-1 scope for now because model availability and comparability are too uneven. Revisit when a stable visual-model lane exists.
 - `math_decimal_shift_batch`: fine as a later low-cost reliability leaf. Useful for checking batch consistency, equation setup, and "show all working" compliance across near-duplicate school-math prompts, but not important enough for the core 20.
 - `train_inference_mismatch_audit`: real underlying failure mode, but the current prompt shape invites shotgun code-audit behavior. Keep the idea, but revisit it later as a broader semantic train-vs-inference mismatch task rather than a near-core singleton.
@@ -617,3 +621,14 @@ This policy is now the recorded judge guidance for RoughBench v1 hardening and r
   - GPT-OSS identified the relative-position bucket path as primary and explained the threshold mechanically, but still did not isolate it in the most direct way; it relied on higher-level checks instead of explicitly printing bucket ids from the function
   - Qwen knew the component family, but it did not explain the threshold shape, did not give a direct isolation check, and did not make the fix concrete
   - note: the task deliberately rewards exact-log bucket-structure knowledge, but the judge does not require the model to claim that the canonical T5 exact/log split itself is at 24 or 25
+- `smarthome_toolcall_notification_triage` drafted:
+  - sibling of the smart-home ambiguity leaf
+  - tests bounded tool choice, cheap evidence/media gathering, and notification payload quality
+- `aquarium_ph_crash_triage` drafted:
+  - practical-reasoning leaf with a plausible but wrong CO2 explanation, a real water-change dilution diagnosis, and a separate filter red herring
+- `nutrition_two_component_bowl_fixed_topping` drafted:
+  - intended middle rung between the simple ingredient-scaling leaf and the harder multi-component burger leaf
+  - two components, one fixed topping, 3-serving recombination
+- `home_energy_ev_charge_decision` drafted:
+  - practical-reasoning household-energy leaf for Home Assistant-style charge scheduling
+  - useful trap is that weak models default to `wait for solar`, while stronger models integrate departure time, charger throughput, off-peak pricing, and forecast uncertainty and pick the overnight window

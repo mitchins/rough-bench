@@ -223,14 +223,23 @@ There is now a static MkDocs-style visualization POC under `docs/`.
 Build the JSON payload from saved compare runs:
 
 ```bash
-python scripts/build_docs_data.py
+make docs-generate
 ```
 
 Then serve the site:
 
 ```bash
-pip install -e .[docs]
-mkdocs serve
+make docs-install
+make docs-serve
+```
+
+Useful docs targets:
+
+```bash
+make docs-clear
+make docs-generate
+make docs-build
+make docs-serve
 ```
 
 Current POC pages:

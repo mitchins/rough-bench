@@ -1,0 +1,34 @@
+id: nutrition_table_from_variable_ingredients
+title: Nutrition table from variable-weight ingredients
+domain: quantitative_reasoning
+family: practical_reasoning
+counted: false
+intent: Score whether the model can scale per-100g nutrition data to awkward ingredient amounts, sum the full recipe correctly, and compute per-serving values without drifting into advice or handwaving.
+latent_requirements:
+  - scale each ingredient from per-100g values to the actual gram amount used
+  - keep calories separate from protein, carbs, and fat rather than collapsing into vague totals
+  - sum the full recipe correctly across all ingredients
+  - divide the full recipe correctly into two equal servings
+  - follow the stated rounding rule instead of mixing rounded and unrounded totals arbitrarily
+hard_failures:
+  - copies the per-100g numbers into the table without scaling them to the actual ingredient weights
+  - omits the total recipe or per-serving calculation
+  - turns the task into diet advice rather than a calculation table
+strong_signals:
+  - shows one scaled row per ingredient
+  - computes the total recipe as 621 kcal, 34.0g protein, 72.1g carbs, 23.4g fat
+  - computes each serving as 310 kcal, 17.0g protein, 36.1g carbs, 11.7g fat when using exact arithmetic before rounding
+  - keeps the output compact and table-shaped
+penalties:
+  - missing required structure
+  - ingredient coverage incomplete
+  - oats scaling wrong
+  - yogurt scaling wrong
+  - total calories wrong
+  - total macros wrong
+  - per serving wrong
+  - copied per-100g values
+  - generic nutrition advice
+expected_artifacts:
+  - nutrition table
+judge_instructions: Reward arithmetic fidelity and table structure. The task is about scaling, summing, and per-serving normalization from per-100g values, not meal-planning advice.

@@ -1,0 +1,45 @@
+id: smarthome_toolcall_notification_triage
+title: Smart-home tool-call triage with proportionate notification
+domain: practical_reasoning
+family: practical_reasoning
+counted: false
+intent: Score whether the model can turn an ambiguous smart-home event into a bounded sequence of concrete tool calls, use at least one cheap information or media step before escalation, avoid both overreaction and passive dismissal, and compose a useful notification payload rather than hiding behind a generic middle action.
+latent_requirements:
+  - recognize that the cat is still the leading explanation for the interior activity
+  - retain residual perimeter uncertainty from the patio vibration and degraded contact path
+  - prefer a cheap evidence or media call before the final outward action
+  - choose a proportionate final action rather than `noop`, `security.siren`, or `security.call_out`
+  - use the notification path because it is actionable through Sarah even if Maya's phone is dead
+  - keep the plan bounded to one to three concrete tool calls
+  - avoid inventing the outputs of `camera.capture` or `sensors.read`
+  - compose a concise notification that states uncertainty without sounding alarmist
+  - tell Sarah exactly what to do next and what not to do
+hard_failures:
+  - makes `security.call_out()` the final action without confirmed breach evidence
+  - makes `security.siren()` the final action without confirmed breach evidence
+  - ends with `noop()` or `security.log(...)` despite unresolved perimeter ambiguity and an actionable notification path
+  - invents the result of `camera.capture` or `sensors.read` instead of choosing the call
+  - gives prose advice instead of explicit tool calls
+strong_signals:
+  - presents an ordered one-to-three-call plan using the exact tool names
+  - uses `camera.capture("patio_camera")` or `sensors.read("rear_slider_contact")` before the final action
+  - makes `notification.compose(push_notification_payload)` the final action
+  - includes Sarah in the notification recipients
+  - makes the notification time-sensitive but not alarmist
+  - mentions that Miso likely explains the interior sequence while the rear-slider perimeter signal remains unresolved
+  - includes a concrete exterior-only next step for Sarah
+  - explicitly rejects `security.siren()` and `security.call_out()` as disproportionate
+penalties:
+  - missing required structure
+  - no concrete tool calls
+  - high-cost overreaction
+  - no notification final action
+  - no cheap evidence step
+  - invented tool results
+  - missing notification payload
+  - payload missing Sarah or time-sensitive handling
+  - payload alarmism
+  - no lower-higher contrast
+expected_artifacts:
+  - tool decision register
+judge_instructions: Reward bounded operational judgment. The best answer should use a small ordered tool sequence, spend at least one cheap step on media or sensor state, end in a notification rather than a siren or police dispatch, and compose a message that is useful to Sarah without pretending the system has stronger evidence than it does.

@@ -1,0 +1,135 @@
+signals:
+  - id: required_structure_present
+    description: Uses the requested three-section structure.
+    groups:
+      - [component totals]
+      - [full meal (3 servings), full meal]
+      - [per serving (1 of 3), per serving]
+  - id: base_batch_correct
+    description: Computes the base batch subtotal correctly.
+    groups:
+      - [base batch]
+      - [1527]
+      - [136.8, 136.77]
+      - [114.9, 114.87]
+      - [54.7, 54.66]
+  - id: sauce_batch_correct
+    description: Computes the sauce batch subtotal correctly.
+    groups:
+      - [sauce batch]
+      - [280, 280.4, 280.35]
+      - [16.4, 16.35]
+      - [12.0, 11.97]
+      - [19.5, 19.53]
+  - id: feta_total_included
+    description: Includes the fixed feta topping as 36g total across the meal.
+    groups:
+      - [feta total]
+      - [95, 95.4]
+      - [5.1, 5.11]
+      - [1.4]
+      - [7.7, 7.74]
+  - id: full_meal_correct
+    description: Computes the full 3-serving meal correctly.
+    groups:
+      - [full meal]
+      - [1903]
+      - [158.2, 158.23]
+      - [128.2, 128.24]
+      - [81.9, 81.93]
+  - id: per_serving_correct
+    description: Computes the assembled per-serving bowl correctly.
+    groups:
+      - [per serving]
+      - [634]
+      - [52.7, 52.74]
+      - [42.7, 42.75]
+      - [27.3, 27.31]
+penalties:
+  - id: missing_required_structure
+    description: Does not follow the required three-section output format.
+    points: 4
+    missing_groups:
+      - [component totals]
+      - [full meal (3 servings), full meal]
+      - [per serving (1 of 3), per serving]
+  - id: base_batch_wrong
+    description: Gets the base batch subtotal wrong.
+    points: 4
+    missing_groups:
+      - [base batch]
+      - [1527]
+      - [136.8, 136.77]
+      - [114.9, 114.87]
+      - [54.7, 54.66]
+  - id: sauce_batch_wrong
+    description: Gets the sauce batch subtotal wrong.
+    points: 4
+    missing_groups:
+      - [sauce batch]
+      - [280, 280.4, 280.35]
+      - [16.4, 16.35]
+      - [12.0, 11.97]
+      - [19.5, 19.53]
+  - id: fixed_topping_missing_or_wrong
+    description: Omits the fixed feta topping or accounts for it incorrectly.
+    points: 4
+    missing_groups:
+      - [feta total]
+      - [95, 95.4]
+      - [5.1, 5.11]
+      - [1.4]
+      - [7.7, 7.74]
+  - id: full_meal_calories_wrong
+    description: Gets the full meal calories wrong.
+    points: 5
+    missing_groups:
+      - [full meal]
+      - [1903]
+  - id: full_meal_protein_wrong
+    description: Gets the full meal protein total wrong.
+    points: 2
+    missing_groups:
+      - [full meal]
+      - [158.2, 158.23]
+  - id: full_meal_carbs_wrong
+    description: Gets the full meal carbs total wrong.
+    points: 2
+    missing_groups:
+      - [full meal]
+      - [128.2, 128.24]
+  - id: full_meal_fat_wrong
+    description: Gets the full meal fat total wrong.
+    points: 2
+    missing_groups:
+      - [full meal]
+      - [81.9, 81.93]
+  - id: per_serving_protein_wrong
+    description: Gets the per-serving protein total wrong.
+    points: 2
+    missing_groups:
+      - [per serving]
+      - [52.7, 52.74]
+  - id: per_serving_carbs_wrong
+    description: Gets the per-serving carbs total wrong.
+    points: 2
+    missing_groups:
+      - [per serving]
+      - [42.7, 42.75]
+  - id: per_serving_fat_wrong
+    description: Gets the per-serving fat total wrong.
+    points: 2
+    missing_groups:
+      - [per serving]
+      - [27.3, 27.31]
+  - id: generic_nutrition_advice
+    description: Gives meal or diet advice instead of just doing the arithmetic.
+    points: 3
+    present_unnegated_any:
+      - healthy bowl
+      - high in protein
+      - balanced meal
+      - you should swap
+      - good for weight loss
+      - lower calorie
+judge_instructions: Reward models that keep the base batch, sauce batch, and fixed topping distinct before assembling the final meal. This leaf should spread models that can scale and recombine two components cleanly from those that immediately collapse the arithmetic.

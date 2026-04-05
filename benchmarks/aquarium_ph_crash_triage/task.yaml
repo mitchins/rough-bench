@@ -1,0 +1,80 @@
+id: aquarium_ph_crash_triage
+title: Aquarium pH crash triage with overlapping CO2, water-change, and filter signals
+domain: practical_reasoning
+family: practical_reasoning
+counted: false
+intent: >
+  Score whether the model can diagnose an aquarium pH crash by integrating
+  correlated sensor movements (pH, TDS, temperature), reject a plausible but
+  incorrect near-match explanation (CO2 overdose), identify the actual cause
+  (unbuffered water change into an exhausted substrate buffer), correctly
+  separate a concurrent but unrelated issue (flow rate decline), and recommend
+  a proportionate immediate action.
+
+latent_requirements:
+  - recognize that pH drop + TDS drop + slight temperature drop together indicate dilution with unbuffered water, not CO2 overdose
+  - reject the CO2 solenoid as the cause despite temporal overlap, because CO2 alone does not explain the simultaneous TDS dilution and temperature dip after hours of stable operation
+  - identify that the substrate buffer (KH) is likely exhausted because the tank couldn't absorb the pH impact of the water change
+  - notice the flow rate decline is a separate issue (filter clogging) and not causally related to the pH crash
+  - recommend stabilising with buffered/remineralised water, not shutting off CO2
+  - flag the filter flow as a secondary maintenance item
+
+hard_failures:
+  - blames the CO2 solenoid as the primary cause of the pH crash
+  - recommends shutting off CO2 as the primary intervention
+  - ignores the TDS drop or fails to connect it to the pH movement
+  - treats the flow rate decline as the cause of or contributor to the pH crash
+  - gives generic aquarium maintenance advice instead of diagnosing this specific event
+  - recommends a large water change without specifying remineralized/buffered water
+
+strong_signals:
+  - rules out CO2 using multiple lines of evidence (TDS direction, temperature dip, 3.5h of prior stability, or schedule nominality) rather than a single fact
+  - connects the TDS drop + temperature dip to a recent water change with low-mineral water
+  - identifies KH buffer exhaustion as the reason the tank couldn't compensate
+  - correctly separates the flow rate issue as unrelated mechanical maintenance
+  - recommends stabilising with properly remineralised/buffered water as the immediate fix
+  - notes that CO2 schedule was nominal and the timing is coincidental
+
+penalties:
+  - missing required structure
+  - CO2 blamed as primary cause
+  - recommends CO2 shutoff as primary action
+  - TDS-pH-temperature correlation missed
+  - water change not identified
+  - buffer exhaustion not identified
+  - flow rate conflated with pH issue
+  - flow rate issue ignored entirely
+  - generic aquarium advice
+  - large unbuffered water change recommended
+
+expected_artifacts:
+  - aquarium diagnostic memo
+
+judge_instructions: >
+  The correct diagnosis has three parts:
+
+  (1) CAUSE: A water change was performed with low-KH (unbuffered) water.
+  The evidence is the simultaneous drop in pH, TDS, and temperature — all
+  consistent with dilution by soft, cool tap/RO water. The substrate's
+  buffering capacity (KH) was already depleted, so the tank couldn't
+  compensate for the incoming unbuffered water.
+
+  (2) NEAR-MATCH REJECTION: The CO2 solenoid ran its normal scheduled cycle.
+  The timing overlaps the pH crash, making it look causal. But multiple lines
+  of evidence argue against CO2 as the primary driver:
+    - CO2 had been running for 3.5 hours with stable pH before the crash
+    - CO2 dissolution does not explain a simultaneous TDS drop or temperature dip
+    - The onset is abrupt and step-like, not the gradual drift of CO2 accumulation
+  A strong answer uses at least two of these lines. Accept answers that
+  note CO2 dissolution raises TDS, but do not require that specific chemistry
+  fact as the sole basis for rejection.
+
+  (3) SEPARATE ISSUE: Flow rate declined before the pH event. This is a
+  canister filter clog (mechanical issue). It is not causally related to the
+  pH crash. A good answer flags it as a secondary maintenance item without
+  conflating it with the pH diagnosis.
+
+  The recommended action should be: stabilise with properly remineralised or
+  buffered water. Shutting off CO2 is wrong as a primary action because CO2 is
+  not the cause. A large water change without specifying buffered/remineralised
+  water would repeat the original problem.

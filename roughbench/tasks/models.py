@@ -24,6 +24,7 @@ def _as_groups(values: Any) -> tuple[tuple[str, ...], ...]:
 class SignalRule:
     id: str
     description: str
+    section: str = ""
     any: tuple[str, ...] = ()
     all: tuple[str, ...] = ()
     groups: tuple[tuple[str, ...], ...] = ()
@@ -37,6 +38,7 @@ class SignalRule:
         return cls(
             id=str(data["id"]),
             description=str(data["description"]),
+            section=str(data.get("section", "")),
             any=_as_tuple(data.get("any")),
             all=_as_tuple(data.get("all")),
             groups=_as_groups(data.get("groups")),
@@ -52,6 +54,7 @@ class PenaltyRule:
     id: str
     description: str
     points: int
+    section: str = ""
     present_any: tuple[str, ...] = ()
     present_unnegated_any: tuple[str, ...] = ()
     present_all: tuple[str, ...] = ()
@@ -79,6 +82,7 @@ class PenaltyRule:
             id=str(data["id"]),
             description=str(data["description"]),
             points=int(data["points"]),
+            section=str(data.get("section", "")),
             present_any=_as_tuple(data.get("present_any")),
             present_unnegated_any=_as_tuple(data.get("present_unnegated_any")),
             present_all=_as_tuple(data.get("present_all")),

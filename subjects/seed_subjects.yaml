@@ -8,9 +8,23 @@ subjects:
     temperature: 0.0
     max_tokens: 10000
     timeout_seconds: 600
-    reasoning_effort: low
+    reasoning_effort: medium
     direct_answer_first: true
     notes: Baseline stronger local subject model.
+
+  - id: gpt_oss_20b_auto
+    title: GPT-OSS 20B auto
+    params_billion: 20
+    base_url: http://192.168.1.14:8000/v1
+    model: openai/gpt-oss-20b
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 600
+    reasoning_effort: medium
+    reasoning_effort_profile: balanced_auto
+    direct_answer_first: true
+    notes: GPT-OSS 20B with a balanced auto reasoning-effort profile. Defaults to medium effort, but escalates a small allowlist of long-horizon tasks to high.
 
   - id: qwen3_4b_local
     title: Qwen3 4B local
@@ -104,6 +118,40 @@ subjects:
     direct_answer_first: true
     notes: Local vLLM-served Qwen3.5 9B on the hot-swapped LAN endpoint.
 
+  - id: qwen3_5_9b_llamacpp_local
+    title: Qwen3.5 9B llama.cpp local
+    params_billion: 9
+    base_url: http://192.168.1.14:8080/v1
+    model: unsloth/Qwen3.5-9B-GGUF:Q8_0
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 58000
+    timeout_seconds: 2400
+    direct_answer_first: true
+    notes: Local llama.cpp-served Unsloth Qwen3.5 9B GGUF Q8_0 on the same LAN host. Kept separate from the vLLM FP16-style subject because runtime and weight format differ.
+
+  - id: qwen3_5_35b_a3b_compute_test
+    title: Qwen3.5 35B A3B compute-test
+    params_billion: 3
+    base_url: http://192.168.4.222:1234/v1
+    model: qwen/qwen3.5-35b-a3b
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 600
+    notes: LM Studio-served Qwen3.5 35B A3B on compute-test. Running as a Q8 GGUF; user reports perplexity delta under 0.1%, so note it but treat it as practically negligible.
+
+  - id: gemma_4_26b_a4b_compute_test
+    title: Gemma 4 26B A4B compute-test
+    params_billion: 4
+    base_url: http://192.168.4.222:1234/v1
+    model: google/gemma-4-26b-a4b
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 600
+    notes: LM Studio-served Gemma 4 26B A4B on compute-test. Running as a Q8 quantized local model; treat the quantization note as operational context, not a major comparability caveat.
+
   - id: glm_4_6v_flash_labpc
     title: GLM-4.6V-Flash lab-pc (ethernet)
     base_url: http://192.168.4.3:8000/v1
@@ -136,11 +184,33 @@ subjects:
     timeout_seconds: 600
     notes: Local vLLM-served LiquidAI LFM2.5 1.2B on lab-pc over wired LAN. Small-model baseline with large context headroom.
 
+  - id: lfm2_24b_a2b_compute_test
+    title: LFM2 24B A2B compute-test
+    params_billion: 2
+    base_url: http://192.168.4.222:1234/v1
+    model: liquid/lfm2-24b-a2b
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 600
+    notes: "LM Studio-served Liquid LFM2 24B A2B on compute-test. Treated like other high-fidelity local MoE runs; active params are recorded for size-normalized comparisons."
+
+  - id: gemma_3_1b_router
+    title: Gemma 3 1B router
+    params_billion: 1
+    base_url: http://192.168.1.26:8080/v1
+    model: gemma-3-1b-it
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 600
+    notes: Router-backed Google Gemma 3 1B via local OpenAI-compatible pass-through.
+
   - id: gemma_3_4b_router
     title: Gemma 3 4B router
     params_billion: 4
     base_url: http://192.168.1.26:8080/v1
-    model: "gemma-3-4b-it [google]"
+    model: gemma-3-4b-it
     api_key: dummy
     temperature: 0.0
     max_tokens: 10000
@@ -151,7 +221,7 @@ subjects:
     title: Gemma 3 12B router
     params_billion: 12
     base_url: http://192.168.1.26:8080/v1
-    model: "gemma-3-12b-it [google]"
+    model: gemma-3-12b-it
     api_key: dummy
     temperature: 0.0
     max_tokens: 10000
@@ -162,7 +232,7 @@ subjects:
     title: Gemma 3 27B router
     params_billion: 27
     base_url: http://192.168.1.26:8080/v1
-    model: "gemma-3-27b-it [google]"
+    model: gemma-3-27b-it
     api_key: dummy
     temperature: 0.0
     max_tokens: 10000
@@ -173,7 +243,7 @@ subjects:
     title: Gemma 3n E2B router
     params_billion: 2
     base_url: http://192.168.1.26:8080/v1
-    model: "gemma-3n-e2b-it [google]"
+    model: gemma-3n-e2b-it
     api_key: dummy
     temperature: 0.0
     max_tokens: 10000
@@ -184,7 +254,7 @@ subjects:
     title: Gemma 3n E4B router
     params_billion: 4
     base_url: http://192.168.1.26:8080/v1
-    model: "gemma-3n-e4b-it [google]"
+    model: gemma-3n-e4b-it
     api_key: dummy
     temperature: 0.0
     max_tokens: 10000
@@ -195,7 +265,7 @@ subjects:
     title: Gemma 4 26B A4B router
     params_billion: 4
     base_url: http://192.168.1.26:8080/v1
-    model: "gemma-4-26b-a4b-it [google]"
+    model: gemma-4-26b-a4b-it
     api_key: dummy
     temperature: 0.0
     max_tokens: 10000
@@ -206,12 +276,21 @@ subjects:
     title: Gemma 4 31B router
     params_billion: 31
     base_url: http://192.168.1.26:8080/v1
-    model: "gemma-4-31b-it [google]"
+    model: gemma-4-31b-it
     api_key: dummy
     temperature: 0.0
     max_tokens: 10000
     timeout_seconds: 600
     notes: Router-backed Google Gemma 4 31B via local OpenAI-compatible pass-through.
+
+  - id: claude_haiku_4_5_anthropic
+    title: Claude Haiku 4.5 Anthropic
+    provider: anthropic
+    model: claude-haiku-4-5
+    api_key_env: ANTHROPIC_API_KEY
+    temperature: 0.0
+    max_tokens: 4000
+    notes: One-off Anthropic API subject for spot-checking hard leaves against Claude Haiku 4.5.
 
   - id: qwen3_5_2b_labpc
     title: Qwen3.5 2B lab-pc (ethernet)

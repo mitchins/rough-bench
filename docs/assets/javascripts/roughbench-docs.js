@@ -31,6 +31,25 @@
     return `<span class="rb-badge rb-badge-clean">clean</span>`;
   }
 
+  function tokenMix(run) {
+    const prompt = Number(run?.usage_prompt_tokens || 0);
+    const completion = Number(run?.usage_completion_tokens || 0);
+    const reasoningRaw = run?.usage_reasoning_tokens;
+    const reasoningKnown = reasoningRaw !== null && reasoningRaw !== undefined && !Number.isNaN(Number(reasoningRaw));
+    const reasoning = reasoningKnown ? Number(reasoningRaw) : 0;
+    const answer = reasoningKnown ? Math.max(0, completion - reasoning) : 0;
+    const unsplit = reasoningKnown ? 0 : completion;
+    const total = prompt + reasoning + answer + unsplit;
+    return {
+      prompt,
+      reasoning,
+      answer,
+      unsplit,
+      total,
+      reasoningKnown,
+    };
+  }
+
   function awardPills(run) {
     const awards = run?.awards || [];
     if (!awards.length) {
@@ -152,6 +171,35 @@
           { label: "Demerits / 1k", render: (row) => Number(row.demerits_per_1k_total_tokens).toFixed(2) },
           { label: "Quality", render: (row) => pct(row.overall_quality) },
           { label: "Tokens", render: (row) => number(row.usage_total_tokens) },
+          {
+            label: "Mix",
+            render: (row) => {
+              const mix = tokenMix(row);
+              if (!mix.total) {
+                return "—";
+              }
+              const width = (value) => `${((value / mix.total) * 100).toFixed(1)}%`;
+              const legend = mix.reasoningKnown
+                ? `
+                    <span class="rb-token-mix-chip"><span class="rb-token-mix-swatch rb-token-mix-swatch-prompt"></span>P ${number(mix.prompt)}</span>
+                    <span class="rb-token-mix-chip"><span class="rb-token-mix-swatch rb-token-mix-swatch-reason"></span>R ${number(mix.reasoning)}</span>
+                    <span class="rb-token-mix-chip"><span class="rb-token-mix-swatch rb-token-mix-swatch-answer"></span>A ${number(mix.answer)}</span>
+                  `
+                : `
+                    <span class="rb-token-mix-chip"><span class="rb-token-mix-swatch rb-token-mix-swatch-prompt"></span>P ${number(mix.prompt)}</span>
+                    <span class="rb-token-mix-chip"><span class="rb-token-mix-swatch rb-token-mix-swatch-unsplit"></span>C ${number(mix.unsplit)}</span>
+                  `;
+              return `
+                <div class="rb-token-mix-track">
+                  <span class="rb-token-seg rb-token-seg-prompt" style="width:${width(mix.prompt)}"></span>
+                  ${mix.reasoningKnown ? `<span class="rb-token-seg rb-token-seg-reason" style="width:${width(mix.reasoning)}"></span>` : ""}
+                  ${mix.reasoningKnown ? `<span class="rb-token-seg rb-token-seg-answer" style="width:${width(mix.answer)}"></span>` : ""}
+                  ${!mix.reasoningKnown ? `<span class="rb-token-seg rb-token-seg-unsplit" style="width:${width(mix.unsplit)}"></span>` : ""}
+                </div>
+                <div class="rb-token-mix-legend">${legend}</div>
+              `;
+            },
+          },
           { label: "Status", render: (row) => badge(row) },
         ],
         (data.leaderboards?.efficiency || []).map((row, index) => ({ ...row, __index: index })),
@@ -160,6 +208,57 @@
         tr.children[0].textContent = String(index + 1);
       });
     }
+  }
+
+  function renderTokenMixSection() {
+    const root = document.getElementById("rb-token-mix-list");
+    if (!root) {
+      return;
+    }
+    const rows = (data.runs || [])
+      .filter((run) => run.status === "complete")
+      .filter((run) => Number(run.usage_total_tokens || 0) > 0)
+      .filter((run) => Number(run.requested_task_count || 0) >= 20)
+      .sort((left, right) => Number(right.usage_total_tokens || 0) - Number(left.usage_total_tokens || 0));
+    if (!rows.length) {
+      root.innerHTML = `<p class="rb-muted">No substantial complete runs with token usage data are available yet.</p>`;
+      return;
+    }
+
+    root.innerHTML = rows
+      .map((run) => {
+        const mix = tokenMix(run);
+        if (!mix.total) {
+          return "";
+        }
+        const width = (value) => `${((value / mix.total) * 100).toFixed(1)}%`;
+        const legend = mix.reasoningKnown
+          ? `
+              <span class="rb-token-mix-chip"><span class="rb-token-mix-swatch rb-token-mix-swatch-prompt"></span>Prompt ${number(mix.prompt)}</span>
+              <span class="rb-token-mix-chip"><span class="rb-token-mix-swatch rb-token-mix-swatch-reason"></span>Reason ${number(mix.reasoning)}</span>
+              <span class="rb-token-mix-chip"><span class="rb-token-mix-swatch rb-token-mix-swatch-answer"></span>Answer ${number(mix.answer)}</span>
+            `
+          : `
+              <span class="rb-token-mix-chip"><span class="rb-token-mix-swatch rb-token-mix-swatch-prompt"></span>Prompt ${number(mix.prompt)}</span>
+              <span class="rb-token-mix-chip"><span class="rb-token-mix-swatch rb-token-mix-swatch-unsplit"></span>Completion ${number(mix.unsplit)}</span>
+            `;
+        return `
+          <section class="rb-token-mix-row">
+            <div class="rb-token-mix-head">
+              <div class="rb-token-mix-title">${run.title}</div>
+              <div class="rb-token-mix-meta">${number(run.usage_total_tokens)} total tok · ${badge(run)}</div>
+            </div>
+            <div class="rb-token-mix-track">
+              <span class="rb-token-seg rb-token-seg-prompt" style="width:${width(mix.prompt)}"></span>
+              ${mix.reasoningKnown ? `<span class="rb-token-seg rb-token-seg-reason" style="width:${width(mix.reasoning)}"></span>` : ""}
+              ${mix.reasoningKnown ? `<span class="rb-token-seg rb-token-seg-answer" style="width:${width(mix.answer)}"></span>` : ""}
+              ${!mix.reasoningKnown ? `<span class="rb-token-seg rb-token-seg-unsplit" style="width:${width(mix.unsplit)}"></span>` : ""}
+            </div>
+            <div class="rb-token-mix-legend">${legend}</div>
+          </section>
+        `;
+      })
+      .join("");
   }
 
   function radarValue(run, categoryId, mode) {
@@ -462,6 +561,7 @@
   renderSummaryCards();
   renderAwards();
   renderOverviewTables();
+  renderTokenMixSection();
   renderModelExplorer();
   renderComparePage();
   renderCategoryPage();

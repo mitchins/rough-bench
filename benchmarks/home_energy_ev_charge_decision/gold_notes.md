@@ -1,0 +1,21 @@
+Strong answer outline:
+
+- Choose `charge at overnight rate`
+- Compute roughly:
+  - current battery energy: `82 * 0.34 ~= 27.9 kWh`
+  - target battery energy: `82 * 0.80 = 65.6 kWh`
+  - battery energy needed: about `37.7-37.8 kWh`
+  - wall energy at 92 percent efficiency: about `41.0 kWh`
+  - charge time at `7.4 kW`: about `5.1-5.6 hours`, depending on whether the model folds efficiency into the time estimate
+- Explain that:
+  - the overnight window `23:00-05:30` is long enough
+  - the useful solar arrives after the `07:30` departure
+  - the morning forecast is uncertain anyway
+  - charging immediately at `34p/kWh` is clearly worse
+- Plausible cost range:
+  - about `320-350 pence`
+- Good "what would change it" answers:
+  - later departure, for example after `10:00`
+  - working from home / EV staying plugged in through midday
+  - materially worse overnight tariff
+  - materially stronger guaranteed early solar

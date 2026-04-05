@@ -5,6 +5,10 @@
   --rb-panel: #f8fbf8;
   --rb-accent: #0b6b57;
   --rb-accent-soft: #dff4eb;
+  --rb-prompt: #cdd6d1;
+  --rb-reason: #6f42c1;
+  --rb-answer: #0b6b57;
+  --rb-unsplit: #7ba798;
   --rb-warn: #8b5e00;
   --rb-warn-soft: #fff4d6;
   --rb-bad: #8a1c1c;
@@ -142,6 +146,107 @@
 .rb-bar-fill {
   background: linear-gradient(90deg, #0b6b57, #34a37e);
   height: 100%;
+}
+
+.rb-token-mix-list {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.rb-token-mix-row {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.rb-token-mix-head {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.rb-token-mix-title {
+  font-weight: 600;
+  color: var(--rb-ink);
+}
+
+.rb-token-mix-meta {
+  color: var(--rb-muted);
+  font-size: 0.9rem;
+}
+
+.rb-token-mix-track {
+  display: flex;
+  width: 100%;
+  height: 14px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #edf2ef;
+  border: 1px solid #e2eae6;
+}
+
+.rb-token-seg {
+  height: 100%;
+}
+
+.rb-token-seg-prompt {
+  background: var(--rb-prompt);
+}
+
+.rb-token-seg-reason {
+  background: var(--rb-reason);
+}
+
+.rb-token-seg-answer {
+  background: var(--rb-answer);
+}
+
+.rb-token-seg-unsplit {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--rb-unsplit),
+    var(--rb-unsplit) 8px,
+    #a7c2b9 8px,
+    #a7c2b9 16px
+  );
+}
+
+.rb-token-mix-legend {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  color: var(--rb-muted);
+  font-size: 0.84rem;
+}
+
+.rb-token-mix-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.rb-token-mix-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.rb-token-mix-swatch-prompt {
+  background: var(--rb-prompt);
+}
+
+.rb-token-mix-swatch-reason {
+  background: var(--rb-reason);
+}
+
+.rb-token-mix-swatch-answer {
+  background: var(--rb-answer);
+}
+
+.rb-token-mix-swatch-unsplit {
+  background: var(--rb-unsplit);
 }
 
 .rb-delta-positive {

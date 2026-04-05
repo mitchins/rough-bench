@@ -1,0 +1,307 @@
+signals:
+  - id: required_structure_present
+    description: Uses the requested six-section structure.
+    groups:
+      - [best occupancy hypothesis]
+      - [confidence]
+      - [alert decision]
+      - [most diagnostic evidence]
+      - [alternative explanation]
+      - [one additional signal to check]
+  - id: pet_leading_explanation
+    description: Identifies the cat or pet activity as the leading explanation.
+    any:
+      - miso is the most likely explanation
+      - cat activity is the most likely explanation
+      - pet activity is the most likely explanation
+      - likely just the cat
+      - likely miso
+      - cat-triggered activity
+      - only likely occupant is the indoor cat
+      - only likely occupant is miso
+      - only miso is present
+      - only miso is inside
+      - occupied solely by the indoor cat
+      - occupied solely by miso
+      - sole occupant is miso
+      - sole occupant is the indoor cat
+      - likely the cat is inside
+      - attributed to miso
+      - the cat hypothesis
+  - id: low_confidence_camera_discounted
+    description: Treats the camera classifier event as weak evidence because of low confidence and recent mislabels.
+    groups:
+      - [0.41, below 0.50, low confidence, weak evidence]
+      - [mislabel, mislabeled, false positive, recently mislabeled]
+      - [camera, patio camera, classifier, label]
+  - id: vibration_flagged_unexplained
+    description: Notes that the patio-door vibration remains unresolved rather than being cleanly absorbed by the cat story.
+    groups:
+      - [vibration, patio-door vibration, 1.8g, peak acceleration]
+      - [unexplained, residual uncertainty, unresolved, not explained by the cat, not fully explained]
+  - id: away_context_used
+    description: Uses the fact that Maya is explicitly away.
+    any:
+      - maya is away
+      - maya is still away
+      - not home before 00:30
+      - new year's eve party
+      - across town
+      - explicitly away
+  - id: camera_outage_used
+    description: Uses the loss of the second camera angle as part of the uncertainty.
+    any:
+      - front driveway camera
+      - second exterior view
+      - second camera
+      - camera outage
+      - went unresponsive at 22:08
+      - no second exterior view
+  - id: secondary_recipient_used
+    description: Uses the fact that the low-priority check-in still reaches Sarah even if Maya's phone is dead.
+    any:
+      - sarah
+      - neighbor sarah
+      - spare key
+      - neighbor can check
+      - even if maya's phone is dead
+  - id: action_cost_asymmetry_used
+    description: Uses the fact that a quiet check-in is cheap while silence and hard escalation carry higher downside.
+    any:
+      - 0.01
+      - $0.01
+      - cheap check-in
+      - quiet check-in is cheap
+      - silent miss
+      - false escalation
+      - false alarm
+      - 25000
+      - $25,000
+  - id: perimeter_temporal_correlation_used
+    description: Ties the camera label and vibration together as same-time perimeter evidence.
+    groups:
+      - [22:13, 22 13, same minute, same time, simultaneously]
+      - [camera, patio camera, person label]
+      - [vibration, patio-door vibration, 1.8g]
+  - id: degraded_sensor_uncertainty_used
+    description: Keeps residual uncertainty because the sliding-door sensor path is degraded.
+    any:
+      - sliding-door contact sensor battery has been low
+      - rear sliding-door contact sensor
+      - degraded door sensor
+      - low battery on the contact sensor
+      - on a low battery
+      - contact sensor uncertainty
+      - sliding-door sensor battery is low
+      - slider sensor battery is low
+      - cannot be fully trusted
+  - id: closed_state_non_decisive
+    description: Treats the current `closed` state as non-decisive because the contact path is degraded.
+    any:
+      - does not fully rule out entry
+      - does not fully rule out an open
+      - closed does not fully rule out
+      - closed is not decisive
+      - lack of an open event does not fully rule out
+      - contact state is not decisive
+  - id: low_priority_check_in
+    description: Chooses a proportional low-priority check-in.
+    any:
+      - low-priority check-in
+      - low priority check-in
+      - low-priority check in
+      - low priority check in
+  - id: avoids_confident_all_clear
+    description: Holds residual ambiguity instead of declaring the case fully resolved.
+    any:
+      - medium
+      - medium-high
+      - medium high
+      - some uncertainty
+      - residual uncertainty
+      - not zero
+      - unresolved
+  - id: pet_evidence_cited
+    description: Uses the feeder, bowl, litter box, or cat-triggerable PIR as core evidence.
+    any:
+      - feeder
+      - bowl weight
+      - litter box
+      - hallway pir
+      - console table
+  - id: additional_signal_concrete
+    description: Names a specific next check that would reduce uncertainty.
+    any:
+      - review the clip
+      - check the camera clip
+      - patio camera clip
+      - second camera
+      - another camera angle
+      - backup camera
+      - real-time image
+      - power-cycle
+      - health-check
+      - front driveway camera
+      - verify the sliding-door sensor
+      - check the rear sliding-door contact sensor
+      - check raw video
+      - review the patio footage
+      - slider state
+      - contact sensor battery
+      - last-trigger timestamp
+      - compare timestamps
+penalties:
+  - id: missing_required_structure
+    description: Does not follow the required six-section output format.
+    points: 5
+    missing_groups:
+      - [best occupancy hypothesis]
+      - [confidence]
+      - [alert decision]
+      - [most diagnostic evidence]
+      - [alternative explanation]
+      - [one additional signal to check]
+  - id: intrusion_alert_overreach
+    description: Escalates to a high-priority intrusion alert despite the stronger pet explanation.
+    points: 5
+    present_unnegated_any:
+      - intrusion alert
+  - id: confident_no_alert_dismissal
+    description: Resolves the case as a confident all-clear despite the unexplained vibration and degraded contact path.
+    points: 5
+    present_groups:
+      - [no alert]
+      - [high, 85%, 90%, 95%, very high, resolved, definitively, definitely just the cat]
+  - id: pet_explanation_missed
+    description: Fails to identify pet activity as the leading explanation.
+    points: 4
+    missing_any:
+      - miso is the most likely explanation
+      - cat activity is the most likely explanation
+      - pet activity is the most likely explanation
+      - likely just the cat
+      - likely miso
+      - cat-triggered activity
+      - only likely occupant is the indoor cat
+      - only likely occupant is miso
+      - only miso is present
+      - only miso is inside
+      - occupied solely by the indoor cat
+      - occupied solely by miso
+      - sole occupant is miso
+      - sole occupant is the indoor cat
+      - likely the cat is inside
+      - attributed to miso
+      - the cat hypothesis
+  - id: camera_label_taken_literally
+    description: Treats the low-confidence `person` label as decisive rather than weak.
+    points: 4
+    present_unnegated_any:
+      - the person label confirms
+      - definite person
+      - clearly a person
+      - confirms an intruder
+      - proves someone is there
+  - id: vibration_event_ignored
+    description: Fails to acknowledge the unexplained patio-door vibration or fully explains it away as just the cat.
+    points: 4
+    missing_groups:
+      - [vibration, patio-door vibration, 1.8g, peak acceleration]
+      - [unexplained, residual uncertainty, unresolved, not explained by the cat, not fully explained]
+  - id: away_context_ignored
+    description: Ignores that Maya is explicitly away, so this cannot be resolved as a normal false-away case.
+    points: 3
+    missing_any:
+      - maya is away
+      - maya is still away
+      - not home before 00:30
+      - new year's eve party
+      - across town
+      - explicitly away
+  - id: camera_outage_ignored
+    description: Ignores that the front camera is unavailable, removing a corroborating exterior view.
+    points: 3
+    missing_any:
+      - front driveway camera
+      - second exterior view
+      - second camera
+      - camera outage
+      - went unresponsive at 22:08
+      - no second exterior view
+  - id: secondary_recipient_ignored
+    description: Ignores that the quiet check-in still has value because Sarah can receive it even if Maya cannot.
+    points: 2
+    missing_any:
+      - sarah
+      - neighbor sarah
+      - spare key
+      - neighbor can check
+      - even if maya's phone is dead
+  - id: degraded_sensor_uncertainty_missed
+    description: Ignores the low-battery sliding-door contact path.
+    points: 3
+    missing_any:
+      - sliding-door contact sensor battery has been low
+      - rear sliding-door contact sensor
+      - degraded door sensor
+      - low battery on the contact sensor
+      - on a low battery
+      - contact sensor uncertainty
+      - sliding-door sensor battery is low
+      - slider sensor battery is low
+      - cannot be fully trusted
+  - id: perimeter_temporal_correlation_missed
+    description: Fails to notice that the camera label and vibration are same-minute patio evidence.
+    points: 2
+    missing_groups:
+      - [22:13, 22 13, same minute, same time, simultaneously]
+      - [camera, patio camera, person label]
+      - [vibration, patio-door vibration, 1.8g]
+  - id: closed_state_treated_as_reassuring
+    description: Treats the low-battery contact sensor's `closed` state as reassuring without noting that the path is degraded.
+    points: 2
+    present_unnegated_any:
+      - door remains closed
+      - sliding-door contact remains closed
+      - contact state still closed
+      - no open event recorded
+  - id: low_priority_action_missed
+    description: Misses the proportional quiet-check action.
+    points: 3
+    missing_any:
+      - low-priority check-in
+      - low priority check-in
+      - low-priority check in
+      - low priority check in
+  - id: additional_signal_missing
+    description: Does not name one specific next signal or check that would reduce uncertainty.
+    points: 2
+    missing_any:
+      - review the clip
+      - check the camera clip
+      - patio camera clip
+      - second camera
+      - another camera angle
+      - backup camera
+      - real-time image
+      - power-cycle
+      - health-check
+      - front driveway camera
+      - verify the sliding-door sensor
+      - check the rear sliding-door contact sensor
+      - check raw video
+      - review the patio footage
+      - slider state
+      - contact sensor battery
+      - last-trigger timestamp
+      - compare timestamps
+  - id: generic_smart_home_advice
+    description: Gives general smart-home advice instead of triaging this case.
+    points: 3
+    present_unnegated_any:
+      - install more cameras
+      - improve your home security
+      - add more sensors
+      - update your system
+      - review your smart-home setup
+judge_instructions: Reward models that integrate the feeder, bowl, litter-box, low-confidence CV event, patio-door vibration, explicit away-context, front-camera outage, and action-cost asymmetry coherently. The best answer should treat the cat as the leading explanation for most of the activity, explicitly flag the vibration as residual unexplained evidence, note that Maya is away and the second exterior view is unavailable, recognize that the quiet check-in still has value because Sarah can receive it even if Maya cannot, tie the 22:13 camera label and 22:13 vibration together as same-location perimeter evidence, keep some uncertainty because of the degraded contact path, and explicitly avoid treating the current `closed` state as decisive. That should lead to a low-priority check-in rather than either a hard alarm or a confident all-clear.

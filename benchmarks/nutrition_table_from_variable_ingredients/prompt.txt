@@ -1,0 +1,34 @@
+You are given per-100g nutrition data for a breakfast mix.
+
+Per 100g nutrition:
+
+Ingredient | Calories | Protein (g) | Carbs (g) | Fat (g)
+Rolled oats | 389 | 16.9 | 66.3 | 6.9
+Greek yogurt | 97 | 9.0 | 3.6 | 5.0
+Blueberries | 57 | 0.7 | 14.5 | 0.3
+Peanut butter | 588 | 25.0 | 20.0 | 50.0
+
+Actual recipe amounts:
+
+- Rolled oats: 75g
+- Greek yogurt: 180g
+- Blueberries: 85g
+- Peanut butter: 18g
+
+Construct a nutrition table for the full recipe and for 2 equal servings.
+
+Use exact arithmetic internally, then round the displayed values like this:
+- calories: nearest whole number
+- protein/carbs/fat: 1 decimal place
+
+Write exactly these sections:
+
+## Ingredient Calculations
+## Total Recipe
+## Per Serving (2 servings)
+
+Requirements:
+- Under Ingredient Calculations, include one row per ingredient with: ingredient, amount_g, calories, protein_g, carbs_g, fat_g
+- Under Total Recipe, give one total row with: calories, protein_g, carbs_g, fat_g
+- Under Per Serving (2 servings), give one row with: calories, protein_g, carbs_g, fat_g
+- Do not give diet advice, substitutions, or commentary outside the requested sections.

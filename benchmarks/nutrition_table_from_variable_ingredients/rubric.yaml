@@ -1,0 +1,114 @@
+signals:
+  - id: required_structure_present
+    description: Uses the requested three-section structure.
+    groups:
+      - [ingredient calculations]
+      - [total recipe]
+      - [per serving (2 servings), per serving]
+  - id: ingredient_rows_present
+    description: Includes one row per ingredient.
+    groups:
+      - [rolled oats]
+      - [greek yogurt]
+      - [blueberries]
+      - [peanut butter]
+  - id: oats_scaled_correctly
+    description: Scales rolled oats correctly to 75g.
+    groups:
+      - [rolled oats]
+      - [75]
+      - [292, 12.7, 49.7, 5.2]
+  - id: yogurt_scaled_correctly
+    description: Scales Greek yogurt correctly to 180g.
+    groups:
+      - [greek yogurt]
+      - [180]
+      - [175, 16.2, 6.5, 9.0]
+  - id: total_recipe_correct
+    description: Computes the full-recipe totals correctly.
+    groups:
+      - [total recipe]
+      - [621]
+      - [34.0]
+      - [72.1]
+      - [23.4]
+  - id: per_serving_correct
+    description: Computes the 2-serving split correctly.
+    groups:
+      - [per serving]
+      - [310]
+      - [17.0]
+      - [36.1]
+      - [11.7]
+penalties:
+  - id: missing_required_structure
+    description: Does not follow the required three-section output format.
+    points: 4
+    missing_groups:
+      - [ingredient calculations]
+      - [total recipe]
+      - [per serving (2 servings), per serving]
+  - id: ingredient_coverage_incomplete
+    description: Leaves out one or more ingredient rows.
+    points: 4
+    missing_groups:
+      - [rolled oats]
+      - [greek yogurt]
+      - [blueberries]
+      - [peanut butter]
+  - id: oats_scaling_wrong
+    description: Does not scale the rolled oats row correctly.
+    points: 3
+    missing_groups:
+      - [rolled oats]
+      - [75]
+      - [292, 12.7, 49.7, 5.2]
+  - id: yogurt_scaling_wrong
+    description: Does not scale the Greek yogurt row correctly.
+    points: 3
+    missing_groups:
+      - [greek yogurt]
+      - [180]
+      - [175, 16.2, 6.5, 9.0]
+  - id: total_calories_wrong
+    description: Gets the total recipe calories wrong.
+    points: 5
+    missing_groups:
+      - [total recipe]
+      - [621]
+  - id: total_macros_wrong
+    description: Gets one or more total recipe macros wrong.
+    points: 6
+    missing_groups:
+      - [total recipe]
+      - [34.0]
+      - [72.1]
+      - [23.4]
+  - id: per_serving_wrong
+    description: Gets the 2-serving row wrong.
+    points: 5
+    missing_groups:
+      - [per serving]
+      - [310]
+      - [17.0]
+      - [36.1]
+      - [11.7]
+  - id: copied_per_100g_values
+    description: Reuses the per-100g values instead of scaling ingredient rows.
+    points: 4
+    present_groups:
+      - [rolled oats, greek yogurt]
+      - [75, 180]
+      - [389, 97]
+  - id: generic_nutrition_advice
+    description: Gives meal or diet advice instead of just doing the calculation.
+    points: 3
+    present_unnegated_any:
+      - healthy breakfast
+      - great source of
+      - you should add
+      - you could swap
+      - for weight loss
+      - high in fiber
+      - balanced meal
+judge_instructions: Reward correct scaling and exact totals. A response that is well-formatted but leaves the per-100g values unscaled should score badly.

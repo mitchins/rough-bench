@@ -1,0 +1,169 @@
+signals:
+  - id: required_structure_present
+    description: Uses the requested five-section structure.
+    groups:
+      - [best occupancy hypothesis]
+      - [confidence]
+      - [alert decision]
+      - [key evidence]
+      - [alternative explanation]
+  - id: likely_maya_home
+    description: Infers that Maya is most likely home.
+    any:
+      - maya is home
+      - maya is most likely home
+      - maya is likely home
+      - maya is probably home
+      - likely maya
+      - likely the resident is home
+      - likely a normal return home
+  - id: low_priority_check_in
+    description: Recommends a proportional low-priority check-in rather than a hard alarm.
+    any:
+      - low-priority check-in
+      - low priority check-in
+      - low-priority check in
+      - low priority check in
+  - id: phone_context_used
+    description: Uses the dead-phone context to avoid over-trusting geofence absence.
+    any:
+      - phone battery died
+      - phone died
+      - dead phone
+      - geofence unavailable
+      - geofence/wi-fi absent
+      - geofence and wi-fi are unavailable
+      - wi-fi presence is unavailable
+      - phone presence is unavailable
+  - id: door_sensor_caveat_used
+    description: Uses the front-door sensor reliability caveat.
+    any:
+      - front-door contact sensor
+      - door sensor missed events
+      - sensor has missed events
+      - door sensor is imperfect
+      - contact sensor is unreliable
+      - missed event
+      - failure rate
+  - id: routine_progression_named
+    description: Recognizes the kitchen/living room/bathroom/bedroom pattern as ordinary evening occupancy.
+    any:
+      - normal evening progression
+      - ordinary evening
+      - home-like pattern
+      - ordinary occupancy
+      - sustained domestic pattern
+      - prolonged, varied room activity
+      - evening-to-bedtime sequence
+      - kitchen -> living room -> bathroom -> bedroom
+      - kitchen, living room, bathroom, bedroom
+      - bathroom activity
+      - bedroom activity
+      - continuous indoor motion and lights
+  - id: alternative_explanation_present
+    description: Names a plausible but less likely alternative explanation.
+    any:
+      - intruder
+      - unauthorized entry
+      - someone else entered
+      - sensor glitch
+      - false trigger
+      - visitor
+      - delivery person
+penalties:
+  - id: missing_required_structure
+    description: Does not follow the required five-section output format.
+    points: 4
+    missing_groups:
+      - [best occupancy hypothesis]
+      - [confidence]
+      - [alert decision]
+      - [key evidence]
+      - [alternative explanation]
+  - id: intrusion_alert_overreach
+    description: Escalates to an intrusion alert despite stronger evidence of ordinary occupancy.
+    points: 8
+    present_unnegated_any:
+      - intrusion alert
+  - id: likely_resident_hypothesis_missed
+    description: Fails to identify Maya or an ordinary resident return as the leading explanation.
+    points: 5
+    missing_any:
+      - maya is home
+      - maya is most likely home
+      - maya is likely home
+      - maya is probably home
+      - likely maya
+      - likely the resident is home
+      - likely a normal return home
+  - id: phone_context_ignored
+    description: Ignores the dead-phone / missing-geofence caveat.
+    points: 4
+    missing_any:
+      - phone battery died
+      - phone died
+      - dead phone
+      - geofence unavailable
+      - geofence/wi-fi absent
+      - geofence and wi-fi are unavailable
+      - wi-fi presence is unavailable
+      - phone presence is unavailable
+  - id: door_sensor_caveat_ignored
+    description: Ignores that the front-door sensor can miss events.
+    points: 4
+    missing_any:
+      - front-door contact sensor
+      - door sensor missed events
+      - sensor has missed events
+      - door sensor is imperfect
+      - contact sensor is unreliable
+      - missed event
+      - failure rate
+  - id: routine_progression_missed
+    description: Does not use the normal evening movement pattern as evidence.
+    points: 4
+    missing_any:
+      - normal evening progression
+      - ordinary evening
+      - home-like pattern
+      - ordinary occupancy
+      - sustained domestic pattern
+      - prolonged, varied room activity
+      - evening-to-bedtime sequence
+      - kitchen -> living room -> bathroom -> bedroom
+      - kitchen, living room, bathroom, bedroom
+      - bathroom activity
+      - bedroom activity
+      - continuous indoor motion and lights
+  - id: mode_correction_missed
+    description: Does not suggest a proportional check-in or mode-correction nudge.
+    points: 3
+    missing_any:
+      - low-priority check-in
+      - low priority check-in
+      - switch to home mode
+      - transition from away mode to home mode
+      - disarm away mode
+      - mode correction
+      - confirm occupancy
+  - id: alternative_explanation_missing
+    description: Does not acknowledge a plausible alternative explanation.
+    points: 3
+    missing_any:
+      - intruder
+      - unauthorized entry
+      - someone else entered
+      - sensor glitch
+      - false trigger
+      - visitor
+      - delivery person
+  - id: generic_smart_home_advice
+    description: Gives general smart-home advice instead of deciding this case.
+    points: 3
+    present_unnegated_any:
+      - review your smart-home settings
+      - improve your home security
+      - add more sensors
+      - install cameras
+      - always keep your system updated
+judge_instructions: Reward proportional occupancy inference. The best answer identifies a likely false-away-state case, cites the dead phone and imperfect door sensor, and recommends a low-priority check-in rather than an intrusion alert.

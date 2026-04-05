@@ -26,7 +26,11 @@ class SubjectLoadingTests(unittest.TestCase):
                         model: demo/model
                         api_key: dummy
                         timeout_seconds: 240
+                        max_tokens: 1024
                         reasoning_effort: low
+                        reasoning_effort_profile: balanced_auto
+                        reasoning_effort_overrides:
+                          custom_task: high
                         direct_answer_first: true
                     """
                 ).strip()
@@ -39,6 +43,13 @@ class SubjectLoadingTests(unittest.TestCase):
         self.assertEqual(len(subjects), 1)
         self.assertEqual(subjects[0].timeout_seconds, 240)
         self.assertEqual(subjects[0].reasoning_effort, "low")
+        self.assertEqual(subjects[0].reasoning_effort_profile, "balanced_auto")
+        self.assertEqual(subjects[0].reasoning_effort_overrides, (("custom_task", "high"),))
+        self.assertEqual(subjects[0].reasoning_effort_for_task("custom_task"), "high")
+        self.assertEqual(subjects[0].reasoning_effort_for_task("swe_scraper_persistent_resumable"), "high")
+        self.assertEqual(subjects[0].reasoning_effort_for_task("critique_without_sandwich"), "low")
+        self.assertEqual(subjects[0].max_tokens_for_task("critique_without_sandwich"), 1024)
+        self.assertEqual(subjects[0].max_tokens_for_task("nutrition_multi_component_meal_servings"), 50000)
         self.assertTrue(subjects[0].direct_answer_first)
 
     def test_live_runner_from_env_reads_timeout_and_direct_answer_flags(self) -> None:

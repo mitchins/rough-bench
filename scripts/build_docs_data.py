@@ -44,11 +44,13 @@ DOMAIN_TO_CATEGORY = {
     "nlp_engineering": "ml_nlp_engineering",
     "nlp": "ml_nlp_engineering",
     "applied_nlp": "ml_nlp_engineering",
+    "quantitative_reasoning": "search_analytics",
     "retrieval_systems": "search_analytics",
     "product_analytics": "search_analytics",
     "language_translation": "language_localization",
     "language_pragmatics": "language_localization",
     "agentic_specification": "planning_product",
+    "practical_reasoning": "planning_product",
     "tool_planning": "planning_product",
     "ux_product_design": "planning_product",
     "writing_critique": "judgment_creative",
@@ -58,6 +60,13 @@ DOMAIN_TO_CATEGORY = {
 }
 
 EFFICIENCY_QUALITY_FLOOR = 60.0
+
+HOME_ASSISTANT_OVERSIGHT_TASK_IDS = [
+    "smarthome_occupancy_inference_alert",
+    "smarthome_conflicting_signals_pet_vs_intrusion",
+    "smarthome_toolcall_notification_triage",
+    "aquarium_ph_crash_triage",
+]
 
 
 @dataclass
@@ -139,7 +148,11 @@ def _quality_from_pct(suite_demerit_pct: Any) -> float | None:
     return round(100.0 - value, 1)
 
 
-def _category_summary(task_results: list[dict[str, Any]], task_index: dict[str, TaskMeta]) -> tuple[dict[str, Any], dict[str, dict[str, float]]]:
+def _category_summary(
+    task_results: list[dict[str, Any]],
+    failed_task_penalties: list[dict[str, Any]],
+    task_index: dict[str, TaskMeta],
+) -> tuple[dict[str, Any], dict[str, dict[str, float]]]:
     summary: dict[str, dict[str, float]] = {
         category: {"demerits": 0.0, "max_demerits": 0.0, "task_count": 0.0}
         for category in CATEGORY_ORDER
@@ -161,6 +174,31 @@ def _category_summary(task_results: list[dict[str, Any]], task_index: dict[str, 
             "total_penalty": total_penalty,
             "max_penalty_possible": max_penalty,
             "quality": round(100.0 * (1.0 - (total_penalty / max_penalty)), 1) if max_penalty else None,
+        }
+
+    for failure in failed_task_penalties:
+        task_id = str(failure.get("task_id", ""))
+        task_meta = task_index.get(task_id)
+        category = task_meta.meta_category if task_meta else "uncategorized"
+        total_penalty = float(
+            failure.get("failure_demerits")
+            or failure.get("max_penalty_possible")
+            or 0.0
+        )
+        max_penalty = float(
+            failure.get("max_penalty_possible")
+            or failure.get("failure_demerits")
+            or 0.0
+        )
+        slot = summary.setdefault(category, {"demerits": 0.0, "max_demerits": 0.0, "task_count": 0.0})
+        slot["demerits"] += total_penalty
+        slot["max_demerits"] += max_penalty
+        slot["task_count"] += 1.0
+        per_task[task_id] = {
+            "total_penalty": total_penalty,
+            "max_penalty_possible": max_penalty,
+            "quality": 0.0 if max_penalty else None,
+            "failed": True,
         }
 
     category_rows: dict[str, Any] = {}
@@ -187,9 +225,26 @@ def _normalize_run(
 ) -> dict[str, Any]:
     report = subject_item.get("report", {})
     task_results = report.get("task_results", []) or []
-    categories, task_penalties = _category_summary(task_results, task_index)
+    failed_task_penalties = report.get("failed_task_penalties", []) or []
+    categories, task_penalties = _category_summary(task_results, failed_task_penalties, task_index)
     overall_quality = _quality_from_pct(report.get("suite_demerit_pct"))
     usage_total = report.get("usage_total_tokens")
+    usage_prompt_tokens = report.get("usage_prompt_tokens")
+    usage_completion_tokens = report.get("usage_completion_tokens")
+    usage_reasoning_tokens = report.get("usage_reasoning_tokens")
+    usage_answer_tokens = None
+    usage_unsplit_completion_tokens = None
+    try:
+        completion_value = None if usage_completion_tokens is None else int(usage_completion_tokens)
+        reasoning_value = None if usage_reasoning_tokens is None else int(usage_reasoning_tokens)
+        if completion_value is not None:
+            if reasoning_value is None:
+                usage_unsplit_completion_tokens = completion_value
+            else:
+                usage_answer_tokens = max(0, completion_value - reasoning_value)
+    except (TypeError, ValueError):
+        usage_answer_tokens = None
+        usage_unsplit_completion_tokens = None
     demerits_per_1k = report.get("demerits_per_1k_total_tokens")
     tainted = bool(report.get("tainted") or report.get("warning_output_cap_task_count"))
     status = subject_item.get("status")
@@ -223,9 +278,11 @@ def _normalize_run(
         "suite_demerit_pct": report.get("suite_demerit_pct"),
         "overall_quality": overall_quality,
         "usage_total_tokens": usage_total,
-        "usage_prompt_tokens": report.get("usage_prompt_tokens"),
-        "usage_completion_tokens": report.get("usage_completion_tokens"),
-        "usage_reasoning_tokens": report.get("usage_reasoning_tokens"),
+        "usage_prompt_tokens": usage_prompt_tokens,
+        "usage_completion_tokens": usage_completion_tokens,
+        "usage_reasoning_tokens": usage_reasoning_tokens,
+        "usage_answer_tokens": usage_answer_tokens,
+        "usage_unsplit_completion_tokens": usage_unsplit_completion_tokens,
         "demerits_per_1k_total_tokens": demerits_per_1k,
         "params_billion": None if subject_meta is None else subject_meta.params_billion,
         "headline_eligible": headline_eligible,
@@ -236,6 +293,7 @@ def _normalize_run(
         "unique_signal_ids": unique_signal_ids,
         "categories": categories,
         "task_penalties": task_penalties,
+        "failed_task_penalties": failed_task_penalties,
     }
 
 
@@ -365,7 +423,27 @@ def _safe_harmonic_mean(values: list[float]) -> float:
     return len(values) / sum(1.0 / value for value in values)
 
 
-def _build_awards(runs: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], dict[str, list[dict[str, str]]]]:
+def _subset_quality(run: dict[str, Any], task_ids: list[str]) -> float | None:
+    if not task_ids:
+        return None
+    task_rows = run.get("task_penalties", {})
+    rows = []
+    for task_id in task_ids:
+        row = task_rows.get(task_id)
+        if not isinstance(row, dict):
+            return None
+        rows.append(row)
+    max_penalty = sum(float(row.get("max_penalty_possible") or 0.0) for row in rows)
+    demerits = sum(float(row.get("total_penalty") or 0.0) for row in rows)
+    if max_penalty <= 0:
+        return None
+    return round(100.0 * (1.0 - (demerits / max_penalty)), 1)
+
+
+def _build_awards(
+    runs: list[dict[str, Any]],
+    task_index: dict[str, TaskMeta],
+) -> tuple[list[dict[str, Any]], dict[str, list[dict[str, str]]]]:
     eligible = _award_eligible_runs(runs)
     awards: list[dict[str, Any]] = []
     run_awards: dict[str, list[dict[str, str]]] = {str(run.get("run_id")): [] for run in runs}
@@ -533,6 +611,56 @@ def _build_awards(runs: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], dic
             metric_display=f"{score:.2f} rarity pts",
         )
 
+    language_task_ids = sorted(
+        task.id
+        for task in task_index.values()
+        if task.counted and task.meta_category == "language_localization"
+    )
+    if language_task_ids:
+        language_candidates = []
+        for run in eligible:
+            quality = _subset_quality(run, language_task_ids)
+            if quality is None:
+                continue
+            language_candidates.append((run, quality))
+        if language_candidates:
+            winner, quality = max(
+                language_candidates,
+                key=lambda item: (item[1], float(item[0].get("overall_quality") or 0.0)),
+            )
+            add_award(
+                award_id="linguist",
+                label="The Linguist",
+                description="Best aggregate quality across the full counted language and localization task set.",
+                winner=winner,
+                metric_value=quality,
+                metric_display=f"{quality:.1f}%",
+            )
+
+    smarthome_task_ids = [
+        task_id for task_id in HOME_ASSISTANT_OVERSIGHT_TASK_IDS if task_id in task_index
+    ]
+    if smarthome_task_ids:
+        smarthome_candidates = []
+        for run in eligible:
+            quality = _subset_quality(run, smarthome_task_ids)
+            if quality is None:
+                continue
+            smarthome_candidates.append((run, quality))
+        if smarthome_candidates:
+            winner, quality = max(
+                smarthome_candidates,
+                key=lambda item: (item[1], float(item[0].get("overall_quality") or 0.0)),
+            )
+            add_award(
+                award_id="sentry",
+                label="The Sentry",
+                description="Best aggregate quality across the explicit Home Assistant-style household oversight set: occupancy, ambiguous security triage, tool-call notification triage, and aquarium monitoring.",
+                winner=winner,
+                metric_value=quality,
+                metric_display=f"{quality:.1f}%",
+            )
+
     return awards, run_awards
 
 
@@ -573,7 +701,7 @@ def build_docs_data() -> dict[str, Any]:
                 continue
             category_row["relative_quality"] = round(100.0 * float(quality) / float(reference_quality), 1)
 
-    awards, run_awards = _build_awards(runs)
+    awards, run_awards = _build_awards(runs, task_index)
     for run in runs:
         run["awards"] = run_awards.get(str(run.get("run_id")), [])
         run.pop("unique_signal_ids", None)

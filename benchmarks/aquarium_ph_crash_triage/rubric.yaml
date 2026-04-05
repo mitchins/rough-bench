@@ -1,0 +1,250 @@
+signals:
+  - id: required_structure_present
+    description: Uses the requested six-section structure.
+    groups:
+      - [primary diagnosis]
+      - [evidence chain]
+      - [rejected hypothesis]
+      - [unrelated issue]
+      - [immediate action]
+      - [secondary action]
+  - id: water_change_identified
+    description: Identifies low-mineral water change as the primary cause.
+    section: Primary Diagnosis
+    any:
+      - water change
+      - water replacement
+      - replacement water
+      - fresh water
+      - ro water
+      - reverse osmosis
+      - unbuffered water
+      - low-kh water
+      - low mineral water
+      - unmineralised water
+      - unmineralized water
+      - dilution
+      - diluted with soft water
+  - id: tds_temp_dilution_reasoning
+    description: Uses the simultaneous TDS drop and temperature dip as dilution evidence.
+    section: Evidence Chain
+    groups:
+      - [tds, ppm]
+      - [temperature, temp]
+      - [dilution, diluted, cool water, soft water, water change, remineralised, remineralized]
+  - id: buffer_exhaustion_identified
+    description: Identifies depleted KH / buffering exhaustion.
+    section: Primary Diagnosis
+    any:
+      - kh
+      - carbonate hardness
+      - buffer exhaustion
+      - exhausted buffer
+      - buffering capacity
+      - depleted buffer
+      - could not buffer
+      - depleted aquasoil
+  - id: co2_rejected_with_multiple_lines
+    description: Rejects CO2 using at least two independent lines of evidence.
+    section: Rejected Hypothesis
+    groups:
+      - [co2, solenoid]
+      - [stable, 3.5 hours, hours of stability, schedule, normal scheduled cycle, nominal]
+      - [tds drop, temperature dip, abrupt, step-like, not gradual, not the primary driver]
+  - id: flow_issue_separated
+    description: Flags the flow decline as a separate mechanical issue.
+    section: Unrelated Issue
+    groups:
+      - [flow, canister filter, filter]
+      - [separate, unrelated, independent, secondary]
+  - id: buffered_water_action
+    description: Recommends stabilising with buffered or remineralised water.
+    section: Immediate Action
+    any:
+      - remineralised water
+      - remineralized water
+      - buffered water
+      - kh buffer
+      - stabilise
+      - stabilize
+      - mineral
+      - bicarbonate
+  - id: filter_followup_present
+    description: Recommends separate filter maintenance follow-up.
+    section: Secondary Action
+    any:
+      - clean the canister filter
+      - service the filter
+      - filter maintenance
+      - clear the clog
+      - inspect the canister
+penalties:
+  - id: missing_required_structure
+    description: Does not follow the required six-section format.
+    points: 6
+    missing_groups:
+      - [primary diagnosis]
+      - [evidence chain]
+      - [rejected hypothesis]
+      - [unrelated issue]
+      - [immediate action]
+      - [secondary action]
+  - id: co2_blamed_as_primary_cause
+    description: Blames the CO2 solenoid as the primary cause.
+    points: 8
+    section: Primary Diagnosis
+    present_unnegated_any:
+      - co2 overdose
+      - co2 solenoid is stuck
+      - solenoid is stuck in the on position
+      - solenoid is stuck on
+      - stuck in the on position
+      - continuous co2 injection
+      - co2 over-injection
+      - co2 over injection
+      - co2 excess
+      - co2 buildup
+      - co2 accumulation
+      - co2 dump
+      - co2 malfunction
+      - co2 is the cause
+      - solenoid caused
+      - co2 caused the crash
+      - co2 injection is causing
+      - caused by co2
+      - caused by the solenoid
+      - cessation of co2 injection
+      - due to the sudden cessation of co2 injection
+  - id: recommends_co2_shutoff_as_primary_action
+    description: Recommends shutting off CO2 as the primary intervention.
+    points: 6
+    section: Immediate Action
+    present_unnegated_any:
+      - shut off co2
+      - turn off co2
+      - stop the co2 injection
+      - disable the solenoid
+      - disable co2
+      - stop co2 injection
+      - close the co2 solenoid
+      - manually close the co2 solenoid
+      - cut power to the solenoid
+      - cut power to the co2 solenoid
+      - power off the solenoid
+      - deactivate co2
+      - halt co2
+      - pause co2
+      - suspend co2
+  - id: tds_ph_temperature_correlation_missed
+    description: Misses the dilution reasoning from pH + TDS + temperature together.
+    points: 5
+    section: Evidence Chain
+    missing_groups:
+      - [tds, ppm]
+      - [temperature, temp]
+      - [dilution, diluted, cool water, soft water, water change, remineralised, remineralized]
+  - id: primary_diagnosis_missed_water_change
+    description: Fails to identify the water change / dilution event in Primary Diagnosis.
+    points: 6
+    section: Primary Diagnosis
+    missing_any:
+      - water change
+      - water replacement
+      - replacement water
+      - fresh water
+      - ro water
+      - reverse osmosis
+      - unbuffered water
+      - low-kh water
+      - low mineral water
+      - unmineralised water
+      - unmineralized water
+      - dilution
+      - diluted with soft water
+  - id: primary_diagnosis_missed_buffer_exhaustion
+    description: Fails to identify depleted KH / buffering exhaustion in Primary Diagnosis.
+    points: 5
+    section: Primary Diagnosis
+    missing_any:
+      - kh
+      - carbonate hardness
+      - buffer exhaustion
+      - exhausted buffer
+      - buffering capacity
+      - depleted buffer
+      - could not buffer
+      - depleted aquasoil
+  - id: rejected_hypothesis_not_co2
+    description: Fails to name CO2 / solenoid as the near-match hypothesis to reject.
+    points: 4
+    section: Rejected Hypothesis
+    missing_any:
+      - co2
+      - carbon dioxide
+      - solenoid
+      - over-injection
+      - overdose
+  - id: flow_rate_conflated_with_ph_issue
+    description: Treats the flow decline as the cause of or contributor to the pH crash.
+    points: 4
+    section: Primary Diagnosis
+    present_unnegated_any:
+      - reduced flow caused the ph drop
+      - flow decline caused the crash
+      - co2 degassing from low flow
+      - flow is why ph crashed
+      - flow rate has dropped, leading to a rapid ph crash
+      - flow is contributing to the rapid kh depletion
+      - exacerbating the mineral depletion
+  - id: flow_rate_issue_ignored
+    description: Ignores the separate filter-flow issue entirely.
+    points: 2
+    section: Unrelated Issue
+    missing_any:
+      - flow
+      - canister filter
+      - filter maintenance
+      - clog
+  - id: generic_aquarium_advice
+    description: Gives generic aquarium advice instead of diagnosing this event.
+    points: 3
+    present_unnegated_any:
+      - monitor the tank closely
+      - test your water regularly
+      - maintain good husbandry
+      - keep up with maintenance
+      - aquarium care
+  - id: large_unbuffered_water_change_recommended
+    description: Recommends a large water change without buffered/remineralised water.
+    points: 3
+    section: Immediate Action
+    present_unnegated_any:
+      - do a large water change
+      - perform a big water change
+      - immediate 50% water change
+judge_instructions: >
+  The correct diagnosis has three parts:
+
+  (1) CAUSE: A water change was performed with low-KH (unbuffered) water.
+  The evidence is the simultaneous drop in pH, TDS, and temperature — all
+  consistent with dilution by soft, cool tap/RO water. The substrate's
+  buffering capacity (KH) was already depleted, so the tank couldn't
+  compensate for the incoming unbuffered water.
+
+  (2) NEAR-MATCH REJECTION: The CO2 solenoid ran its normal scheduled cycle.
+  The timing overlaps the pH crash, making it look causal. But multiple lines
+  of evidence argue against CO2 as the primary driver:
+    - CO2 had been running for hours with stable pH before the crash
+    - CO2 alone does not explain a simultaneous TDS drop or temperature dip
+    - The onset is abrupt and step-like, not the gradual drift of CO2 accumulation
+  A strong answer uses at least two of these lines.
+
+  (3) SEPARATE ISSUE: Flow rate declined before the pH event. This is a
+  canister filter clog (mechanical issue). It is not causally related to the
+  pH crash. A good answer flags it as a secondary maintenance item without
+  conflating it with the pH diagnosis.
+
+  The recommended action should be: stabilise with properly remineralised or
+  buffered water. Shutting off CO2 is wrong as a primary action because CO2 is
+  not the cause. A large water change without specifying buffered/remineralised
+  water would repeat the original problem.

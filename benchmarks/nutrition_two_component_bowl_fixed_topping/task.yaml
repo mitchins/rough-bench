@@ -1,0 +1,50 @@
+id: nutrition_two_component_bowl_fixed_topping
+title: Nutrition math for a two-component bowl with fixed topping
+domain: quantitative_reasoning
+family: practical_reasoning
+counted: false
+intent: Score whether the model can normalize per-100g nutrition across two recipe components, keep batch subtotals straight, include a fixed per-serving topping, and compute correct whole-meal and per-serving totals without drifting into meal advice.
+latent_requirements:
+  - scale each ingredient from per-100g values to its actual gram amount
+  - keep the base batch and sauce batch separate before assembling the final meal
+  - include the fixed feta topping as 12g per bowl, 36g total
+  - compute the full 3-serving meal correctly
+  - compute the 1-serving assembled bowl correctly from the full meal
+  - apply the stated rounding rule after exact internal arithmetic
+hard_failures:
+  - omits one full component from the calculation
+  - forgets the fixed feta topping entirely
+  - copies source per-100g values without scaling them
+  - turns the task into nutrition commentary instead of arithmetic
+strong_signals:
+  - computes the base batch as 1527 kcal, 136.8g protein, 114.9g carbs, 54.7g fat
+  - computes the sauce batch as 280 kcal, 16.4g protein, 12.0g carbs, 19.5g fat
+  - includes feta as 95 kcal, 5.1g protein, 1.4g carbs, 7.7g fat total
+  - computes the full 3-serving meal as 1903 kcal, 158.2g protein, 128.2g carbs, 81.9g fat
+  - computes each serving as 634 kcal, 52.7g protein, 42.7g carbs, 27.3g fat
+penalties:
+  - missing required structure
+  - base batch wrong
+  - sauce batch wrong
+  - fixed topping missing or wrong
+  - full meal calories wrong
+  - full meal protein wrong
+  - full meal carbs wrong
+  - full meal fat wrong
+  - per serving protein wrong
+  - per serving carbs wrong
+  - per serving fat wrong
+  - generic nutrition advice
+expected_artifacts:
+  - nutrition table
+judge_instructions: >
+  Reward correct batch accounting and final assembly math. This leaf should sit
+  between the simple one-bowl task and the harder multi-component burger task:
+  fewer moving pieces than the hard leaf, but still enough bookkeeping that
+  sloppy models should drift.
+
+  Important scoring nuance: upstream component math should remain strict, but
+  tiny end-of-pipeline display drift on the final macro totals should not be
+  punished as harshly as getting a whole component wrong. That is why the final
+  full-meal and per-serving macros are scored per-macro rather than as one
+  all-or-nothing block.

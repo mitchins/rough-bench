@@ -1,0 +1,55 @@
+id: smarthome_conflicting_signals_pet_vs_intrusion
+title: Away-mode smart-home triage under pet and perimeter ambiguity
+domain: practical_reasoning
+family: practical_reasoning
+counted: false
+intent: Score whether the model can weigh conflicting smart-home evidence while the resident is known to be away, discount weak computer-vision labels appropriately, account for pet-generated activity, hold residual uncertainty when a corroborating camera path is unavailable, and choose a proportionate action under asymmetric action costs rather than collapsing into either alarmism or premature dismissal.
+latent_requirements:
+  - recognize that the cat and feeder/litter-box signals explain most of the interior activity
+  - treat the low-confidence camera label as weak evidence rather than proof
+  - notice that the degraded door sensor preserves some uncertainty about entry
+  - notice that the patio-door vibration event has no clean pet explanation
+  - notice that the resident is explicitly away, so the system cannot resolve this as a simple false-away-state case
+  - notice that a low-priority check-in is still actionable because it also reaches Sarah
+  - notice that the front camera outage removes an important corroboration path
+  - notice that a quiet check-in is cheap relative to both a false hard escalation and a silent miss
+  - notice that the camera label and patio-door vibration are same-minute, same-location perimeter evidence
+  - treat the low-battery contact sensor as making the `closed` state unreliable rather than fully reassuring
+  - avoid both hard intrusion escalation and confident all-clear dismissal
+  - choose a quiet check-in or review action that matches the uncertainty level
+  - name one additional signal that would materially reduce ambiguity
+hard_failures:
+  - treats the camera classifier label as decisive proof of an intruder
+  - ignores the pet-related evidence entirely
+  - sends a high-priority intrusion alert as the main recommendation
+  - gives generic home-security advice instead of deciding this case
+  - dismisses all ambiguity and recommends no alert with high confidence
+  - fails to acknowledge the vibration event or treats it as fully pet-explained
+strong_signals:
+  - identifies pet activity as the leading explanation for the interior motion sequence
+  - calls the camera event weak because the confidence is low and the camera has recent false positives on the cat
+  - explicitly notes the vibration event is not explained by the cat hypothesis
+  - explicitly notes that Maya is away and the front camera outage prevents clean closure
+  - explicitly notes that Sarah can still receive the cheap check-in even if Maya's phone is dead
+  - ties the 22:13 camera event and 22:13 vibration together as correlated perimeter evidence
+  - explicitly says the low-battery contact path means `closed` does not fully rule out an open/close event
+  - uses the cheap-check-in versus costly-silence tradeoff as part of the final action choice
+  - picks a low-priority check-in rather than intrusion alert or unconditional no-alert
+  - cites the bowl, litter box, and low-light classifier caveat together
+  - names a concrete next signal to check, such as reviewing the clip, checking slider/door state, or requesting another camera angle
+penalties:
+  - missing required structure
+  - intrusion alert overreach
+  - confident no-alert dismissal
+  - pet explanation missed
+  - camera label taken literally
+  - vibration event ignored
+  - away context ignored
+  - camera outage ignored
+  - degraded sensor uncertainty missed
+  - low priority action missed
+  - additional signal missing
+  - generic smart-home advice
+expected_artifacts:
+  - occupancy memo
+judge_instructions: Reward proportional evidence weighting. The best answer should say the cat is the leading explanation for most of the interior activity, flag the patio-door vibration as residual unexplained evidence, note that Maya is explicitly away and the front camera is unavailable, recognize that the quiet check-in still has value because Sarah can receive it even if Maya's phone is dead, tie the 22:13 camera label and 22:13 vibration together as same-location perimeter evidence, keep some uncertainty because the low-battery contact path makes `closed` non-decisive, and choose a low-priority check-in or review action rather than either a hard alarm or a confident all-clear.

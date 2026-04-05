@@ -1,0 +1,36 @@
+id: smarthome_occupancy_inference_alert
+title: Smart-home occupancy inference without alarm overreach
+domain: practical_reasoning
+family: practical_reasoning
+counted: false
+intent: Score whether the model can infer likely occupancy from a small event log, handle missing or unreliable signals sanely, and choose a proportional alert action instead of defaulting to certainty or generic advice.
+latent_requirements:
+  - infer that the most likely explanation is the resident returning home rather than an intrusion
+  - use the phone-battery and missed-door-sensor caveats as uncertainty reducers, not as certainty proofs
+  - notice that the kitchen to living room to bathroom to bedroom sequence looks like ordinary evening occupancy
+  - choose a proportional notification action rather than a high-priority alarm
+  - acknowledge at least one plausible alternative explanation
+hard_failures:
+  - sends an intrusion alert as the main recommendation
+  - ignores the phone battery and sensor reliability caveats
+  - treats the missing door event as dispositive proof of an intruder
+  - gives generic smart-home advice instead of deciding what to do now
+strong_signals:
+  - says Maya is most likely home or recently arrived home
+  - chooses a low-priority check-in rather than an intrusion alert
+  - cites the dead phone and imperfect door sensor as reasons to avoid overconfidence
+  - describes the event sequence as a normal evening progression through the home
+  - names an alternative explanation while keeping it less likely
+penalties:
+  - missing required structure
+  - intrusion alert overreach
+  - likely resident hypothesis missed
+  - phone context ignored
+  - door sensor caveat ignored
+  - routine progression missed
+  - mode correction missed
+  - alternative explanation missing
+  - generic smart-home advice
+expected_artifacts:
+  - occupancy memo
+judge_instructions: Reward proportional reasoning under uncertainty. The best answer should treat this as a likely false-away-state case and recommend a low-priority check-in or mode-correction nudge, not a high-priority intrusion alert.

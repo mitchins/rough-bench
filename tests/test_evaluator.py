@@ -8,6 +8,7 @@ from roughbench.judging.evaluator import (
     _artifact_match_any,
     _contains_any,
     _contains_any_unnegated,
+    _extract_sections,
     _iter_term_spans,
     _normalize,
     _penalty_triggered_with_artifacts,
@@ -47,6 +48,10 @@ class NormalizeTests(unittest.TestCase):
     def test_normalize_flattens_case_spacing_and_hyphen_variants(self) -> None:
         text = "Alpha\u2014Beta  \n  GAMMA"
         self.assertEqual(_normalize(text), "alpha-beta gamma")
+
+    def test_normalize_flattens_unicode_formula_digits_and_aliases(self) -> None:
+        text = "CO\u2082 and Carbon Dioxide"
+        self.assertEqual(_normalize(text), "co2 and co2")
 
 
 class TermSpanTests(unittest.TestCase):
@@ -141,6 +146,56 @@ class SignalAndPenaltyRuleTests(unittest.TestCase):
                 text="answer",
                 artifact_names=("artifacts/server.py",),
                 artifact_text="await websocket.close()",
+            )
+        )
+
+    def test_penalty_triggered_can_scope_to_named_section(self) -> None:
+        rule = PenaltyRule(
+            id="section-penalty",
+            description="example",
+            points=4,
+            section="Immediate Action",
+            present_unnegated_any=("stop the co2 injection",),
+        )
+        text = """## Rejected Hypothesis
+Stop the CO2 injection is the wrong move.
+
+## Immediate Action
+Stop the CO2 injection immediately.
+"""
+
+        self.assertTrue(
+            _penalty_triggered_with_artifacts(
+                rule,
+                _normalize(text),
+                artifact_names=(),
+                artifact_text="",
+                sections=_extract_sections(text),
+            )
+        )
+
+    def test_missing_penalty_uses_target_section_not_later_mentions(self) -> None:
+        rule = PenaltyRule(
+            id="missing-water-change",
+            description="example",
+            points=4,
+            section="Primary Diagnosis",
+            missing_any=("water change",),
+        )
+        text = """## Primary Diagnosis
+CO2 solenoid fault.
+
+## Rejected Hypothesis
+Water change dilution.
+"""
+
+        self.assertTrue(
+            _penalty_triggered_with_artifacts(
+                rule,
+                _normalize(text),
+                artifact_names=(),
+                artifact_text="",
+                sections=_extract_sections(text),
             )
         )
 

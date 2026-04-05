@@ -1,0 +1,38 @@
+You are deciding what a smart-home system should do right now.
+
+Current time: Wednesday 22:48.
+
+Household context:
+- One resident: Maya.
+- No pets.
+- Cleaner visits Thursdays only. Today is Wednesday.
+- Maya's phone battery died at work at 16:55, so phone geofence and Wi-Fi presence are unavailable tonight.
+- The home is still in Away mode because Maya sometimes forgets to disarm it.
+- The front-door contact sensor has missed events twice in the last month.
+
+Recent event log:
+- 18:09 porch motion
+- 18:10 hallway motion
+- 18:11 kitchen light on
+- 18:28 kitchen light off
+- 19:03 living room lamp on
+- 21:54 bathroom motion
+- 21:55 bathroom light on
+- 22:02 bathroom light off
+- 22:13 bedroom light on
+- 22:44 bedroom motion
+
+Write exactly these sections:
+
+## Best Occupancy Hypothesis
+## Confidence
+## Alert Decision
+## Key Evidence
+## Alternative Explanation
+
+Requirements:
+- In Alert Decision, choose one of exactly these: `intrusion alert`, `low-priority check-in`, or `no alert`
+- If you think someone is probably home, say who is most likely home
+- Explain what the system should do now, not a general policy
+- Treat the missing door event as evidence, but not perfect evidence
+- Do not write generic smart-home advice

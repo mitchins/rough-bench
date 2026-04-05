@@ -1,0 +1,52 @@
+You are deciding what a smart-home system should do right now.
+
+Current time: Tuesday 22:18.
+
+Household context:
+- One resident: Maya.
+- One indoor cat: Miso.
+- The home is still in Away mode.
+- Maya messaged at 20:06 that she was at a New Year's Eve party across town and would not be home before 00:30.
+- A `low-priority check-in` sends one quiet push/SMS to Maya and her neighbor Sarah, who has a spare key and can check the exterior if needed. Total messaging cost is about `$0.01`.
+- An `intrusion alert` wakes Maya and escalates to monitored-alarm review; false escalations are expensive and disruptive.
+- There is about `$25,000` of portable property in the house right now.
+- Maya's phone last checked in at 18:21, then the battery died, so phone geofence and Wi-Fi presence are unavailable tonight.
+- The automatic feeder is scheduled for 22:10 every night.
+- The smart bowl records food-weight change.
+- The litter box has an occupancy sensor.
+- The hallway PIR can occasionally trigger on Miso if he jumps down from the console table.
+- The rear sliding-door contact sensor battery has been low for two days.
+- The front driveway camera went unresponsive at 22:08 and has not recovered, so there is no second exterior view right now.
+- Camera classifier note: on this patio camera, labels below 0.50 confidence are treated as weak evidence unless corroborated. This camera has recently mislabeled Miso as `person` twice and `raccoon` once in low light.
+
+Recent event log:
+- 22:10 feeder dispensed 24g kibble
+- 22:12 bowl weight down 17g
+- 22:13 patio camera: `person` confidence 0.41, small low-to-ground silhouette near the sliding door
+- 22:13 patio-door vibration sensor: single impulse, 1.8g peak acceleration
+- 22:14 kitchen motion
+- 22:14 living room motion
+- 22:15 litter box occupied for 38 seconds
+- 22:16 hallway motion
+- 22:17 sliding-door contact state still `closed`; no open event recorded
+- 22:17 Maya phone geofence still `away`; Wi-Fi absent
+
+Write exactly these sections:
+
+## Best Occupancy Hypothesis
+## Confidence
+## Alert Decision
+## Most Diagnostic Evidence
+## Alternative Explanation
+## One Additional Signal To Check
+
+Requirements:
+- In Alert Decision, choose one of exactly these: `intrusion alert`, `low-priority check-in`, or `no alert`
+- Decide what the system should do now, not a general policy
+- Treat the camera label as one piece of evidence, not gospel
+- Take the action-cost asymmetry seriously: a quiet check-in is cheap, a hard alarm is costly, and silent failure is also costly
+- Notice whether multiple perimeter signals happened at the same time and place
+- Treat the low-battery sliding-door contact sensor as a degraded sensor path, not a clean confirmation that the door definitely stayed closed
+- Explain why the cat evidence matters or does not matter
+- In One Additional Signal To Check, name one specific next signal or check that would reduce uncertainty
+- Do not give generic smart-home advice

@@ -29,6 +29,16 @@ Efficiency only includes complete, untainted runs above the configured quality f
   <table class="rb-table" id="rb-efficiency-table"></table>
 </div>
 
+## Token Composition
+
+<p class="rb-muted">
+Grey is prompt, purple is reasoning, green is final answer. When a provider does not expose reasoning telemetry, completion is shown as an unsplit segment instead of a fake think split.
+</p>
+
+<div class="rb-panel">
+  <div id="rb-token-mix-list"></div>
+</div>
+
 ## Model Shape
 
 <p class="rb-muted">

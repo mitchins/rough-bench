@@ -8,6 +8,7 @@ from openai import OpenAI
 
 from roughbench.runners.base import TaskOutput
 from roughbench.runners.structured_output import build_task_output_from_text
+from roughbench.subjects import resolve_max_tokens, resolve_reasoning_effort
 from roughbench.tasks.models import TaskDefinition
 
 
@@ -32,6 +33,10 @@ class OpenAIRunner:
     temperature: float = 0.0
     max_tokens: int = 3000
     reasoning_effort: str = ""
+    reasoning_effort_profile: str = ""
+    reasoning_effort_overrides: tuple[tuple[str, str], ...] = ()
+    max_tokens_profile: str = ""
+    max_tokens_overrides: tuple[tuple[str, int], ...] = ()
     save_responses_dir: Path | None = None
     _client: OpenAI | None = field(default=None, init=False, repr=False)
 
@@ -41,14 +46,16 @@ class OpenAIRunner:
             self._client = OpenAI(api_key=self.api_key)
         return self._client
 
-    def run(self, prompt: str) -> tuple[str, dict]:
+    def run(self, prompt: str, *, task: TaskDefinition | None = None) -> tuple[str, dict]:
+        resolved_reasoning_effort = self._reasoning_effort_for_task(task)
+        resolved_max_tokens = self._max_tokens_for_task(task)
         create_kwargs: dict[str, object] = {
             "model": self.model,
             "input": prompt,
-            "max_output_tokens": self.max_tokens,
+            "max_output_tokens": resolved_max_tokens,
         }
-        if self.reasoning_effort:
-            create_kwargs["reasoning"] = {"effort": self.reasoning_effort}
+        if resolved_reasoning_effort:
+            create_kwargs["reasoning"] = {"effort": resolved_reasoning_effort}
         elif self.temperature != 0.0:
             create_kwargs["temperature"] = self.temperature
 
@@ -61,7 +68,10 @@ class OpenAIRunner:
                     "model": self.model,
                     "prompt_variant": "original",
                     "finish_reason": getattr(response, "status", None),
-                    "reasoning_effort": self.reasoning_effort,
+                    "reasoning_effort": resolved_reasoning_effort,
+                    "reasoning_effort_profile": self.reasoning_effort_profile,
+                    "requested_max_tokens": resolved_max_tokens,
+                    "max_tokens_profile": self.max_tokens_profile,
                     "content_present": bool(answer_text),
                     "content_len": len(answer_text),
                     "reasoning_present": False,
@@ -78,8 +88,28 @@ class OpenAIRunner:
         }
         return answer_text, metadata
 
+    def _reasoning_effort_for_task(self, task: TaskDefinition | None) -> str:
+        if task is None:
+            return self.reasoning_effort
+        return resolve_reasoning_effort(
+            base_effort=self.reasoning_effort,
+            profile=self.reasoning_effort_profile,
+            overrides=self.reasoning_effort_overrides,
+            task_id=task.id,
+        )
+
+    def _max_tokens_for_task(self, task: TaskDefinition | None) -> int:
+        if task is None:
+            return self.max_tokens
+        return resolve_max_tokens(
+            base_max_tokens=self.max_tokens,
+            profile=self.max_tokens_profile or self.reasoning_effort_profile,
+            overrides=self.max_tokens_overrides,
+            task_id=task.id,
+        )
+
     def collect(self, task: TaskDefinition) -> TaskOutput:
-        answer_text, metadata = self.run(task.prompt)
+        answer_text, metadata = self.run(task.prompt, task=task)
         source_dir = _source_dir(self.save_responses_dir, task)
         _persist_metadata(self.save_responses_dir, task, metadata)
         return build_task_output_from_text(

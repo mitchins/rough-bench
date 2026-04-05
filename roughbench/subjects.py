@@ -13,6 +13,19 @@ import yaml
 
 DEFAULT_TIMEOUT_SECONDS = 180
 DEFAULT_LAN_TIMEOUT_SECONDS = 600
+DEFAULT_BALANCED_AUTO_REASONING_EFFORT = "medium"
+BALANCED_AUTO_REASONING_EFFORT_OVERRIDES: dict[str, str] = {
+    "swe_scraper_persistent_resumable": "high",
+    "ux_multirole_service_hub_ia": "high",
+    "nutrition_multi_component_meal_servings": "high",
+    "retrieval_local_search_stack_practicality": "high",
+    "train_inference_mismatch_audit": "high",
+}
+BALANCED_AUTO_MAX_TOKENS_OVERRIDES: dict[str, int] = {
+    "swe_scraper_persistent_resumable": 50000,
+    "nutrition_multi_component_meal_servings": 50000,
+    "train_inference_mismatch_audit": 50000,
+}
 
 
 def _read_yaml(path: Path) -> dict:
@@ -27,6 +40,70 @@ def _read_yaml(path: Path) -> dict:
 def _slugify(value: str) -> str:
     slug = re.sub(r"[^a-z0-9]+", "_", value.casefold()).strip("_")
     return slug or "subject"
+
+
+def _as_reasoning_effort_overrides(value: object) -> tuple[tuple[str, str], ...]:
+    if value is None:
+        return ()
+    if not isinstance(value, dict):
+        raise ValueError("reasoning_effort_overrides must be a mapping of task_id -> effort")
+    pairs: list[tuple[str, str]] = []
+    for task_id, effort in value.items():
+        key = str(task_id).strip()
+        level = str(effort).strip()
+        if not key or not level:
+            continue
+        pairs.append((key, level))
+    return tuple(sorted(pairs))
+
+
+def _as_max_tokens_overrides(value: object) -> tuple[tuple[str, int], ...]:
+    if value is None:
+        return ()
+    if not isinstance(value, dict):
+        raise ValueError("max_tokens_overrides must be a mapping of task_id -> integer")
+    pairs: list[tuple[str, int]] = []
+    for task_id, max_tokens in value.items():
+        key = str(task_id).strip()
+        if not key:
+            continue
+        level = int(max_tokens)
+        if level <= 0:
+            continue
+        pairs.append((key, level))
+    return tuple(sorted(pairs))
+
+
+def resolve_reasoning_effort(
+    *,
+    base_effort: str,
+    profile: str,
+    overrides: tuple[tuple[str, str], ...],
+    task_id: str,
+) -> str:
+    for override_task_id, override_effort in overrides:
+        if override_task_id == task_id:
+            return override_effort
+    if profile == "balanced_auto":
+        if task_id in BALANCED_AUTO_REASONING_EFFORT_OVERRIDES:
+            return BALANCED_AUTO_REASONING_EFFORT_OVERRIDES[task_id]
+        return base_effort or DEFAULT_BALANCED_AUTO_REASONING_EFFORT
+    return base_effort
+
+
+def resolve_max_tokens(
+    *,
+    base_max_tokens: int,
+    profile: str,
+    overrides: tuple[tuple[str, int], ...],
+    task_id: str,
+) -> int:
+    for override_task_id, override_max_tokens in overrides:
+        if override_task_id == task_id:
+            return override_max_tokens
+    if profile == "balanced_auto":
+        return BALANCED_AUTO_MAX_TOKENS_OVERRIDES.get(task_id, base_max_tokens)
+    return base_max_tokens
 
 
 def is_lan_base_url(base_url: str) -> bool:
@@ -65,9 +142,29 @@ class SubjectDefinition:
     timeout_seconds: int = DEFAULT_TIMEOUT_SECONDS
     direct_answer_first: bool = False
     reasoning_effort: str = ""
+    reasoning_effort_profile: str = ""
+    reasoning_effort_overrides: tuple[tuple[str, str], ...] = ()
+    max_tokens_profile: str = ""
+    max_tokens_overrides: tuple[tuple[str, int], ...] = ()
     thinking_type: str = ""
     notes: str = ""
     storage_name: str = ""
+
+    def reasoning_effort_for_task(self, task_id: str) -> str:
+        return resolve_reasoning_effort(
+            base_effort=self.reasoning_effort,
+            profile=self.reasoning_effort_profile,
+            overrides=self.reasoning_effort_overrides,
+            task_id=task_id,
+        )
+
+    def max_tokens_for_task(self, task_id: str) -> int:
+        return resolve_max_tokens(
+            base_max_tokens=self.max_tokens,
+            profile=self.max_tokens_profile or self.reasoning_effort_profile,
+            overrides=self.max_tokens_overrides,
+            task_id=task_id,
+        )
 
     @property
     def resolved_api_key(self) -> str:
@@ -110,6 +207,14 @@ class SubjectDefinition:
             timeout_seconds=timeout_seconds,
             direct_answer_first=bool(data.get("direct_answer_first", False)),
             reasoning_effort=str(data.get("reasoning_effort", "")),
+            reasoning_effort_profile=str(data.get("reasoning_effort_profile", "")),
+            reasoning_effort_overrides=_as_reasoning_effort_overrides(
+                data.get("reasoning_effort_overrides")
+            ),
+            max_tokens_profile=str(
+                data.get("max_tokens_profile", data.get("reasoning_effort_profile", ""))
+            ),
+            max_tokens_overrides=_as_max_tokens_overrides(data.get("max_tokens_overrides")),
             thinking_type=str(data.get("thinking_type", "")),
             notes=str(data.get("notes", "")),
             storage_name=storage_name,

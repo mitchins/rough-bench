@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import unicodedata
 from pathlib import Path
 
 from roughbench.judging.scorecard import PenaltyHit, SignalHit, TaskScorecard
@@ -11,6 +12,47 @@ HEAD_TEXT_LIMIT = 1000
 
 _THINK_RE = re.compile(r"<think>.*?</think>", re.DOTALL | re.IGNORECASE)
 _UNCLOSED_THINK_RE = re.compile(r"<think>.*", re.DOTALL | re.IGNORECASE)
+_SECTION_RE = re.compile(r"(?m)^##\s+(.+?)\s*$")
+
+_HYPHEN_VARIANTS = {
+    ord("\u2010"): "-",
+    ord("\u2011"): "-",
+    ord("\u2012"): "-",
+    ord("\u2013"): "-",
+    ord("\u2014"): "-",
+    ord("\u2015"): "-",
+    ord("\u2212"): "-",
+}
+_SUBSCRIPT_DIGITS = str.maketrans({
+    "\u2080": "0",
+    "\u2081": "1",
+    "\u2082": "2",
+    "\u2083": "3",
+    "\u2084": "4",
+    "\u2085": "5",
+    "\u2086": "6",
+    "\u2087": "7",
+    "\u2088": "8",
+    "\u2089": "9",
+})
+_SUPERSCRIPT_DIGITS = str.maketrans({
+    "\u2070": "0",
+    "\u00B9": "1",
+    "\u00B2": "2",
+    "\u00B3": "3",
+    "\u2074": "4",
+    "\u2075": "5",
+    "\u2076": "6",
+    "\u2077": "7",
+    "\u2078": "8",
+    "\u2079": "9",
+})
+_CHEMICAL_ALIASES = (
+    ("carbon dioxide", "co2"),
+    ("carbonic acid", "h2co3"),
+    ("sodium bicarbonate", "nahco3"),
+    ("calcium carbonate", "caco3"),
+)
 
 
 def _strip_think_blocks(text: str) -> str:
@@ -21,19 +63,48 @@ def _strip_think_blocks(text: str) -> str:
 
 
 def _normalize(text: str) -> str:
-    hyphen_variants = {
-        ord("\u2010"): "-",
-        ord("\u2011"): "-",
-        ord("\u2012"): "-",
-        ord("\u2013"): "-",
-        ord("\u2014"): "-",
-        ord("\u2015"): "-",
-        ord("\u2212"): "-",
-    }
-    text = text.translate(hyphen_variants).casefold()
+    text = unicodedata.normalize("NFKC", text)
+    text = text.translate(_HYPHEN_VARIANTS)
+    text = text.translate(_SUBSCRIPT_DIGITS)
+    text = text.translate(_SUPERSCRIPT_DIGITS)
+    text = text.casefold()
     # Strip thousand-separator commas in numbers (e.g. 3,264 → 3264)
     text = re.sub(r"(?<=\d),(?=\d{3})", "", text)
+    text = re.sub(r"(?m)^#{1,6}\s*", "", text)
+    text = re.sub(r"`{1,3}", "", text)
+    text = re.sub(r"\*{1,3}", "", text)
+    for alias, canonical in _CHEMICAL_ALIASES:
+        text = text.replace(alias, canonical)
     return " ".join(text.split())
+
+
+def _section_key(name: str) -> str:
+    return _normalize(name)
+
+
+def _extract_sections(text: str) -> dict[str, str]:
+    matches = list(_SECTION_RE.finditer(text))
+    if not matches:
+        return {}
+
+    sections: dict[str, str] = {}
+    for index, match in enumerate(matches):
+        start = match.end()
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
+        heading = _section_key(match.group(1))
+        body = text[start:end].strip()
+        sections[heading] = _normalize(body)
+    return sections
+
+
+def _rule_text(
+    section: str,
+    text: str,
+    sections: dict[str, str],
+) -> str:
+    if not section:
+        return text
+    return sections.get(_section_key(section), "")
 
 
 def _iter_term_spans(text: str, term: str):
@@ -128,7 +199,7 @@ def _artifact_match_any(artifact_names: tuple[str, ...], patterns: tuple[str, ..
 
 
 def _signal_matches(rule: SignalRule, text: str, artifact_names: tuple[str, ...]) -> bool:
-    return _signal_matches_with_artifacts(rule, text, artifact_names, "")
+    return _signal_matches_with_artifacts(rule, text, artifact_names, "", {})
 
 
 def _signal_matches_with_artifacts(
@@ -136,19 +207,22 @@ def _signal_matches_with_artifacts(
     text: str,
     artifact_names: tuple[str, ...],
     artifact_text: str,
+    sections: dict[str, str] | None = None,
 ) -> bool:
+    sections = sections or {}
+    scoped_text = _rule_text(rule.section, text, sections)
     matched = False
     if rule.any:
-        matched = _contains_any(text, rule.any)
+        matched = _contains_any(scoped_text, rule.any)
         if not matched:
             return False
     if rule.all:
         matched = True
-        if not _contains_all(text, rule.all):
+        if not _contains_all(scoped_text, rule.all):
             return False
     if rule.groups:
         matched = True
-        if not _matches_groups(text, rule.groups):
+        if not _matches_groups(scoped_text, rule.groups):
             return False
     if rule.artifact_any:
         matched = True
@@ -170,7 +244,7 @@ def _signal_matches_with_artifacts(
 
 
 def _penalty_triggered(rule: PenaltyRule, text: str, artifact_names: tuple[str, ...]) -> bool:
-    return _penalty_triggered_with_artifacts(rule, text, artifact_names, "")
+    return _penalty_triggered_with_artifacts(rule, text, artifact_names, "", {})
 
 
 def _penalty_triggered_with_artifacts(
@@ -178,15 +252,20 @@ def _penalty_triggered_with_artifacts(
     text: str,
     artifact_names: tuple[str, ...],
     artifact_text: str,
+    sections: dict[str, str] | None = None,
 ) -> bool:
-    head_text = text[:HEAD_TEXT_LIMIT]
-    if rule.present_any and _contains_any(text, rule.present_any):
+    sections = sections or {}
+    scoped_text = _rule_text(rule.section, text, sections)
+    head_text = scoped_text[:HEAD_TEXT_LIMIT]
+    if rule.present_any and _contains_any(scoped_text, rule.present_any):
         return True
-    if rule.present_unnegated_any and _contains_any_unnegated(text, rule.present_unnegated_any):
+    if rule.present_unnegated_any and _contains_any_unnegated(
+        scoped_text, rule.present_unnegated_any
+    ):
         return True
-    if rule.present_all and _contains_all(text, rule.present_all):
+    if rule.present_all and _contains_all(scoped_text, rule.present_all):
         return True
-    if rule.present_groups and _matches_groups(text, rule.present_groups):
+    if rule.present_groups and _matches_groups(scoped_text, rule.present_groups):
         return True
     if rule.present_head_any and _contains_any(head_text, rule.present_head_any):
         return True
@@ -194,11 +273,11 @@ def _penalty_triggered_with_artifacts(
         return True
     if rule.present_head_groups and _matches_groups(head_text, rule.present_head_groups):
         return True
-    if rule.missing_any and not _contains_any(text, rule.missing_any):
+    if rule.missing_any and not _contains_any(scoped_text, rule.missing_any):
         return True
-    if rule.missing_all and not _contains_all(text, rule.missing_all):
+    if rule.missing_all and not _contains_all(scoped_text, rule.missing_all):
         return True
-    if rule.missing_groups and not _matches_groups(text, rule.missing_groups):
+    if rule.missing_groups and not _matches_groups(scoped_text, rule.missing_groups):
         return True
     if rule.missing_head_any and not _contains_any(head_text, rule.missing_head_any):
         return True
@@ -243,6 +322,7 @@ class RuleBasedJudge:
         cleaned_artifact_text = _strip_think_blocks(output.artifact_text)
         normalized_text = _normalize(cleaned_text)
         normalized_artifact_text = _normalize(cleaned_artifact_text)
+        normalized_sections = _extract_sections(cleaned_text)
 
         passed_signals = tuple(
             SignalHit(id=rule.id, description=rule.description)
@@ -252,6 +332,7 @@ class RuleBasedJudge:
                 normalized_text,
                 output.artifact_names,
                 normalized_artifact_text,
+                normalized_sections,
             )
         )
 
@@ -263,6 +344,7 @@ class RuleBasedJudge:
                 normalized_text,
                 output.artifact_names,
                 normalized_artifact_text,
+                normalized_sections,
             )
         )
 

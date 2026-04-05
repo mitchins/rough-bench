@@ -1,0 +1,80 @@
+id: home_energy_ev_charge_decision
+title: EV charge scheduling under solar forecast uncertainty and competing grid economics
+domain: practical_reasoning
+family: practical_reasoning
+counted: false
+intent: >
+  Score whether the model can integrate time-of-use pricing, solar forecast
+  uncertainty, EV departure constraints, charger throughput, and export
+  opportunity cost to choose a charge strategy, rather than defaulting to the
+  surface-level "free solar beats paid grid" heuristic.
+
+latent_requirements:
+  - recognize that the 07:30 departure leaves almost no usable solar window
+  - notice that the morning cloud band and sunrise timing make pre-departure solar unreliable
+  - estimate that the EV needs roughly 38 kWh into the battery, or roughly 41 kWh from the wall at 92 percent efficiency
+  - estimate that the charge will take roughly 5.1 to 5.6 hours at 7.4 kW
+  - identify the 23:00-05:30 overnight tariff as the practical charging window
+  - reject waiting for solar as the primary plan because the useful solar arrives after departure
+  - acknowledge that export value makes midday solar less obviously "free" even in a hypothetical later-departure case
+  - recommend that a later departure or home-all-day scenario would change the decision
+
+hard_failures:
+  - recommends waiting for solar as the primary strategy
+  - ignores the departure-time constraint
+  - ignores the overnight tariff entirely
+  - recommends charging immediately at the current peak evening rate
+  - gives generic EV or solar advice instead of deciding this case
+
+strong_signals:
+  - explicitly estimates energy needed and charge time
+  - identifies the overnight tariff as the best window
+  - notes that pre-departure solar is effectively negligible
+  - rejects solar-first because the useful generation is after departure
+  - estimates the overnight cost in a plausible range
+  - names at least one concrete scenario change that would flip the recommendation
+  - optionally notes export opportunity cost as a further reason not to romanticize solar
+
+penalties:
+  - missing required structure
+  - wait for solar recommended as primary strategy
+  - departure-time constraint ignored
+  - overnight tariff not used
+  - charge now at peak rate recommended
+  - no arithmetic attempted
+  - forecast uncertainty ignored
+  - generic EV or solar advice
+  - solar window timing missed
+  - cost estimate omitted
+
+expected_artifacts:
+  - charge schedule memo
+
+judge_instructions: >
+  The correct recommendation is: charge at the overnight rate. Starting around
+  23:00 and finishing around 04:00-04:30 is the practical answer.
+
+  Accept arithmetic in a reasonable range:
+
+  - battery energy needed: about 38 kWh
+  - wall energy needed at 92 percent efficiency: about 41 kWh
+  - charge time: about 5.1 to 5.6 hours, depending on whether the model treats
+    charger power as battery-side or wall-side
+  - overnight cost: about 320-350 pence
+
+  The core reasoning chain is:
+
+  (1) DEPARTURE CONSTRAINT: the owner leaves at 07:30. Sunrise is 06:42 and the
+  forecast is cloudy until roughly 09:00, so there is effectively no reliable
+  solar window before departure.
+
+  (2) CHEAP FEASIBLE WINDOW: the overnight tariff runs from 23:00 to 05:30,
+  which is long enough for the needed charge.
+
+  (3) SOLAR TRAP: a naive answer says "wait for free solar", but the useful
+  solar arrives after the car has already left. A stronger answer may also note
+  that midday solar has export value, so it is not literally free even in a
+  hypothetical later-departure case.
+
+  (4) PEAK AVOIDANCE: charging immediately at 19:45 is wrong because the car
+  has enough charge for an evening emergency and the overnight rate is much cheaper.

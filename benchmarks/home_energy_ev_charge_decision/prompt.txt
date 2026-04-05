@@ -1,0 +1,69 @@
+You are a home energy management system deciding when to charge the EV.
+
+Current time: Wednesday 19:45.
+
+-- Household Dashboard ------------------------------------------------
+
+SOLAR
+  Panels: 6.2 kWp array, west-facing
+  Current output: 0.3 kW (sunset in ~20 min)
+  Inverter: 5 kW hybrid, single MPPT
+  Current mode: grid export
+
+SOLAR FORECAST (tomorrow, via Solcast)
+  06:00-07:00    0.0 kW   overcast
+  07:00-08:00    0.4 kW   overcast
+  08:00-09:00    1.1 kW   mostly cloudy
+  09:00-10:00    3.2 kW   clearing
+  10:00-11:00    4.4 kW   clear
+  11:00-12:00    4.8 kW   clear
+  12:00-13:00    5.1 kW   clear (peak)
+  13:00-14:00    4.9 kW   clear
+  14:00-15:00    4.2 kW   clear
+  15:00-16:00    2.8 kW   some cloud
+  Forecast confidence: 72% (moderate; morning cloud band timing uncertain +/-90 min)
+
+GRID TARIFF (Octopus Go-style)
+  19:00-23:00    34.0 p/kWh   evening peak
+  23:00-05:30     8.5 p/kWh   overnight off-peak
+  05:30-19:00    28.5 p/kWh   daytime standard
+  Export rate:   15.0 p/kWh   fixed all day
+
+HOUSEHOLD
+  Current draw: 0.9 kW (normal evening)
+  Overnight base load (typical): 0.3-0.4 kW
+  No unusual loads expected tonight or tomorrow morning
+
+EV (at home, plugged in)
+  Battery: 82 kWh total capacity
+  Current SOC: 34%
+  Charger: 7.4 kW AC (Type 2, single-phase)
+  Charge efficiency: ~92%
+
+OWNER SCHEDULE
+  Tomorrow departure: 07:30 (commute, ~45 miles each way)
+  Preferred minimum SOC at departure: 80%
+  Owner note: "charge it cheap, don't wake me up"
+
+WEATHER
+  Tonight: clear, 8C, calm
+  Tomorrow sunrise: 06:42
+  Tomorrow morning: overcast until ~09:00, then clearing
+
+---------------------------------------------------------------------
+
+Write exactly these sections:
+
+## Charge Decision
+## Reasoning
+## Key Constraints
+## Cost Estimate
+## What Would Change This Decision
+
+Requirements:
+- In Charge Decision, choose one of exactly these: `charge now`, `charge at overnight rate`, `wait for solar`, `partial charge now + solar top-up`
+- Show your energy arithmetic: how much charge is needed, how long it takes
+- Explain why you chose this option over the alternatives
+- In Cost Estimate, estimate the cost in pence for your recommended approach
+- In What Would Change This Decision, name at least one specific change to the scenario that would flip your recommendation
+- Do not give generic EV charging or solar energy advice

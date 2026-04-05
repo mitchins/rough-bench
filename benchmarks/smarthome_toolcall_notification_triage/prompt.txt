@@ -1,0 +1,64 @@
+You are deciding what a smart-home system should do right now.
+
+Current time: Tuesday 22:18.
+
+Household context:
+- One resident: Maya.
+- One indoor cat: Miso.
+- The home is still in Away mode.
+- Maya messaged at 20:06 that she was at a New Year's Eve party across town and would not be home before 00:30.
+- Maya's phone last checked in at 18:21, then the battery died, so phone geofence and Wi-Fi presence are unavailable tonight.
+- Neighbor Sarah has a spare key and can do an exterior-only check if needed.
+- There is about `$25,000` of portable property in the house right now.
+- The automatic feeder is scheduled for 22:10 every night.
+- The smart bowl records food-weight change.
+- The litter box has an occupancy sensor.
+- The hallway PIR can occasionally trigger on Miso if he jumps down from the console table.
+- The rear sliding-door contact sensor battery has been low for two days.
+- The front driveway camera went unresponsive at 22:08 and has not recovered, so there is no second exterior view right now.
+- Camera classifier note: on this patio camera, labels below 0.50 confidence are treated as weak evidence unless corroborated. This camera has recently mislabeled Miso as `person` twice and `raccoon` once in low light.
+
+Recent event log:
+- 22:10 feeder dispensed 24g kibble
+- 22:12 bowl weight down 17g
+- 22:13 patio camera: `person` confidence 0.41, small low-to-ground silhouette near the sliding door
+- 22:13 patio-door vibration sensor: single impulse, 1.8g peak acceleration
+- 22:14 kitchen motion
+- 22:14 living room motion
+- 22:15 litter box occupied for 38 seconds
+- 22:16 hallway motion
+- 22:17 sliding-door contact state still `closed`; no open event recorded
+- 22:17 Maya phone geofence still `away`; Wi-Fi absent
+
+Available tools:
+- `noop()`
+  Take no visible action.
+- `security.log(note)`
+  Log the event internally and raise watchfulness for 10 minutes. No user-visible action.
+- `sensors.read("rear_slider_contact")`
+  Read the current state, battery health, and last heartbeat for the rear sliding-door contact path.
+- `camera.capture("patio_camera")`
+  Request a fresh still frame from the patio camera and make `patio_camera.latest` attachable to a notification.
+- `notification.compose(push_notification_payload)`
+  Send a time-sensitive push/SMS to Maya and Sarah. Messaging cost is negligible.
+- `security.siren()`
+  Trigger the exterior siren. Socially costly if wrong.
+- `security.call_out()`
+  Request police dispatch / monitored response. False dispatch cost is `$300`.
+
+Write exactly these sections:
+
+## Ordered Tool Calls
+## push_notification_payload
+## Why Not Lower
+## Why Not Higher
+
+Requirements:
+- Choose between 1 and 3 tool calls, in order.
+- Each line in `## Ordered Tool Calls` must be one exact tool call.
+- The final call must be one of: `noop()`, `security.log(...)`, `notification.compose(push_notification_payload)`, `security.siren()`, or `security.call_out()`.
+- If you do not use `notification.compose(push_notification_payload)`, write exactly `none` under `## push_notification_payload`.
+- Do not invent the outputs of `camera.capture` or `sensors.read`.
+- Prefer proportionate action under uncertainty, not generic advice.
+- If you notify, the payload must be compact JSON with keys: `to`, `time_sensitive`, `title`, `body`, `attachments`.
+- The notification should help Sarah decide what to do next without overstating certainty.

@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
 import sys
 import time
 import traceback
@@ -35,7 +36,7 @@ from roughbench.judging import (
 )
 from roughbench.runners import AnthropicRunner, LocalDirectoryRunner, OpenAIRunner
 from roughbench.runners.base import Runner
-from roughbench.runners.openai_compatible import OpenAICompatibleRunner
+from roughbench.runners.openai_compatible import OpenAICompatibleRunner, OutputCapExceededError
 from roughbench.runners.openai_compatible import from_env as live_runner_from_env
 from roughbench.subjects import SubjectDefinition, load_subjects
 from roughbench.tasks import TaskDefinition, load_tasks
@@ -291,6 +292,70 @@ def build_parser() -> argparse.ArgumentParser:
         help="Prepend the direct-answer preamble on the first request for all selected compare subjects.",
     )
     _add_background_arguments(compare_parser)
+
+    rescore_parser = subparsers.add_parser(
+        "rescore",
+        help="Rejudge saved compare runs from local response directories without rerunning models.",
+    )
+    _add_run_arguments(rescore_parser)
+    rescore_parser.add_argument(
+        "--subjects-file",
+        type=Path,
+        default=_default_path("subjects/seed_subjects.yaml"),
+        help="YAML file defining subject metadata. Used to refresh titles and notes when available.",
+    )
+    rescore_parser.add_argument(
+        "--subject",
+        action="append",
+        default=[],
+        help="Limit rescoring to a subject id from the saved runs. Repeat to select multiple.",
+    )
+    rescore_parser.add_argument(
+        "--save-runs-dir",
+        type=Path,
+        required=True,
+        help="Root directory containing saved compare runs to rescore in place.",
+    )
+
+    invalidate_parser = subparsers.add_parser(
+        "invalidate",
+        help="Remove saved compare results for selected task ids so --cache=resume reruns them.",
+    )
+    invalidate_parser.add_argument(
+        "--benchmarks-dir",
+        type=Path,
+        default=_default_path("benchmarks"),
+        help="Directory containing benchmark task folders.",
+    )
+    invalidate_parser.add_argument(
+        "--save-runs-dir",
+        type=Path,
+        required=True,
+        help="Root directory containing saved compare runs to invalidate in place.",
+    )
+    invalidate_parser.add_argument(
+        "--subject",
+        action="append",
+        default=[],
+        help="Limit invalidation to a subject id from the saved runs. Repeat to select multiple.",
+    )
+    invalidate_parser.add_argument(
+        "--task",
+        action="append",
+        default=[],
+        required=True,
+        help="Saved task id to invalidate. Repeat to clear multiple leaves.",
+    )
+    invalidate_parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show what would be invalidated without changing any files.",
+    )
+    invalidate_parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Print the invalidation summary as JSON.",
+    )
 
     execute_parser = subparsers.add_parser(
         "execute",
@@ -580,6 +645,15 @@ def _dispatch(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
             return _execute_task(task, args)
         except (RuntimeError, ValueError) as exc:
             parser.error(str(exc))
+    if args.command == "invalidate":
+        tasks = load_tasks(args.benchmarks_dir)
+        found_task_ids = {task.id for task in tasks}
+        missing_task_ids = sorted(set(args.task) - found_task_ids)
+        if missing_task_ids:
+            parser.error(
+                f"Cannot invalidate unknown task id(s): {', '.join(missing_task_ids)}"
+            )
+        return _invalidate_compare(args, tasks)
 
     tasks = load_tasks(args.benchmarks_dir, task_ids=args.task)
     if not tasks:
@@ -592,6 +666,8 @@ def _dispatch(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
 
     if args.command == "compare":
         return _run_compare(tasks, args, judge=judge)
+    if args.command == "rescore":
+        return _rescore_compare(tasks, args, judge=judge)
 
     if args.command == "demo":
         report = _run_with_runner(tasks, LocalDirectoryRunner(args.examples_dir), judge=judge)
@@ -684,6 +760,293 @@ def _run_compare(tasks: list[TaskDefinition], args: argparse.Namespace, *, judge
     return 0
 
 
+def _rescore_compare(tasks: list[TaskDefinition], args: argparse.Namespace, *, judge: Judge) -> int:
+    if args.save_runs_dir is None or not args.save_runs_dir.exists():
+        raise SystemExit(f"Saved runs directory not found: {args.save_runs_dir}")
+
+    configured_subjects = {
+        subject.id: subject
+        for subject in load_subjects(args.subjects_file, subject_ids=args.subject)
+    }
+    wanted_subjects = set(args.subject or [])
+    task_filter = set(args.task or [])
+    task_map = {task.id: task for task in tasks}
+
+    compared: list[dict[str, Any]] = []
+    progress_paths, _ = _locate_compare_progress_paths(args.save_runs_dir)
+    if not progress_paths:
+        raise SystemExit(f"No saved compare subject progress found under {args.save_runs_dir}")
+
+    for progress_path in progress_paths:
+        raw = json.loads(progress_path.read_text(encoding="utf-8"))
+        subject_id = str(raw.get("subject_id") or "")
+        if wanted_subjects and subject_id not in wanted_subjects:
+            compared.append(raw)
+            continue
+
+        subject_save_dir = progress_path.parent
+        old_results_raw = raw.get("report", {}).get("task_results", []) or []
+        old_failures = raw.get("failures", []) or []
+        old_results_by_id: dict[str, TaskScorecard] = {}
+        ordered_task_ids: list[str] = []
+        for item in old_results_raw:
+            try:
+                scorecard = TaskScorecard.from_dict(item)
+            except Exception:
+                continue
+            old_results_by_id[scorecard.task_id] = scorecard
+            ordered_task_ids.append(scorecard.task_id)
+
+        task_ids_to_rescore = set(ordered_task_ids)
+        if task_filter:
+            task_ids_to_rescore &= task_filter
+
+        missing_task_ids = sorted(task_ids_to_rescore - task_map.keys())
+        if missing_task_ids:
+            raise SystemExit(
+                f"Cannot rescore subject {subject_id!r}; tasks not found in benchmark set: {', '.join(missing_task_ids)}"
+            )
+
+        runner = LocalDirectoryRunner(subject_save_dir)
+        rescored: dict[str, TaskScorecard] = {}
+        for task_id in ordered_task_ids:
+            if task_id not in task_ids_to_rescore:
+                continue
+            rescored[task_id] = judge.evaluate(task_map[task_id], runner.collect(task_map[task_id]))
+
+        merged_scorecards = [
+            rescored.get(task_id, old_results_by_id[task_id])
+            for task_id in ordered_task_ids
+            if task_id in old_results_by_id
+        ]
+
+        subject = configured_subjects.get(subject_id)
+        if subject is None:
+            subject = SubjectDefinition(
+                id=subject_id,
+                title=str(raw.get("title", subject_id)),
+                provider=str(raw.get("provider", "openai-compatible")),
+                base_url=str(raw.get("base_url", "")),
+                model=str(raw.get("model", "")),
+                reasoning_effort=str(raw.get("reasoning_effort", "")),
+                reasoning_effort_profile=str(raw.get("reasoning_effort_profile", "")),
+                thinking_type=str(raw.get("thinking_type", "")),
+                notes=str(raw.get("notes", "")),
+                storage_name=subject_save_dir.name,
+            )
+        elif subject.storage_name != subject_save_dir.name:
+            subject = replace(subject, storage_name=subject_save_dir.name)
+
+        payload = _build_compare_subject_payload(
+            subject=subject,
+            requested_task_count=int(raw.get("requested_task_count") or len(merged_scorecards) + len(old_failures)),
+            scorecards=merged_scorecards,
+            failures=_enrich_failure_entries(
+                [item for item in old_failures if isinstance(item, dict)],
+                task_map,
+            ),
+            subject_save_dir=subject_save_dir,
+        )
+        progress_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+        compared.append(payload)
+        print(
+            f"[rescore] subject {subject.id}: rescored {len(rescored)} task(s), "
+            f"preserved {len(merged_scorecards) - len(rescored)} existing scorecard(s), "
+            f"{len(old_failures)} failure(s) retained.",
+            flush=True,
+        )
+
+    _persist_compare_payload(args, compared)
+
+    payload = {
+        "subjects_file": str(args.subjects_file),
+        "benchmarks_dir": str(args.benchmarks_dir),
+        "judge_mode": args.judge_mode,
+        "rescore": True,
+        "subjects": compared,
+        "summary": _summarize_compare_payload(compared),
+    }
+
+    output_path = getattr(args, "output", None)
+    if output_path:
+        output_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+
+    if args.json:
+        print(json.dumps(payload, indent=2))
+    else:
+        _print_compare_report(compared)
+
+    if any(item["failed_task_count"] > 0 for item in compared):
+        return 1
+    return 0
+
+
+def _invalidate_compare(args: argparse.Namespace, tasks: list[TaskDefinition]) -> int:
+    if args.save_runs_dir is None or not args.save_runs_dir.exists():
+        raise SystemExit(f"Saved runs directory not found: {args.save_runs_dir}")
+
+    progress_paths, compare_root = _locate_compare_progress_paths(args.save_runs_dir)
+    if not progress_paths:
+        raise SystemExit(f"No saved compare subject progress found under {args.save_runs_dir}")
+
+    wanted_subjects = set(args.subject or [])
+    task_filter = set(args.task or [])
+    task_map = {task.id: task for task in tasks}
+    compared: list[dict[str, Any]] = []
+    matched_subject_ids: set[str] = set()
+    changed_subject_count = 0
+    removed_scorecard_count = 0
+    removed_failure_count = 0
+    removed_response_dir_count = 0
+    removed_live_meta_count = 0
+
+    for progress_path in progress_paths:
+        raw = json.loads(progress_path.read_text(encoding="utf-8"))
+        subject_id = str(raw.get("subject_id") or "")
+        if wanted_subjects and subject_id not in wanted_subjects:
+            compared.append(raw)
+            continue
+
+        matched_subject_ids.add(subject_id)
+        subject_save_dir = progress_path.parent
+        old_results_raw = raw.get("report", {}).get("task_results", []) or []
+        old_failures = raw.get("failures", []) or []
+
+        kept_results_raw: list[dict[str, Any]] = []
+        removed_results_for_subject = 0
+        for item in old_results_raw:
+            task_id = str(item.get("task_id") or "")
+            if task_id in task_filter:
+                removed_results_for_subject += 1
+                continue
+            if isinstance(item, dict):
+                kept_results_raw.append(item)
+
+        kept_failures: list[dict[str, Any]] = []
+        removed_failures_for_subject = 0
+        for item in old_failures:
+            task_id = str(item.get("task_id") or "")
+            if task_id in task_filter:
+                removed_failures_for_subject += 1
+                continue
+            if isinstance(item, dict):
+                kept_failures.append(item)
+
+        removed_response_dirs_for_subject = 0
+        removed_live_meta_for_subject = 0
+        for task_id in sorted(task_filter):
+            response_dir = subject_save_dir / task_id
+            if response_dir.exists():
+                removed_response_dirs_for_subject += 1
+                if not args.dry_run:
+                    shutil.rmtree(response_dir)
+
+            live_meta_path = subject_save_dir / ".roughbench_live_meta" / f"{task_id}.json"
+            if live_meta_path.exists():
+                removed_live_meta_for_subject += 1
+                if not args.dry_run:
+                    live_meta_path.unlink()
+
+        subject_changed = any(
+            (
+                removed_results_for_subject,
+                removed_failures_for_subject,
+                removed_response_dirs_for_subject,
+                removed_live_meta_for_subject,
+            )
+        )
+        if not subject_changed:
+            compared.append(raw)
+            continue
+
+        changed_subject_count += 1
+        removed_scorecard_count += removed_results_for_subject
+        removed_failure_count += removed_failures_for_subject
+        removed_response_dir_count += removed_response_dirs_for_subject
+        removed_live_meta_count += removed_live_meta_for_subject
+
+        scorecards: list[TaskScorecard] = []
+        for item in kept_results_raw:
+            try:
+                scorecards.append(TaskScorecard.from_dict(item))
+            except Exception:
+                continue
+
+        subject = SubjectDefinition(
+            id=subject_id,
+            title=str(raw.get("title", subject_id)),
+            provider=str(raw.get("provider", "openai-compatible")),
+            base_url=str(raw.get("base_url", "")),
+            model=str(raw.get("model", "")),
+            reasoning_effort=str(raw.get("reasoning_effort", "")),
+            reasoning_effort_profile=str(raw.get("reasoning_effort_profile", "")),
+            thinking_type=str(raw.get("thinking_type", "")),
+            notes=str(raw.get("notes", "")),
+            storage_name=subject_save_dir.name,
+        )
+        payload = _build_compare_subject_payload(
+            subject=subject,
+            requested_task_count=int(
+                raw.get("requested_task_count") or len(kept_results_raw) + len(kept_failures)
+            ),
+            scorecards=scorecards,
+            failures=_enrich_failure_entries(kept_failures, task_map),
+            subject_save_dir=subject_save_dir,
+        )
+        if not args.dry_run:
+            progress_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+        compared.append(payload)
+
+        action = "would invalidate" if args.dry_run else "invalidated"
+        print(
+            f"[invalidate] subject {subject_id}: {action} "
+            f"{removed_results_for_subject} scorecard(s), "
+            f"{removed_failures_for_subject} failure(s), "
+            f"{removed_response_dirs_for_subject} response dir(s), "
+            f"{removed_live_meta_for_subject} live-meta file(s).",
+            flush=True,
+        )
+
+    if wanted_subjects:
+        missing_subjects = sorted(wanted_subjects - matched_subject_ids)
+        if missing_subjects:
+            raise SystemExit(
+                f"No saved compare subject progress found for requested subject id(s): "
+                f"{', '.join(missing_subjects)}"
+            )
+
+    if not args.dry_run:
+        _persist_compare_payload(args, compared, save_runs_dir=compare_root)
+
+    summary = {
+        "save_runs_dir": str(compare_root),
+        "dry_run": bool(args.dry_run),
+        "task_ids": sorted(task_filter),
+        "subject_filter": sorted(wanted_subjects),
+        "changed_subject_count": changed_subject_count,
+        "removed_scorecard_count": removed_scorecard_count,
+        "removed_failure_count": removed_failure_count,
+        "removed_response_dir_count": removed_response_dir_count,
+        "removed_live_meta_count": removed_live_meta_count,
+    }
+    if args.json:
+        print(json.dumps(summary, indent=2))
+    elif changed_subject_count == 0:
+        print("[invalidate] No matching saved task results found.", flush=True)
+    return 0
+
+
+def _locate_compare_progress_paths(save_runs_dir: Path) -> tuple[list[Path], Path]:
+    direct_progress_path = save_runs_dir / ".roughbench_compare_subject.json"
+    if direct_progress_path.is_file():
+        return [direct_progress_path], save_runs_dir.parent
+    progress_paths = {
+        *save_runs_dir.glob("*/.roughbench_compare_subject.json"),
+        *save_runs_dir.glob("*/*/.roughbench_compare_subject.json"),
+    }
+    return sorted(progress_paths), save_runs_dir
+
+
 def _run_compare_subject(
     tasks: list[TaskDefinition],
     subject: SubjectDefinition,
@@ -694,6 +1057,7 @@ def _run_compare_subject(
     subject = _resolved_compare_subject(subject, args)
     runner = _runner_for_subject(subject, args.save_runs_dir)
     subject_save_dir = _subject_save_dir(subject, args.save_runs_dir)
+    cache_mode = getattr(args, "cache", "resume")
 
     # Resume support: if a progress file exists and --pristine not set, load existing
     # scorecards and failures and only run missing tasks.
@@ -705,12 +1069,12 @@ def _run_compare_subject(
     progress_path = None
     if subject_save_dir is not None:
         progress_path = subject_save_dir / ".roughbench_compare_subject.json"
-    if progress_path is not None and progress_path.exists() and args.cache in {"resume", "resume-tainted"}:
+    if progress_path is not None and progress_path.exists() and cache_mode in {"resume", "resume-tainted"}:
         try:
             raw = json.loads(progress_path.read_text(encoding="utf-8"))
             report = raw.get("report", {})
             existing_results = report.get("task_results", [])
-            if args.cache == "resume-tainted":
+            if cache_mode == "resume-tainted":
                 raw_tainted = report.get("warning_output_cap_task_ids", []) or []
                 tainted_task_ids = {str(item) for item in raw_tainted if item}
             for item in existing_results:
@@ -749,11 +1113,11 @@ def _run_compare_subject(
     tasks_to_run = [t for t in tasks if t.id not in existing_task_ids]
 
     progress_bits = [
-        f"[compare] subject {subject.id}: cache={args.cache}",
+        f"[compare] subject {subject.id}: cache={cache_mode}",
         f"existing_tasks={len(existing_task_ids)}",
         f"tasks_to_run={len(tasks_to_run)}",
     ]
-    if args.cache == "resume-tainted":
+    if cache_mode == "resume-tainted":
         progress_bits.append(f"tainted_tasks={len(tainted_task_ids)}")
     print(", ".join(progress_bits), flush=True)
 
@@ -814,6 +1178,27 @@ def _evaluate_task_with_retries(
     for attempt_number in range(1, total_attempts + 1):
         try:
             return judge.evaluate(task, runner.collect(task)), None
+        except OutputCapExceededError as exc:
+            error_entry = {
+                "attempt": attempt_number,
+                "error_type": type(exc).__name__,
+                "error_message": str(exc),
+                "traceback": "".join(traceback.format_exception(exc)).strip(),
+            }
+            attempts.append(error_entry)
+            print(
+                f"[compare] {subject.id} {task.id} capped out after internal retry: "
+                f"{type(exc).__name__}: {exc}",
+                file=sys.stderr,
+                flush=True,
+            )
+            return None, _build_failure_entry(
+                task=task,
+                error_type=type(exc).__name__,
+                error_message=str(exc),
+                attempts=attempts,
+                output_cap_exhausted=True,
+            )
         except Exception as exc:
             error_entry = {
                 "attempt": attempt_number,
@@ -829,24 +1214,81 @@ def _evaluate_task_with_retries(
                 flush=True,
             )
             if attempt_number >= total_attempts:
-                return None, {
-                    "task_id": task.id,
-                    "title": task.title,
-                    "error_type": type(exc).__name__,
-                    "error_message": str(exc),
-                    "attempt_count": len(attempts),
-                    "attempts": attempts,
-                }
+                return None, _build_failure_entry(
+                    task=task,
+                    error_type=type(exc).__name__,
+                    error_message=str(exc),
+                    attempts=attempts,
+                )
             if retry_backoff_seconds > 0:
                 time.sleep(retry_backoff_seconds * attempt_number)
-    return None, {
+    return None, _build_failure_entry(
+        task=task,
+        error_type="RuntimeError",
+        error_message="unreachable retry state",
+        attempts=attempts,
+    )
+
+
+def _task_max_penalty(task: TaskDefinition) -> int:
+    return sum(max(0, int(rule.points)) for rule in task.rubric.penalties)
+
+
+def _build_failure_entry(
+    *,
+    task: TaskDefinition,
+    error_type: str,
+    error_message: str,
+    attempts: list[dict[str, Any]],
+    output_cap_exhausted: bool = False,
+) -> dict[str, Any]:
+    full_loss = _task_max_penalty(task)
+    payload: dict[str, Any] = {
         "task_id": task.id,
         "title": task.title,
-        "error_type": "RuntimeError",
-        "error_message": "unreachable retry state",
+        "error_type": error_type,
+        "error_message": error_message,
         "attempt_count": len(attempts),
         "attempts": attempts,
+        "max_penalty_possible": full_loss,
+        "failure_demerits": full_loss,
+        "full_loss_applied": True,
     }
+    if output_cap_exhausted:
+        payload["output_cap_exhausted"] = True
+    return payload
+
+
+def _failure_demerits(failure: Mapping[str, Any]) -> int:
+    return int(failure.get("failure_demerits") or failure.get("max_penalty_possible") or 0)
+
+
+def _failure_max_demerits(failure: Mapping[str, Any]) -> int:
+    return int(failure.get("max_penalty_possible") or failure.get("failure_demerits") or 0)
+
+
+def _enrich_failure_entries(
+    failures: list[dict[str, Any]],
+    task_map: Mapping[str, TaskDefinition],
+) -> list[dict[str, Any]]:
+    enriched: list[dict[str, Any]] = []
+    for failure in failures:
+        if not isinstance(failure, dict):
+            continue
+        item = dict(failure)
+        task_id = str(item.get("task_id") or "")
+        task = task_map.get(task_id)
+        if task is not None:
+            full_loss = _task_max_penalty(task)
+            item.setdefault("title", task.title)
+            item.setdefault("max_penalty_possible", full_loss)
+            item.setdefault("failure_demerits", full_loss)
+        elif "failure_demerits" not in item and "max_penalty_possible" in item:
+            item["failure_demerits"] = item["max_penalty_possible"]
+        if "max_penalty_possible" in item or "failure_demerits" in item:
+            item["full_loss_applied"] = True
+        enriched.append(item)
+    return enriched
 
 
 def _subject_save_dir(subject: SubjectDefinition, save_runs_dir: Path | None) -> Path | None:
@@ -873,6 +1315,7 @@ def _build_compare_subject_payload(
         status = "failed"
     report = _build_compare_report_dict(
         scorecards,
+        failures=failures,
         requested_task_count=requested_task_count,
         failed_task_count=failed_task_count,
         subject_save_dir=subject_save_dir,
@@ -884,6 +1327,7 @@ def _build_compare_subject_payload(
         "base_url": subject.base_url,
         "model": subject.model,
         "reasoning_effort": subject.reasoning_effort,
+        "reasoning_effort_profile": subject.reasoning_effort_profile,
         "thinking_type": subject.thinking_type,
         "notes": subject.notes,
         "status": status,
@@ -901,6 +1345,7 @@ def _build_compare_subject_payload(
 def _build_compare_report_dict(
     scorecards: list[TaskScorecard],
     *,
+    failures: list[dict[str, Any]],
     requested_task_count: int,
     failed_task_count: int,
     subject_save_dir: Path | None,
@@ -919,6 +1364,37 @@ def _build_compare_report_dict(
             "summary": "No tasks completed successfully.",
             "task_results": [],
         }
+    failed_task_demerits = sum(_failure_demerits(item) for item in failures)
+    failed_task_max_demerits = sum(_failure_max_demerits(item) for item in failures)
+    if failed_task_demerits:
+        report["roughbench_demerits"] = int(report.get("roughbench_demerits") or 0) + failed_task_demerits
+        report["roughbench_score"] = int(report.get("roughbench_score") or 0) + failed_task_demerits
+    if failed_task_max_demerits:
+        base_max = report.get("suite_max_demerits")
+        if base_max is None:
+            report["suite_max_demerits"] = failed_task_max_demerits
+        else:
+            report["suite_max_demerits"] = int(base_max) + failed_task_max_demerits
+    suite_max_demerits = report.get("suite_max_demerits")
+    if suite_max_demerits not in (None, 0):
+        report["suite_demerit_pct"] = round(
+            (float(report["roughbench_demerits"]) / float(suite_max_demerits)) * 100.0,
+            1,
+        )
+    report["failed_task_demerits"] = failed_task_demerits
+    report["failed_task_max_demerits"] = failed_task_max_demerits
+    report["failed_task_penalties"] = [
+        {
+            "task_id": str(item.get("task_id") or ""),
+            "title": str(item.get("title") or item.get("task_id") or ""),
+            "error_type": str(item.get("error_type") or ""),
+            "failure_demerits": _failure_demerits(item),
+            "max_penalty_possible": _failure_max_demerits(item),
+            "full_loss_applied": bool(item.get("full_loss_applied") or False),
+        }
+        for item in failures
+        if isinstance(item, dict)
+    ]
     usage_summary = _load_usage_summary(subject_save_dir)
     if usage_summary:
         report.update(usage_summary)
@@ -940,6 +1416,8 @@ def _build_compare_report_dict(
         completion_line += f"; {failed_task_count} failed."
     else:
         completion_line += "; no task failures."
+    if failed_task_demerits:
+        completion_line += f" Failed tasks count as full-loss ({failed_task_demerits}/{failed_task_max_demerits} demerits)."
     report["summary"] = f"{completion_line} {report['summary']}"
     return report
 
@@ -1071,21 +1549,28 @@ def _persist_compare_subject_progress(
     )
 
 
-def _persist_compare_payload(args: argparse.Namespace, compared: list[dict[str, Any]]) -> None:
+def _persist_compare_payload(
+    args: argparse.Namespace,
+    compared: list[dict[str, Any]],
+    *,
+    save_runs_dir: Path | None = None,
+) -> None:
     payload = {
-        "subjects_file": str(args.subjects_file),
-        "benchmarks_dir": str(args.benchmarks_dir),
-        "judge_mode": args.judge_mode,
-        "retry_attempts": args.retry_attempts,
-        "retry_backoff_seconds": args.retry_backoff_seconds,
+        "subjects_file": str(getattr(args, "subjects_file", "")),
+        "benchmarks_dir": str(getattr(args, "benchmarks_dir", "")),
+        "judge_mode": getattr(args, "judge_mode", ""),
+        "retry_attempts": getattr(args, "retry_attempts", None),
+        "retry_backoff_seconds": getattr(args, "retry_backoff_seconds", None),
         "summary": _summarize_compare_payload(compared),
         "subjects": compared,
     }
-    if args.output:
-        args.output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
-    if args.save_runs_dir is not None:
-        args.save_runs_dir.mkdir(parents=True, exist_ok=True)
-        (args.save_runs_dir / ".roughbench_compare.json").write_text(
+    output_path = getattr(args, "output", None)
+    if output_path:
+        output_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    target_save_runs_dir = save_runs_dir if save_runs_dir is not None else args.save_runs_dir
+    if target_save_runs_dir is not None:
+        target_save_runs_dir.mkdir(parents=True, exist_ok=True)
+        (target_save_runs_dir / ".roughbench_compare.json").write_text(
             json.dumps(payload, indent=2) + "\n",
             encoding="utf-8",
         )
@@ -1123,6 +1608,10 @@ def _runner_for_subject(
             temperature=subject.temperature,
             max_tokens=subject.max_tokens,
             reasoning_effort=subject.reasoning_effort,
+            reasoning_effort_profile=subject.reasoning_effort_profile,
+            reasoning_effort_overrides=subject.reasoning_effort_overrides,
+            max_tokens_profile=subject.max_tokens_profile,
+            max_tokens_overrides=subject.max_tokens_overrides,
             save_responses_dir=save_dir,
         )
     if subject.provider == "anthropic":
@@ -1141,6 +1630,10 @@ def _runner_for_subject(
         max_tokens=subject.max_tokens,
         timeout_seconds=subject.timeout_seconds,
         reasoning_effort=subject.reasoning_effort,
+        reasoning_effort_profile=subject.reasoning_effort_profile,
+        reasoning_effort_overrides=subject.reasoning_effort_overrides,
+        max_tokens_profile=subject.max_tokens_profile,
+        max_tokens_overrides=subject.max_tokens_overrides,
         thinking_type=subject.thinking_type,
         direct_answer_first=subject.direct_answer_first,
         save_responses_dir=save_dir,
@@ -1158,8 +1651,12 @@ def _resolved_compare_subject(subject: SubjectDefinition, args: argparse.Namespa
         updates["temperature"] = args.temperature
     if getattr(args, "max_tokens", None) is not None:
         updates["max_tokens"] = args.max_tokens
+        updates["max_tokens_profile"] = ""
+        updates["max_tokens_overrides"] = ()
     if getattr(args, "reasoning_effort", None):
         updates["reasoning_effort"] = args.reasoning_effort
+        updates["reasoning_effort_profile"] = ""
+        updates["reasoning_effort_overrides"] = ()
     if getattr(args, "thinking_type", None):
         updates["thinking_type"] = args.thinking_type
     if getattr(args, "timeout_seconds", None) is not None:
@@ -1370,7 +1867,11 @@ def _print_compare_report(compared: list[dict]) -> None:
             f"{item['failed_task_count']} failed)"
         )
         if item.get("reasoning_effort"):
-            print(f"  reasoning_effort: {item['reasoning_effort']}")
+            profile = item.get("reasoning_effort_profile")
+            if profile:
+                print(f"  reasoning_effort: {item['reasoning_effort']} (profile: {profile})")
+            else:
+                print(f"  reasoning_effort: {item['reasoning_effort']}")
         if item.get("base_url"):
             print(f"  base_url: {item['base_url']}")
         print(f"  demerits: {score_line}")
@@ -1385,9 +1886,16 @@ def _print_compare_report(compared: list[dict]) -> None:
             print(f"  warnings: {warning_line}")
         print(f"  summary: {report['summary']}")
         print(f"  task_penalties: {task_bits}")
+        if report.get("failed_task_penalties"):
+            failed_bits = ", ".join(
+                f"{failure['task_id']}={failure['failure_demerits']}"
+                for failure in report["failed_task_penalties"]
+            )
+            print(f"  failed_task_penalties: {failed_bits}")
         if item["failures"]:
             failure_bits = ", ".join(
-                f"{failure['task_id']} ({failure['error_type']})" for failure in item["failures"]
+                f"{failure['task_id']} ({failure['error_type']}, +{_failure_demerits(failure)})"
+                for failure in item["failures"]
             )
             print(f"  failures: {failure_bits}")
 

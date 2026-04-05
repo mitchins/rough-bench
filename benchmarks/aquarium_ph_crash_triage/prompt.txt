@@ -1,0 +1,69 @@
+You are an aquarium monitoring system diagnosing a pH alert.
+
+Current time: Thursday 14:32.
+
+Tank context:
+- 240L planted freshwater community tank
+- Pressurised CO2 injection via solenoid on timer: ON at 10:00, OFF at 16:00 daily
+- Substrate: inert black sand over depleted aquasoil (18 months old)
+- Canister filter rated 1200 L/h, last cleaned 6 weeks ago
+- Last known water parameters (Sunday test kit): KH 2°dH, GH 6°dH, pH 6.8
+- Owner performs weekly ~20% water changes (~48L) using an RO unit
+- A maintenance reminder for the RO remineralisation cartridge was dismissed 3 weeks ago
+
+ESPHome sensor readings — last 2 hours (sampled every 5 minutes):
+
+| Time  | pH   | TDS (ppm) | Temp (°C) | Flow (L/h) |
+|-------|------|-----------|-----------|------------|
+| 12:30 | 6.82 | 186       | 25.4      | 1080       |
+| 12:35 | 6.80 | 185       | 25.4      | 1078       |
+| 12:40 | 6.81 | 186       | 25.4      | 1075       |
+| 12:45 | 6.80 | 185       | 25.3      | 1072       |
+| 12:50 | 6.79 | 185       | 25.3      | 1068       |
+| 12:55 | 6.80 | 184       | 25.3      | 1062       |
+| 13:00 | 6.79 | 184       | 25.4      | 1058       |
+| 13:05 | 6.78 | 183       | 25.3      | 1055       |
+| 13:10 | 6.80 | 184       | 25.3      | 1050       |
+| 13:15 | 6.79 | 183       | 25.4      | 1048       |
+| 13:20 | 6.78 | 183       | 25.3      | 1044       |
+| 13:25 | 6.79 | 183       | 25.3      | 1040       |
+| 13:30 | 6.78 | 182       | 25.3      | 1038       |
+| 13:35 | 6.55 | 161       | 24.8      | 1035       |
+| 13:40 | 6.38 | 148       | 24.6      | 1032       |
+| 13:45 | 6.21 | 139       | 24.5      | 1030       |
+| 13:50 | 6.12 | 134       | 24.4      | 1028       |
+| 13:55 | 6.08 | 131       | 24.3      | 1026       |
+| 14:00 | 6.04 | 128       | 24.3      | 1024       |
+| 14:05 | 6.02 | 127       | 24.2      | 1022       |
+| 14:10 | 6.00 | 126       | 24.2      | 1020       |
+| 14:15 | 5.98 | 125       | 24.2      | 1018       |
+| 14:20 | 5.97 | 125       | 24.1      | 1016       |
+| 14:25 | 5.96 | 124       | 24.1      | 1015       |
+| 14:30 | 5.95 | 124       | 24.1      | 1014       |
+
+System log:
+- 10:00 CO2 solenoid opened (scheduled)
+- 13:30 pH alert threshold crossed (< 6.2 trigger, but drop started at 13:35)
+- 14:15 flow rate advisory: 15% below baseline
+
+Note: The pH alert trigger is set at 6.2, but the log entry at 13:30 is a
+pre-alert warning based on rate-of-change detection. The actual threshold
+breach occurred at 13:45.
+
+Write exactly these sections:
+
+## Primary Diagnosis
+## Evidence Chain
+## Rejected Hypothesis
+## Unrelated Issue
+## Immediate Action
+## Secondary Action
+
+Requirements:
+- In Primary Diagnosis, identify the most likely single cause of the pH crash
+- In Evidence Chain, explain which sensor correlations support your diagnosis
+- In Rejected Hypothesis, name the most plausible alternative cause and explain specifically why the sensor data rules it out
+- In Unrelated Issue, identify any concurrent problem that is NOT causing the pH crash
+- In Immediate Action, recommend one specific thing to do right now
+- In Secondary Action, recommend one maintenance follow-up
+- Do not give generic aquarium care advice

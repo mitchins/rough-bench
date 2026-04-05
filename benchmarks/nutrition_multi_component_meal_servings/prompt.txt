@@ -1,0 +1,53 @@
+You are given per-100g nutrition data for a 4-serving burger meal.
+
+Per 100g nutrition:
+
+Ingredient | Calories | Protein (g) | Carbs (g) | Fat (g)
+Flour | 364 | 10.3 | 76.3 | 1.0
+Greek yogurt | 97 | 9.0 | 3.6 | 5.0
+Olive oil | 884 | 0.0 | 0.0 | 100.0
+Beef mince | 250 | 26.0 | 0.0 | 17.0
+Onion | 40 | 1.1 | 9.3 | 0.1
+Breadcrumbs | 395 | 13.0 | 74.0 | 5.3
+Passata | 29 | 1.4 | 5.3 | 0.2
+Cream | 340 | 2.1 | 2.9 | 36.0
+Parmesan | 431 | 38.0 | 4.1 | 29.0
+
+Recipe components:
+
+Bread batch for 4 buns:
+- Flour: 280g
+- Greek yogurt: 160g
+- Olive oil: 20g
+
+Patty batch for 4 patties:
+- Beef mince: 520g
+- Onion: 80g
+- Breadcrumbs: 45g
+
+Sauce batch for 4 burgers:
+- Passata: 180g
+- Cream: 60g
+- Olive oil: 12g
+
+Assembly:
+- 1 bun + 1 patty + one quarter of the sauce batch per serving
+- Parmesan sprinkled on top at 6g per burger
+
+Construct the nutrition for the whole meal and for 1 serving out of 4 servings total.
+
+Use exact arithmetic internally, then round the displayed values like this:
+- calories: nearest whole number
+- protein/carbs/fat: 1 decimal place
+
+Write exactly these sections:
+
+## Component Totals
+## Full Meal (4 servings)
+## Per Serving (1 of 4)
+
+Requirements:
+- Under Component Totals, give one row each for: bread batch, patty batch, sauce batch, parmesan total
+- Under Full Meal (4 servings), give one total row with: calories, protein_g, carbs_g, fat_g
+- Under Per Serving (1 of 4), give one row with: calories, protein_g, carbs_g, fat_g
+- Do not give diet advice, substitutions, or commentary outside the requested sections.

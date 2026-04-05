@@ -1,0 +1,174 @@
+signals:
+  - id: required_structure_present
+    description: Uses the requested five-section structure.
+    groups:
+      - [charge decision]
+      - [reasoning]
+      - [key constraints]
+      - [cost estimate]
+      - [what would change this decision]
+  - id: chooses_overnight_rate
+    description: Chooses the overnight charging window.
+    section: Charge Decision
+    any:
+      - charge at overnight rate
+      - overnight rate
+      - off-peak
+      - off peak
+      - 23:00
+  - id: energy_arithmetic_attempted
+    description: Attempts the energy and time arithmetic in a plausible range.
+    groups:
+      - [82, 34%, 80%, 38 kwh, 37.7, 37.8, 41 kwh, 41.0]
+      - [5 hours, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 7.4 kw]
+  - id: departure_blocks_solar
+    description: Uses the 07:30 departure and late solar window to reject solar-first.
+    groups:
+      - [07:30, departure]
+      - [06:42, sunrise, 09:00, overcast, cloudy, after departure, too late]
+  - id: peak_rate_avoided
+    description: Notes that charging now would hit the evening peak rate.
+    groups:
+      - [19:45, charge now, current rate, peak]
+      - [34.0, 34 p, 34p]
+  - id: cost_estimate_present
+    description: Provides a plausible overnight cost estimate.
+    section: Cost Estimate
+    any:
+      - 348
+      - 348.5
+      - 320 p
+      - 321 p
+      - 330 p
+      - 340 p
+      - 349 p
+      - 350 p
+      - 3.2
+      - 3.3
+      - 3.4
+      - 3.5
+      - £3.4
+      - £3.49
+      - £3.5
+  - id: scenario_change_named
+    description: Names a concrete scenario change that would flip the decision.
+    section: What Would Change This Decision
+    any:
+      - later departure
+      - after 10:00
+      - after 09:00
+      - working from home
+      - if the car stayed home
+      - if departure were later
+      - if solar were available before departure
+  - id: export_value_noted
+    description: Notes that midday solar has export value and is not simply free.
+    any:
+      - export rate
+      - export value
+      - 15.0 p
+      - 15p
+      - seg
+      - opportunity cost
+penalties:
+  - id: missing_required_structure
+    description: Does not follow the required five-section format.
+    points: 6
+    missing_groups:
+      - [charge decision]
+      - [reasoning]
+      - [key constraints]
+      - [cost estimate]
+      - [what would change this decision]
+  - id: wait_for_solar_primary_strategy
+    description: Recommends waiting for solar as the primary strategy.
+    points: 7
+    section: Charge Decision
+    present_unnegated_any:
+      - wait for solar
+  - id: overnight_rate_not_used
+    description: Fails to choose the overnight rate as the main plan.
+    points: 4
+    section: Charge Decision
+    missing_any:
+      - charge at overnight rate
+      - overnight rate
+      - off-peak
+      - off peak
+      - 23:00
+  - id: departure_constraint_ignored
+    description: Ignores the 07:30 departure constraint.
+    points: 5
+    missing_any:
+      - 07:30
+      - departure
+      - commute
+  - id: solar_window_timing_missed
+    description: Fails to explain that the useful solar arrives after departure.
+    points: 4
+    missing_groups:
+      - [solar, morning, overcast, cloudy, 09:00, sunrise]
+      - [after departure, too late, not usable before departure, 07:30]
+  - id: charge_now_at_peak_rate
+    description: Recommends charging immediately at the peak rate.
+    points: 4
+    section: Charge Decision
+    present_unnegated_any:
+      - charge now
+  - id: no_arithmetic_attempted
+    description: Does not attempt the energy or time arithmetic.
+    points: 3
+    missing_groups:
+      - [82, 34%, 80%, 38 kwh, 37.7, 37.8, 41 kwh, 41.0]
+      - [5 hours, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 7.4 kw]
+  - id: forecast_uncertainty_ignored
+    description: Ignores the stated uncertainty in the forecast.
+    points: 2
+    missing_any:
+      - 72%
+      - confidence
+      - uncertain
+      - +/-90
+      - cloud band
+      - moderate
+  - id: cost_estimate_omitted
+    description: Omits a concrete cost estimate for the chosen approach.
+    points: 3
+    section: Cost Estimate
+    missing_any:
+      - pence
+      - p
+      - cost
+      - 320
+      - 330
+      - 340
+      - 349
+      - 350
+  - id: generic_ev_or_solar_advice
+    description: Gives generic EV or solar advice instead of deciding this case.
+    points: 3
+    present_unnegated_any:
+      - monitor your charging
+      - charge when rates are low
+      - use solar when possible
+      - optimize your energy usage
+      - best practice
+judge_instructions: >
+  The correct recommendation is "charge at overnight rate". Starting around
+  23:00 and running until roughly 04:00-04:30 is the intended answer.
+
+  Accept plausible arithmetic ranges:
+
+  - about 38 kWh needed into the battery, or about 41 kWh from the wall
+  - about 5.1 to 5.6 hours of charging
+  - about 320 to 350 pence overnight cost
+
+  The core reasoning chain is:
+
+  (1) the owner leaves at 07:30
+  (2) sunrise is 06:42 and the useful solar does not arrive until after 09:00
+  (3) the overnight tariff is both cheap and long enough
+  (4) charging now is clearly worse because the current rate is peak
+
+  A stronger answer also notes that midday solar has export value, so "solar is
+  free" is not even obviously right in a hypothetical later-departure case.

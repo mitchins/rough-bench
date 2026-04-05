@@ -1,0 +1,47 @@
+You are given per-100g nutrition data for a 3-serving chicken rice bowl meal.
+
+Per 100g nutrition:
+
+Ingredient | Calories | Protein (g) | Carbs (g) | Fat (g)
+Cooked rice | 130 | 2.7 | 28.2 | 0.3
+Chicken thigh | 209 | 26.0 | 0.0 | 10.9
+Edamame | 121 | 11.9 | 8.9 | 5.2
+Greek yogurt | 97 | 9.0 | 3.6 | 5.0
+Tahini | 595 | 17.0 | 21.0 | 53.0
+Lemon juice | 22 | 0.4 | 6.9 | 0.2
+Feta | 265 | 14.2 | 3.9 | 21.5
+
+Recipe components:
+
+Base batch for 3 bowls:
+- Cooked rice: 360g
+- Chicken thigh: 420g
+- Edamame: 150g
+
+Sauce batch for 3 bowls:
+- Greek yogurt: 135g
+- Tahini: 24g
+- Lemon juice: 30g
+
+Assembly:
+- 1 bowl gets one third of the base batch
+- 1 bowl gets one third of the sauce batch
+- Feta is added as a fixed 12g topping per bowl
+
+Construct the nutrition for the whole meal and for 1 serving out of 3 servings total.
+
+Use exact arithmetic internally, then round the displayed values like this:
+- calories: nearest whole number
+- protein/carbs/fat: 1 decimal place
+
+Write exactly these sections:
+
+## Component Totals
+## Full Meal (3 servings)
+## Per Serving (1 of 3)
+
+Requirements:
+- Under Component Totals, give one row each for: base batch, sauce batch, feta total
+- Under Full Meal (3 servings), give one total row with: calories, protein_g, carbs_g, fat_g
+- Under Per Serving (1 of 3), give one row with: calories, protein_g, carbs_g, fat_g
+- Do not give diet advice, substitutions, or commentary outside the requested sections.

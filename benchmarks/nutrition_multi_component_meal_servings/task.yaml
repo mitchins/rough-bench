@@ -1,0 +1,36 @@
+id: nutrition_multi_component_meal_servings
+title: Nutrition math for a multi-component meal with fixed topping
+domain: quantitative_reasoning
+family: practical_reasoning
+counted: false
+intent: Score whether the model can normalize per-100g ingredient data across multiple recipe components, keep component subtotals straight, include a fixed per-serving topping, and compute final whole-meal and per-serving nutrition correctly.
+latent_requirements:
+  - scale ingredients correctly within each component instead of flattening the whole meal into one bag of numbers
+  - keep bread, patties, and sauce subtotals distinct before assembling the full meal
+  - include the fixed parmesan topping in the final meal totals
+  - compute the 4-serving whole-meal total and the 1-serving assembled meal correctly
+  - follow the exact rounding rule consistently after exact internal arithmetic
+hard_failures:
+  - omits one whole component from the calculation
+  - forgets the fixed parmesan topping in the assembled meal
+  - copies per-100g values without scaling them to actual ingredient weights
+  - turns the task into nutrition commentary instead of arithmetic
+strong_signals:
+  - computes correct component subtotals for bread, patties, and sauce
+  - includes parmesan as 6g per burger, 24g total
+  - computes the whole 4-serving meal as 3327 kcal, 198.1g protein, 272.4g carbs, 162.6g fat
+  - computes each serving as 832 kcal, 49.5g protein, 68.1g carbs, 40.6g fat
+penalties:
+  - missing required structure
+  - bread subtotal wrong
+  - patty subtotal wrong
+  - sauce subtotal wrong
+  - parmesan omitted
+  - full meal calories wrong
+  - full meal macros wrong
+  - per serving wrong
+  - copied per-100g values
+  - generic nutrition advice
+expected_artifacts:
+  - nutrition table
+judge_instructions: Reward exact component accounting and final assembly math. The task is harder than a single-mix recipe because the answer must preserve component boundaries and still land on the correct whole-meal and per-serving totals.

@@ -1,0 +1,138 @@
+signals:
+  - id: required_structure_present
+    description: Uses the requested three-section structure.
+    groups:
+      - [component totals]
+      - [full meal (4 servings), full meal]
+      - [per serving (1 of 4), per serving]
+  - id: bread_subtotal_correct
+    description: Computes the bread batch subtotal correctly.
+    groups:
+      - [bread batch]
+      - [1351]
+      - [43.2]
+      - [219.4]
+      - [30.8]
+  - id: patty_subtotal_correct
+    description: Computes the patty batch subtotal correctly.
+    groups:
+      - [patty batch]
+      - [1510, 1509.8]
+      - [141.9]
+      - [40.7]
+      - [90.9]
+  - id: sauce_subtotal_correct
+    description: Computes the sauce batch subtotal correctly.
+    groups:
+      - [sauce batch]
+      - [362]
+      - [3.8]
+      - [11.3]
+      - [34.0]
+  - id: parmesan_total_included
+    description: Includes parmesan as a fixed 24g total topping across the meal.
+    groups:
+      - [parmesan total]
+      - [103]
+      - [9.1, 9.12]
+      - [7.0, 6.96]
+  - id: full_meal_correct
+    description: Computes the full 4-serving meal correctly.
+    groups:
+      - [full meal]
+      - [3327]
+      - [198.1]
+      - [272.4]
+      - [162.6]
+  - id: per_serving_correct
+    description: Computes the assembled per-serving meal correctly.
+    groups:
+      - [per serving]
+      - [832]
+      - [49.5]
+      - [68.1]
+      - [40.6]
+penalties:
+  - id: missing_required_structure
+    description: Does not follow the required three-section output format.
+    points: 4
+    missing_groups:
+      - [component totals]
+      - [full meal (4 servings), full meal]
+      - [per serving (1 of 4), per serving]
+  - id: bread_subtotal_wrong
+    description: Gets the bread batch subtotal wrong.
+    points: 4
+    missing_groups:
+      - [bread batch]
+      - [1351]
+      - [43.2]
+      - [219.4]
+      - [30.8]
+  - id: patty_subtotal_wrong
+    description: Gets the patty batch subtotal wrong.
+    points: 4
+    missing_groups:
+      - [patty batch]
+      - [1510, 1509.8]
+      - [141.9]
+      - [40.7]
+      - [90.9]
+  - id: sauce_subtotal_wrong
+    description: Gets the sauce batch subtotal wrong.
+    points: 4
+    missing_groups:
+      - [sauce batch]
+      - [362]
+      - [3.8]
+      - [11.3]
+      - [34.0]
+  - id: parmesan_omitted
+    description: Forgets the fixed parmesan topping in the final accounting.
+    points: 5
+    missing_groups:
+      - [parmesan total]
+      - [103]
+      - [9.1, 9.12]
+      - [7.0, 6.96]
+  - id: full_meal_calories_wrong
+    description: Gets the full meal calories wrong.
+    points: 5
+    missing_groups:
+      - [full meal]
+      - [3327]
+  - id: full_meal_macros_wrong
+    description: Gets one or more full meal macros wrong.
+    points: 6
+    missing_groups:
+      - [full meal]
+      - [198.1]
+      - [272.4]
+      - [162.6]
+  - id: per_serving_wrong
+    description: Gets the per-serving assembled meal wrong.
+    points: 6
+    missing_groups:
+      - [per serving]
+      - [832]
+      - [49.5]
+      - [68.1]
+      - [40.6]
+  - id: copied_per_100g_values
+    description: Reuses source per-100g values instead of scaling component totals.
+    points: 4
+    present_groups:
+      - [bread batch, patty batch]
+      - [364, 250]
+      - [280, 520]
+  - id: generic_nutrition_advice
+    description: Gives meal or diet advice instead of just doing the arithmetic.
+    points: 3
+    present_unnegated_any:
+      - healthy meal
+      - high in protein
+      - you should swap
+      - balanced meal
+      - lower calorie
+      - good for weight loss
+judge_instructions: Reward models that preserve component boundaries and still land on the right assembled meal total. Weak answers often miss the fixed topping or blur per-batch and per-serving math.
