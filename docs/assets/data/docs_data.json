@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-06T05:48:14.540027+00:00",
+  "generated_at": "2026-04-06T05:52:35.380815+00:00",
   "current_suite_task_count": 53,
   "efficiency_quality_floor": 75.0,
   "category_order": [
@@ -7824,23 +7824,23 @@
       "reasoning_effort": "medium",
       "reasoning_effort_profile": "",
       "status": "partial",
-      "completed_task_count": 32,
+      "completed_task_count": 44,
       "requested_task_count": 53,
       "failed_task_count": 0,
-      "summary": "Completed 32 of 53 task(s); no task failures. 21 of 32 task(s) triggered penalties; 134 signal(s) passed.",
-      "roughbench_demerits": 180,
-      "suite_max_demerits": 1038,
-      "suite_demerit_pct": 17.3,
-      "overall_quality": 82.7,
-      "utility_points": 858.0,
-      "utility_per_1k_total_tokens": 33.59,
-      "usage_total_tokens": 25542,
-      "usage_prompt_tokens": 8628,
-      "usage_completion_tokens": 16914,
+      "summary": "Completed 44 of 53 task(s); no task failures. 33 of 44 task(s) triggered penalties; 181 signal(s) passed.",
+      "roughbench_demerits": 356,
+      "suite_max_demerits": 1498,
+      "suite_demerit_pct": 23.8,
+      "overall_quality": 76.2,
+      "utility_points": 1142.0,
+      "utility_per_1k_total_tokens": 29.24,
+      "usage_total_tokens": 39059,
+      "usage_prompt_tokens": 13371,
+      "usage_completion_tokens": 25688,
       "usage_reasoning_tokens": 0,
-      "usage_answer_tokens": 16914,
+      "usage_answer_tokens": 25688,
       "usage_unsplit_completion_tokens": null,
-      "demerits_per_1k_total_tokens": 7.05,
+      "demerits_per_1k_total_tokens": 9.11,
       "params_billion": null,
       "params_billion_active": null,
       "params_billion_backbone": null,
@@ -7854,29 +7854,29 @@
         "build_systems": {
           "id": "build_systems",
           "label": "Build & Systems",
-          "demerits": 16.0,
-          "max_demerits": 27.0,
-          "quality": 40.7,
-          "task_count": 1,
-          "relative_quality": 60.6
+          "demerits": 40.0,
+          "max_demerits": 61.0,
+          "quality": 34.4,
+          "task_count": 2,
+          "relative_quality": 51.2
         },
         "ml_nlp_engineering": {
           "id": "ml_nlp_engineering",
           "label": "ML & NLP Engineering",
-          "demerits": 53.0,
-          "max_demerits": 262.0,
-          "quality": 79.8,
-          "task_count": 9,
-          "relative_quality": 95.2
+          "demerits": 70.0,
+          "max_demerits": 320.0,
+          "quality": 78.1,
+          "task_count": 11,
+          "relative_quality": 93.2
         },
         "search_analytics": {
           "id": "search_analytics",
           "label": "Search & Analytics",
-          "demerits": 18.0,
-          "max_demerits": 80.0,
-          "quality": 77.5,
-          "task_count": 2,
-          "relative_quality": 88.1
+          "demerits": 112.0,
+          "max_demerits": 267.0,
+          "quality": 58.1,
+          "task_count": 7,
+          "relative_quality": 66.0
         },
         "language_localization": {
           "id": "language_localization",
@@ -7890,20 +7890,20 @@
         "planning_product": {
           "id": "planning_product",
           "label": "Planning & Product",
-          "demerits": 10.0,
-          "max_demerits": 175.0,
-          "quality": 94.3,
-          "task_count": 4,
-          "relative_quality": 109.9
+          "demerits": 47.0,
+          "max_demerits": 306.0,
+          "quality": 84.6,
+          "task_count": 7,
+          "relative_quality": 98.6
         },
         "judgment_creative": {
           "id": "judgment_creative",
           "label": "Judgment & Creative",
-          "demerits": 22.0,
-          "max_demerits": 209.0,
-          "quality": 89.5,
-          "task_count": 5,
-          "relative_quality": 96.5
+          "demerits": 26.0,
+          "max_demerits": 259.0,
+          "quality": 90.0,
+          "task_count": 6,
+          "relative_quality": 97.1
         },
         "uncategorized": {
           "id": "uncategorized",
@@ -8074,6 +8074,66 @@
           "total_penalty": 17.0,
           "max_penalty_possible": 29.0,
           "quality": 41.4
+        },
+        "nlp_bio_off_axis_crf": {
+          "total_penalty": 9.0,
+          "max_penalty_possible": 28.0,
+          "quality": 67.9
+        },
+        "nlp_seqeval_vs_token_f1": {
+          "total_penalty": 8.0,
+          "max_penalty_possible": 30.0,
+          "quality": 73.3
+        },
+        "nutrition_multi_component_meal_servings": {
+          "total_penalty": 34.0,
+          "max_penalty_possible": 45.0,
+          "quality": 24.4
+        },
+        "nutrition_table_from_variable_ingredients": {
+          "total_penalty": 11.0,
+          "max_penalty_possible": 37.0,
+          "quality": 70.3
+        },
+        "nutrition_two_component_bowl_fixed_topping": {
+          "total_penalty": 29.0,
+          "max_penalty_possible": 36.0,
+          "quality": 19.4
+        },
+        "rag_broad_search_regression_audit": {
+          "total_penalty": 12.0,
+          "max_penalty_possible": 41.0,
+          "quality": 70.7
+        },
+        "reasoning_settled_blame_purdue_opioid": {
+          "total_penalty": 4.0,
+          "max_penalty_possible": 50.0,
+          "quality": 92.0
+        },
+        "retrieval_local_search_stack_practicality": {
+          "total_penalty": 8.0,
+          "max_penalty_possible": 28.0,
+          "quality": 71.4
+        },
+        "smarthome_conflicting_signals_pet_vs_intrusion": {
+          "total_penalty": 23.0,
+          "max_penalty_possible": 50.0,
+          "quality": 54.0
+        },
+        "smarthome_occupancy_inference_alert": {
+          "total_penalty": 11.0,
+          "max_penalty_possible": 38.0,
+          "quality": 71.1
+        },
+        "smarthome_toolcall_notification_triage": {
+          "total_penalty": 3.0,
+          "max_penalty_possible": 43.0,
+          "quality": 93.0
+        },
+        "swe_existing_code_http_cache_bugfix": {
+          "total_penalty": 24.0,
+          "max_penalty_possible": 34.0,
+          "quality": 29.4
         }
       },
       "failed_task_penalties": [],
