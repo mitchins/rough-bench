@@ -98,14 +98,20 @@
 
   function renderSummaryCards() {
     const root = document.getElementById("rb-summary-cards");
+    const countNode = document.getElementById("rb-overview-count");
     if (!root) {
       return;
     }
     const runs = data.runs || [];
-    const cleanRuns = runs.filter((run) => run.status === "complete" && !run.tainted && !run.failed_task_count);
+    const publishedRuns = runs.filter(
+      (run) => run.current_full_suite_eligible && run.status === "complete" && !run.tainted && !run.failed_task_count,
+    );
+    if (countNode) {
+      countNode.textContent = number(publishedRuns.length);
+    }
     const cards = [
       ["Runs", number(runs.length), "Saved compare runs discovered under runs/"],
-      ["Clean Runs", number(cleanRuns.length), "Complete, untainted, no task failures"],
+      ["Published Runs", number(publishedRuns.length), "Complete current full-suite runs with no taint or failures"],
       ["Tasks", number((data.tasks || []).length), "Benchmark leaves included in the export"],
       ["Categories", number((data.categories || []).length), "Top-level meta categories in the UI"],
     ];

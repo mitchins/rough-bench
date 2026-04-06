@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-06T05:38:06.453974+00:00",
+  "generated_at": "2026-04-06T05:48:14.540027+00:00",
   "current_suite_task_count": 53,
   "efficiency_quality_floor": 75.0,
   "category_order": [
@@ -7824,23 +7824,23 @@
       "reasoning_effort": "medium",
       "reasoning_effort_profile": "",
       "status": "partial",
-      "completed_task_count": 1,
+      "completed_task_count": 32,
       "requested_task_count": 53,
       "failed_task_count": 0,
-      "summary": "Completed 1 of 53 task(s); no task failures. 0 of 1 task(s) triggered penalties; 5 signal(s) passed.",
-      "roughbench_demerits": 0,
-      "suite_max_demerits": 25,
-      "suite_demerit_pct": 0.0,
-      "overall_quality": 100.0,
-      "utility_points": 25.0,
-      "utility_per_1k_total_tokens": 13.25,
-      "usage_total_tokens": 1887,
-      "usage_prompt_tokens": 172,
-      "usage_completion_tokens": 1715,
+      "summary": "Completed 32 of 53 task(s); no task failures. 21 of 32 task(s) triggered penalties; 134 signal(s) passed.",
+      "roughbench_demerits": 180,
+      "suite_max_demerits": 1038,
+      "suite_demerit_pct": 17.3,
+      "overall_quality": 82.7,
+      "utility_points": 858.0,
+      "utility_per_1k_total_tokens": 33.59,
+      "usage_total_tokens": 25542,
+      "usage_prompt_tokens": 8628,
+      "usage_completion_tokens": 16914,
       "usage_reasoning_tokens": 0,
-      "usage_answer_tokens": 1715,
+      "usage_answer_tokens": 16914,
       "usage_unsplit_completion_tokens": null,
-      "demerits_per_1k_total_tokens": 0.0,
+      "demerits_per_1k_total_tokens": 7.05,
       "params_billion": null,
       "params_billion_active": null,
       "params_billion_backbone": null,
@@ -7854,56 +7854,56 @@
         "build_systems": {
           "id": "build_systems",
           "label": "Build & Systems",
-          "demerits": 0.0,
-          "max_demerits": 0.0,
-          "quality": null,
-          "task_count": 0,
-          "relative_quality": null
+          "demerits": 16.0,
+          "max_demerits": 27.0,
+          "quality": 40.7,
+          "task_count": 1,
+          "relative_quality": 60.6
         },
         "ml_nlp_engineering": {
           "id": "ml_nlp_engineering",
           "label": "ML & NLP Engineering",
-          "demerits": 0.0,
-          "max_demerits": 0.0,
-          "quality": null,
-          "task_count": 0,
-          "relative_quality": null
+          "demerits": 53.0,
+          "max_demerits": 262.0,
+          "quality": 79.8,
+          "task_count": 9,
+          "relative_quality": 95.2
         },
         "search_analytics": {
           "id": "search_analytics",
           "label": "Search & Analytics",
-          "demerits": 0.0,
-          "max_demerits": 0.0,
-          "quality": null,
-          "task_count": 0,
-          "relative_quality": null
+          "demerits": 18.0,
+          "max_demerits": 80.0,
+          "quality": 77.5,
+          "task_count": 2,
+          "relative_quality": 88.1
         },
         "language_localization": {
           "id": "language_localization",
           "label": "Language & Localization",
-          "demerits": 0.0,
-          "max_demerits": 0.0,
-          "quality": null,
-          "task_count": 0,
-          "relative_quality": null
+          "demerits": 61.0,
+          "max_demerits": 285.0,
+          "quality": 78.6,
+          "task_count": 11,
+          "relative_quality": 84.9
         },
         "planning_product": {
           "id": "planning_product",
           "label": "Planning & Product",
-          "demerits": 0.0,
-          "max_demerits": 25.0,
-          "quality": 100.0,
-          "task_count": 1,
-          "relative_quality": 116.6
+          "demerits": 10.0,
+          "max_demerits": 175.0,
+          "quality": 94.3,
+          "task_count": 4,
+          "relative_quality": 109.9
         },
         "judgment_creative": {
           "id": "judgment_creative",
           "label": "Judgment & Creative",
-          "demerits": 0.0,
-          "max_demerits": 0.0,
-          "quality": null,
-          "task_count": 0,
-          "relative_quality": null
+          "demerits": 22.0,
+          "max_demerits": 209.0,
+          "quality": 89.5,
+          "task_count": 5,
+          "relative_quality": 96.5
         },
         "uncategorized": {
           "id": "uncategorized",
@@ -7919,6 +7919,161 @@
           "total_penalty": 0.0,
           "max_penalty_possible": 25.0,
           "quality": 100.0
+        },
+        "agent_task_spec_not_handwave": {
+          "total_penalty": 8.0,
+          "max_penalty_possible": 57.0,
+          "quality": 86.0
+        },
+        "analytics_ab_test_mix_shift_decision": {
+          "total_penalty": 15.0,
+          "max_penalty_possible": 46.0,
+          "quality": 67.4
+        },
+        "analytics_guardrail_tradeoff_launch_decision": {
+          "total_penalty": 3.0,
+          "max_penalty_possible": 34.0,
+          "quality": 91.2
+        },
+        "applied_nlp_annotation_quality_gate": {
+          "total_penalty": 3.0,
+          "max_penalty_possible": 26.0,
+          "quality": 88.5
+        },
+        "applied_nlp_bio_sequence_cleanup": {
+          "total_penalty": 3.0,
+          "max_penalty_possible": 27.0,
+          "quality": 88.9
+        },
+        "applied_nlp_conflicting_summary": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 39.0,
+          "quality": 100.0
+        },
+        "applied_nlp_label_normalization": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 28.0,
+          "quality": 100.0
+        },
+        "applied_nlp_ner_span_audit": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 25.0,
+          "quality": 100.0
+        },
+        "applied_nlp_sentiment_batch": {
+          "total_penalty": 5.0,
+          "max_penalty_possible": 30.0,
+          "quality": 83.3
+        },
+        "aquarium_ph_crash_triage": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 52.0,
+          "quality": 100.0
+        },
+        "critique_without_sandwich": {
+          "total_penalty": 5.0,
+          "max_penalty_possible": 23.0,
+          "quality": 78.3
+        },
+        "design_cardgame_blight_mechanics": {
+          "total_penalty": 12.0,
+          "max_penalty_possible": 38.0,
+          "quality": 68.4
+        },
+        "design_magic_system_tractable_constraints": {
+          "total_penalty": 5.0,
+          "max_penalty_possible": 59.0,
+          "quality": 91.5
+        },
+        "hf_datasets_streaming_rewrite_under_caps": {
+          "total_penalty": 16.0,
+          "max_penalty_possible": 27.0,
+          "quality": 40.7
+        },
+        "home_energy_ev_charge_decision": {
+          "total_penalty": 2.0,
+          "max_penalty_possible": 41.0,
+          "quality": 95.1
+        },
+        "lang_japanese_idiom_localization_batch": {
+          "total_penalty": 20.0,
+          "max_penalty_possible": 45.0,
+          "quality": 55.6
+        },
+        "lang_japanese_implied_uchi_soto": {
+          "total_penalty": 4.0,
+          "max_penalty_possible": 17.0,
+          "quality": 76.5
+        },
+        "lang_japanese_keigo_hierarchy_inference": {
+          "total_penalty": 6.0,
+          "max_penalty_possible": 18.0,
+          "quality": 66.7
+        },
+        "lang_japanese_translation_kaze_no_tayori": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 17.0,
+          "quality": 100.0
+        },
+        "lang_korean_idiom_localization_batch": {
+          "total_penalty": 3.0,
+          "max_penalty_possible": 44.0,
+          "quality": 93.2
+        },
+        "lang_korean_politeness_level_switch": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 30.0,
+          "quality": 100.0
+        },
+        "lang_korean_register_tone_batch": {
+          "total_penalty": 20.0,
+          "max_penalty_possible": 40.0,
+          "quality": 50.0
+        },
+        "lang_korean_sarcastic_nunchi_pparune": {
+          "total_penalty": 4.0,
+          "max_penalty_possible": 22.0,
+          "quality": 81.8
+        },
+        "lang_korean_translation_nunchi_eopda": {
+          "total_penalty": 4.0,
+          "max_penalty_possible": 18.0,
+          "quality": 77.8
+        },
+        "lang_korean_translation_ssitgo_wa": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 17.0,
+          "quality": 100.0
+        },
+        "lang_korean_webtoon_register_preservation": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 17.0,
+          "quality": 100.0
+        },
+        "medical_cannabis_risk_straight_talk": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 45.0,
+          "quality": 100.0
+        },
+        "medical_straight_talk_ldl_148": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 44.0,
+          "quality": 100.0
+        },
+        "ml_distributed_eval_debug": {
+          "total_penalty": 21.0,
+          "max_penalty_possible": 31.0,
+          "quality": 32.3
+        },
+        "ml_t5_seq2seq_data_collator_mismatch": {
+          "total_penalty": 4.0,
+          "max_penalty_possible": 27.0,
+          "quality": 85.2
+        },
+        "nlp_augmentation_structural_corruption": {
+          "total_penalty": 17.0,
+          "max_penalty_possible": 29.0,
+          "quality": 41.4
         }
       },
       "failed_task_penalties": [],
