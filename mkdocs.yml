@@ -8,7 +8,9 @@ theme:
     - content.code.copy
 
 nav:
-  - Overview: index.md
+  - Overall: overall.md
+  - Awards: awards.md
+  - Efficiency: efficiency.md
   - Compare: compare.md
   - Categories:
       - Categories Overview: categories/index.md

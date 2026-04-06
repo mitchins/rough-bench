@@ -53,7 +53,8 @@ The efficiency table is gated. A run only appears if it is:
 - has token usage recorded
 - meets the configured quality floor
 
-The current quality floor is shown in the generated data file and defaults to `60`.
+The current quality floor is shown in the generated data file and currently
+uses a `75` pass mark.
 
 ## Token Composition
 
@@ -85,12 +86,20 @@ default unless there is evidence of material benchmark impact.
 The overview page includes fun auto-calculated badges. These are recomputed on
 every docs-data rebuild from the current saved runs.
 
-Awards currently use clean headline-eligible runs by default:
+Awards currently use clean headline-eligible runs by default.
 
-- `Most Efficient`: fewest total tokens above the efficiency quality floor
-- `Noisiest`: most total tokens among clean runs
-- `Underdog`: best overall quality per billion parameters
-- `Fatcat`: worst overall quality per billion parameters
+Token lens:
+
+- `Best Token Efficiency`: highest utility per 1k tokens above the efficiency pass mark
+- `Worst Token Efficiency`: lowest utility per 1k tokens above the efficiency pass mark
+- `Highest Token Burn`: most total tokens among clean runs
+
+Throughput lens:
+
+- `Best Throughput Efficiency`: best overall quality per active billion parameters
+
+General lens:
+
 - `All-Rounder`: best harmonic mean across the six category scores
 - `Specialist`: biggest gap between best and worst category
 - `Nitpicker`: highest weighted total of rare rubric signals passed
@@ -98,7 +107,19 @@ Awards currently use clean headline-eligible runs by default:
 - `The Sentry`: best aggregate quality across the explicit Home Assistant-style household oversight set: occupancy, ambiguous security triage, tool-call notification triage, and aquarium monitoring
 
 Parameter-based awards rely on explicit `params_billion` metadata in the subject
-config when available.
+config when available. At the moment this is treated as an active-parameter /
+throughput-side proxy. That is often reasonable for dense models, but for MoE
+models it should not be read as a backbone-size or VRAM-fit metric. Footprint
+and deployability need separate metadata and are not yet scored by these awards.
+For that reason there is currently no negative throughput-side "worst" award.
+
+Subject metadata can now also record:
+
+- `params_billion_backbone`: total / backbone parameter count
+- `loaded_size_gb`: approximate loaded model footprint when known
+
+These are retained for future deployment- and VRAM-oriented views, but they do
+not currently affect any rankings or awards.
 
 ## Taint
 

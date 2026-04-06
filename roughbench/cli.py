@@ -46,6 +46,99 @@ JUDGE_PROVIDER_CHOICES = ("openai-compatible", "anthropic", "copilot-sdk")
 REASONING_EFFORT_CHOICES = ("low", "medium", "high", "xhigh")
 
 
+def _format_progress_duration(seconds: float) -> str:
+    total_seconds = max(0, int(seconds))
+    minutes, secs = divmod(total_seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    if hours:
+        return f"{hours:d}:{minutes:02d}:{secs:02d}"
+    return f"{minutes:02d}:{secs:02d}"
+
+
+def _truncate_progress_task_id(task_id: str, *, limit: int = 42) -> str:
+    value = str(task_id or "")
+    if len(value) <= limit:
+        return value
+    head = max(8, (limit - 1) // 2)
+    tail = max(8, limit - head - 1)
+    return f"{value[:head]}…{value[-tail:]}"
+
+
+class _CompareProgressLine:
+    def __init__(
+        self,
+        *,
+        subject_id: str,
+        total_tasks: int,
+        initial_done: int = 0,
+        initial_failed: int = 0,
+    ) -> None:
+        self.subject_id = subject_id
+        self.total_tasks = max(0, int(total_tasks))
+        self.initial_done = max(0, int(initial_done))
+        self.done = max(0, int(initial_done))
+        self.failed = max(0, int(initial_failed))
+        self.current_task_id = ""
+        self.status = ""
+        self.started_at = time.monotonic()
+        self.enabled = bool(sys.stdout.isatty())
+        self._line_active = False
+
+    def update(
+        self,
+        *,
+        done: int | None = None,
+        failed: int | None = None,
+        current_task_id: str | None = None,
+        status: str | None = None,
+    ) -> None:
+        if done is not None:
+            self.done = max(0, int(done))
+        if failed is not None:
+            self.failed = max(0, int(failed))
+        if current_task_id is not None:
+            self.current_task_id = current_task_id
+        if status is not None:
+            self.status = status
+        self.redraw()
+
+    def suspend(self) -> None:
+        if not self.enabled or not self._line_active:
+            return
+        sys.stdout.write("\n")
+        sys.stdout.flush()
+        self._line_active = False
+
+    def finish(self) -> None:
+        self.suspend()
+
+    def redraw(self) -> None:
+        if not self.enabled:
+            return
+        elapsed = time.monotonic() - self.started_at
+        processed = max(0, self.done)
+        processed_new = max(0, processed - self.initial_done)
+        remaining = max(0, self.total_tasks - processed)
+        eta = ""
+        if processed_new > 0 and remaining > 0:
+            eta_seconds = (elapsed / processed_new) * remaining
+            eta = f" eta={_format_progress_duration(eta_seconds)}"
+        pct = (processed / self.total_tasks * 100.0) if self.total_tasks else 100.0
+        current = _truncate_progress_task_id(self.current_task_id) if self.current_task_id else "-"
+        status = f" {self.status}" if self.status else ""
+        line = (
+            f"\r[compare] {self.subject_id} "
+            f"{processed}/{self.total_tasks} {pct:5.1f}% "
+            f"fail={self.failed} "
+            f"elapsed={_format_progress_duration(elapsed)}"
+            f"{eta} "
+            f"task={current}{status}"
+        )
+        sys.stdout.write(line)
+        sys.stdout.flush()
+        self._line_active = True
+
+
 def _source_root() -> Path:
     return Path(__file__).resolve().parents[1]
 
@@ -1121,7 +1214,20 @@ def _run_compare_subject(
         progress_bits.append(f"tainted_tasks={len(tainted_task_ids)}")
     print(", ".join(progress_bits), flush=True)
 
+    progress = _CompareProgressLine(
+        subject_id=subject.id,
+        total_tasks=len(tasks),
+        initial_done=len(scorecards) + len(failures),
+        initial_failed=len(failures),
+    )
+
     for task in tasks_to_run:
+        progress.update(
+            done=len(scorecards) + len(failures),
+            failed=len(failures),
+            current_task_id=task.id,
+            status="running",
+        )
         scorecard, failure = _evaluate_task_with_retries(
             task,
             runner,
@@ -1129,12 +1235,21 @@ def _run_compare_subject(
             subject=subject,
             retry_attempts=args.retry_attempts,
             retry_backoff_seconds=args.retry_backoff_seconds,
+            progress=progress,
         )
         if scorecard is not None:
             scorecards.append(scorecard)
         if failure is not None:
             failures.append(failure)
+        progress.update(
+            done=len(scorecards) + len(failures),
+            failed=len(failures),
+            current_task_id=task.id,
+            status="failed" if failure is not None else "ok",
+        )
+        if failure is not None:
             if args.fail_fast:
+                progress.finish()
                 _persist_compare_subject_progress(
                     subject=subject,
                     subject_save_dir=subject_save_dir,
@@ -1154,6 +1269,8 @@ def _run_compare_subject(
             failures=failures,
         )
 
+    progress.finish()
+
     # Build a combined payload that reflects both previous and newly-computed results.
     return _build_compare_subject_payload(
         subject=subject,
@@ -1172,6 +1289,7 @@ def _evaluate_task_with_retries(
     subject: SubjectDefinition,
     retry_attempts: int,
     retry_backoff_seconds: float,
+    progress: _CompareProgressLine | None = None,
 ) -> tuple[TaskScorecard | None, dict[str, Any] | None]:
     attempts: list[dict[str, Any]] = []
     total_attempts = max(1, retry_attempts + 1)
@@ -1179,6 +1297,8 @@ def _evaluate_task_with_retries(
         try:
             return judge.evaluate(task, runner.collect(task)), None
         except OutputCapExceededError as exc:
+            if progress is not None:
+                progress.suspend()
             error_entry = {
                 "attempt": attempt_number,
                 "error_type": type(exc).__name__,
@@ -1200,6 +1320,8 @@ def _evaluate_task_with_retries(
                 output_cap_exhausted=True,
             )
         except Exception as exc:
+            if progress is not None:
+                progress.suspend()
             error_entry = {
                 "attempt": attempt_number,
                 "error_type": type(exc).__name__,
@@ -1220,6 +1342,8 @@ def _evaluate_task_with_retries(
                     error_message=str(exc),
                     attempts=attempts,
                 )
+            if progress is not None:
+                progress.redraw()
             if retry_backoff_seconds > 0:
                 time.sleep(retry_backoff_seconds * attempt_number)
     return None, _build_failure_entry(
@@ -1857,7 +1981,8 @@ def _print_compare_report(compared: list[dict]) -> None:
             pct_bit = f", {pct}% of suite max" if pct is not None else ""
             score_line = f"{report['roughbench_demerits']} / {report['suite_max_demerits']}{pct_bit}"
         print()
-        print(f"{item['subject_id']} [{item['title']}]")
+        label = item.get("display_title") or item.get("title")
+        print(label)
         print(f"  provider: {item['provider']}")
         print(f"  model: {item['model']}")
         print(
@@ -1872,8 +1997,6 @@ def _print_compare_report(compared: list[dict]) -> None:
                 print(f"  reasoning_effort: {item['reasoning_effort']} (profile: {profile})")
             else:
                 print(f"  reasoning_effort: {item['reasoning_effort']}")
-        if item.get("base_url"):
-            print(f"  base_url: {item['base_url']}")
         print(f"  demerits: {score_line}")
         usage_line = _format_usage_line(report)
         if usage_line:
