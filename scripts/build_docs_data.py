@@ -5,7 +5,9 @@ import json
 from dataclasses import dataclass
 from datetime import datetime, UTC
 from pathlib import Path
+import re
 from typing import Any
+from urllib.parse import urlparse
 
 import yaml
 
@@ -59,7 +61,7 @@ DOMAIN_TO_CATEGORY = {
     "reasoning_candor": "judgment_creative",
 }
 
-EFFICIENCY_QUALITY_FLOOR = 60.0
+EFFICIENCY_QUALITY_FLOOR = 75.0
 
 HOME_ASSISTANT_OVERSIGHT_TASK_IDS = [
     "smarthome_occupancy_inference_alert",
@@ -67,6 +69,15 @@ HOME_ASSISTANT_OVERSIGHT_TASK_IDS = [
     "smarthome_toolcall_notification_triage",
     "aquarium_ph_crash_triage",
 ]
+
+HOST_DEPLOYMENT_LABELS = {
+    "192.168.1.14": "local",
+    "192.168.1.26": "router",
+    "192.168.2.216": "compute-test",
+    "192.168.4.3": "lab-pc",
+    "192.168.4.222": "compute-test",
+    "localhost": "local",
+}
 
 
 @dataclass
@@ -83,6 +94,8 @@ class TaskMeta:
 class SubjectMeta:
     id: str
     params_billion: float | None = None
+    params_billion_backbone: float | None = None
+    loaded_size_gb: float | None = None
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -134,7 +147,26 @@ def load_subject_meta_index() -> dict[str, SubjectMeta]:
                     params_billion = float(params_billion_raw)
                 except (TypeError, ValueError):
                     params_billion = None
-            subjects[subject_id] = SubjectMeta(id=subject_id, params_billion=params_billion)
+            params_billion_backbone_raw = item.get("params_billion_backbone")
+            params_billion_backbone = None
+            if params_billion_backbone_raw not in (None, ""):
+                try:
+                    params_billion_backbone = float(params_billion_backbone_raw)
+                except (TypeError, ValueError):
+                    params_billion_backbone = None
+            loaded_size_gb_raw = item.get("loaded_size_gb")
+            loaded_size_gb = None
+            if loaded_size_gb_raw not in (None, ""):
+                try:
+                    loaded_size_gb = float(loaded_size_gb_raw)
+                except (TypeError, ValueError):
+                    loaded_size_gb = None
+            subjects[subject_id] = SubjectMeta(
+                id=subject_id,
+                params_billion=params_billion,
+                params_billion_backbone=params_billion_backbone,
+                loaded_size_gb=loaded_size_gb,
+            )
     return subjects
 
 
@@ -146,6 +178,54 @@ def _quality_from_pct(suite_demerit_pct: Any) -> float | None:
     except (TypeError, ValueError):
         return None
     return round(100.0 - value, 1)
+
+
+def _canonical_title(title: str) -> str:
+    value = str(title or "").strip()
+    value = re.sub(r"\s+\(ethernet\)$", "", value, flags=re.I)
+    value = re.sub(r"\s+lab-pc$", "", value, flags=re.I)
+    value = re.sub(r"\s+compute-test$", "", value, flags=re.I)
+    value = re.sub(r"\s+router$", "", value, flags=re.I)
+    value = re.sub(r"\s+local$", "", value, flags=re.I)
+    value = re.sub(r"\s+anthropic$", "", value, flags=re.I)
+    return value.strip()
+
+
+def _deployment_label(*, title: str, subject_id: str, provider: str, base_url: str) -> str:
+    lower_title = str(title or "").casefold()
+    lower_subject_id = str(subject_id or "").casefold()
+    if "compute-test" in lower_title or "compute_test" in lower_subject_id:
+        return "compute-test"
+    if "lab-pc" in lower_title or "labpc" in lower_subject_id or "lab_pc" in lower_subject_id:
+        return "lab-pc"
+    if lower_title.endswith(" router") or "_router" in lower_subject_id:
+        return "router"
+    if lower_title.endswith(" local") or "_local" in lower_subject_id:
+        return "local"
+    if lower_title.endswith(" anthropic") or provider == "anthropic":
+        return "anthropic"
+    parsed = urlparse(base_url or "")
+    host = (parsed.hostname or "").strip().casefold()
+    if host in HOST_DEPLOYMENT_LABELS:
+        return HOST_DEPLOYMENT_LABELS[host]
+    if provider == "openai":
+        return "openai"
+    return ""
+
+
+def _variant_label(*, title: str, subject_id: str, reasoning_effort: Any, reasoning_effort_profile: Any) -> str:
+    lower_subject_id = str(subject_id or "").casefold()
+    if str(reasoning_effort_profile or "").strip():
+        return "auto"
+    lower_title = str(title or "").casefold()
+    if lower_title.endswith(" auto") or lower_subject_id.endswith("_auto"):
+        return "auto"
+    if not lower_subject_id.startswith("gpt_oss_"):
+        return ""
+    effort = str(reasoning_effort or "").strip().casefold()
+    if effort in {"low", "medium", "high"}:
+        return effort
+    return ""
 
 
 def _category_summary(
@@ -228,6 +308,28 @@ def _normalize_run(
     failed_task_penalties = report.get("failed_task_penalties", []) or []
     categories, task_penalties = _category_summary(task_results, failed_task_penalties, task_index)
     overall_quality = _quality_from_pct(report.get("suite_demerit_pct"))
+    subject_id = str(subject_item.get("subject_id") or "")
+    title = str(subject_item.get("title") or "")
+    provider = str(subject_item.get("provider") or "")
+    base_url = str(subject_item.get("base_url") or "")
+    reasoning_effort = subject_item.get("reasoning_effort")
+    reasoning_effort_profile = subject_item.get("reasoning_effort_profile")
+    canonical_title = _canonical_title(title)
+    deployment = _deployment_label(
+        title=title,
+        subject_id=subject_id,
+        provider=provider,
+        base_url=base_url,
+    )
+    variant = _variant_label(
+        title=title,
+        subject_id=subject_id,
+        reasoning_effort=reasoning_effort,
+        reasoning_effort_profile=reasoning_effort_profile,
+    )
+    display_title = canonical_title
+    if variant and not canonical_title.casefold().endswith(f" {variant}"):
+        display_title = f"{canonical_title} · {variant}"
     usage_total = report.get("usage_total_tokens")
     usage_prompt_tokens = report.get("usage_prompt_tokens")
     usage_completion_tokens = report.get("usage_completion_tokens")
@@ -246,11 +348,23 @@ def _normalize_run(
         usage_answer_tokens = None
         usage_unsplit_completion_tokens = None
     demerits_per_1k = report.get("demerits_per_1k_total_tokens")
+    utility_points = None
+    utility_per_1k = None
+    try:
+        suite_max_value = float(report.get("suite_max_demerits") or 0.0)
+        demerits_value = float(report.get("roughbench_demerits") or 0.0)
+        tokens_value = int(usage_total or 0)
+        if suite_max_value > 0:
+            utility_points = max(0.0, suite_max_value - demerits_value)
+            if tokens_value > 0:
+                utility_per_1k = utility_points / (tokens_value / 1000.0)
+    except (TypeError, ValueError):
+        utility_points = None
+        utility_per_1k = None
     tainted = bool(report.get("tainted") or report.get("warning_output_cap_task_count"))
     status = subject_item.get("status")
     failed_task_count = int(subject_item.get("failed_task_count") or 0)
     headline_eligible = status == "complete" and failed_task_count == 0
-    subject_id = str(subject_item.get("subject_id") or "")
     subject_meta = subject_meta_index.get(subject_id)
     unique_signal_ids = sorted(
         {
@@ -264,10 +378,16 @@ def _normalize_run(
         "run_id": run_dir.name,
         "run_path": str(run_dir.relative_to(REPO_ROOT)),
         "subject_id": subject_id,
-        "title": subject_item.get("title"),
+        "title": title,
+        "canonical_title": canonical_title,
+        "display_title": display_title,
+        "deployment_label": deployment,
+        "variant_label": variant,
         "model": subject_item.get("model"),
-        "provider": subject_item.get("provider"),
-        "base_url": subject_item.get("base_url"),
+        "provider": provider,
+        "base_url": base_url,
+        "reasoning_effort": reasoning_effort,
+        "reasoning_effort_profile": reasoning_effort_profile,
         "status": status,
         "completed_task_count": int(subject_item.get("completed_task_count") or 0),
         "requested_task_count": int(subject_item.get("requested_task_count") or 0),
@@ -277,6 +397,8 @@ def _normalize_run(
         "suite_max_demerits": report.get("suite_max_demerits"),
         "suite_demerit_pct": report.get("suite_demerit_pct"),
         "overall_quality": overall_quality,
+        "utility_points": None if utility_points is None else round(utility_points, 1),
+        "utility_per_1k_total_tokens": None if utility_per_1k is None else round(utility_per_1k, 2),
         "usage_total_tokens": usage_total,
         "usage_prompt_tokens": usage_prompt_tokens,
         "usage_completion_tokens": usage_completion_tokens,
@@ -285,6 +407,9 @@ def _normalize_run(
         "usage_unsplit_completion_tokens": usage_unsplit_completion_tokens,
         "demerits_per_1k_total_tokens": demerits_per_1k,
         "params_billion": None if subject_meta is None else subject_meta.params_billion,
+        "params_billion_active": None if subject_meta is None else subject_meta.params_billion,
+        "params_billion_backbone": None if subject_meta is None else subject_meta.params_billion_backbone,
+        "loaded_size_gb": None if subject_meta is None else subject_meta.loaded_size_gb,
         "headline_eligible": headline_eligible,
         "tainted": tainted,
         "tainted_task_count": int(report.get("tainted_task_count") or report.get("warning_output_cap_task_count") or 0),
@@ -295,6 +420,15 @@ def _normalize_run(
         "task_penalties": task_penalties,
         "failed_task_penalties": failed_task_penalties,
     }
+
+
+def _is_current_full_suite_run(run: dict[str, Any], *, total_task_count: int) -> bool:
+    return (
+        run.get("status") == "complete"
+        and int(run.get("failed_task_count") or 0) == 0
+        and int(run.get("requested_task_count") or 0) == total_task_count
+        and int(run.get("completed_task_count") or 0) == total_task_count
+    )
 
 
 def load_runs(task_index: dict[str, TaskMeta], subject_meta_index: dict[str, SubjectMeta]) -> list[dict[str, Any]]:
@@ -327,7 +461,7 @@ def load_runs(task_index: dict[str, TaskMeta], subject_meta_index: dict[str, Sub
 
 
 def _overall_leaderboard(runs: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    headline_runs = [row for row in runs if row.get("headline_eligible")]
+    headline_runs = [row for row in runs if row.get("current_full_suite_eligible")]
 
     def sort_key(row: dict[str, Any]) -> tuple[int, float, str]:
         demerits = float(row.get("roughbench_demerits") or 0.0)
@@ -339,29 +473,30 @@ def _overall_leaderboard(runs: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def _efficiency_leaderboard(runs: list[dict[str, Any]]) -> list[dict[str, Any]]:
     eligible = []
     for row in runs:
+        if not row.get("current_full_suite_eligible"):
+            continue
         quality = row.get("overall_quality")
-        if row.get("status") != "complete":
-            continue
-        if row.get("failed_task_count"):
-            continue
         if row.get("tainted"):
             continue
         if row.get("usage_total_tokens") in (None, 0):
             continue
         if quality is None or float(quality) < EFFICIENCY_QUALITY_FLOOR:
             continue
+        if row.get("utility_per_1k_total_tokens") in (None, 0):
+            continue
         eligible.append(row)
     return sorted(
         eligible,
         key=lambda row: (
-            float(row.get("demerits_per_1k_total_tokens") or 0.0),
+            -float(row.get("utility_per_1k_total_tokens") or 0.0),
+            int(row.get("usage_total_tokens") or 0),
             float(row.get("roughbench_demerits") or 0.0),
         ),
     )
 
 
 def _category_leaderboards(runs: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
-    headline_runs = [run for run in runs if run.get("headline_eligible")]
+    headline_runs = [run for run in runs if run.get("current_full_suite_eligible")]
     output: dict[str, list[dict[str, Any]]] = {}
     for category in CATEGORY_ORDER:
         rows = []
@@ -373,7 +508,8 @@ def _category_leaderboards(runs: list[dict[str, Any]]) -> dict[str, list[dict[st
                 {
                     "run_id": run["run_id"],
                     "subject_id": run["subject_id"],
-                    "title": run["title"],
+                    "title": run["display_title"],
+                    "deployment_label": run.get("deployment_label"),
                     "model": run["model"],
                     "status": run["status"],
                     "tainted": run["tainted"],
@@ -388,8 +524,8 @@ def _category_leaderboards(runs: list[dict[str, Any]]) -> dict[str, list[dict[st
 
 
 def _category_reference_scores(runs: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
-    clean_runs = [run for run in runs if run.get("headline_eligible") and not run.get("tainted")]
-    headline_runs = [run for run in runs if run.get("headline_eligible")]
+    clean_runs = [run for run in runs if run.get("current_full_suite_eligible") and not run.get("tainted")]
+    headline_runs = [run for run in runs if run.get("current_full_suite_eligible")]
     reference_runs = clean_runs or headline_runs
 
     output: dict[str, dict[str, Any]] = {}
@@ -414,7 +550,7 @@ def _category_reference_scores(runs: list[dict[str, Any]]) -> dict[str, dict[str
 
 
 def _award_eligible_runs(runs: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    return [run for run in runs if run.get("headline_eligible") and not run.get("tainted")]
+    return [run for run in runs if run.get("current_full_suite_eligible") and not run.get("tainted")]
 
 
 def _safe_harmonic_mean(values: list[float]) -> float:
@@ -465,7 +601,8 @@ def _build_awards(
             "description": description,
             "winner_run_id": winner["run_id"],
             "winner_subject_id": winner["subject_id"],
-            "winner_title": winner["title"],
+            "winner_title": winner["display_title"],
+            "winner_deployment_label": winner.get("deployment_label"),
             "winner_model": winner["model"],
             "metric_value": metric_value,
             "metric_display": metric_display,
@@ -479,22 +616,44 @@ def _build_awards(
         if run.get("usage_total_tokens") not in (None, 0)
         and run.get("overall_quality") is not None
         and float(run["overall_quality"]) >= EFFICIENCY_QUALITY_FLOOR
+        and run.get("utility_per_1k_total_tokens") not in (None, 0)
     ]
     if efficiency_candidates:
-        winner = min(
+        winner = max(
             efficiency_candidates,
             key=lambda run: (
-                int(run["usage_total_tokens"]),
-                float(run.get("roughbench_demerits") or 0.0),
+                float(run.get("utility_per_1k_total_tokens") or 0.0),
+                -int(run.get("usage_total_tokens") or 0),
             ),
         )
         add_award(
             award_id="most_efficient",
-            label="Most Efficient",
-            description=f"Fewest total tokens among clean runs at or above the {EFFICIENCY_QUALITY_FLOOR:.0f} quality floor.",
+            label="Best Token Efficiency",
+            description=(
+                f"Highest utility per 1k tokens among clean current full-suite runs "
+                f"at or above the {EFFICIENCY_QUALITY_FLOOR:.0f} pass mark, where utility = suite_max_demerits - demerits."
+            ),
             winner=winner,
-            metric_value=int(winner["usage_total_tokens"]),
-            metric_display=f'{int(winner["usage_total_tokens"]):,} tok',
+            metric_value=float(winner["utility_per_1k_total_tokens"]),
+            metric_display=f'{float(winner["utility_per_1k_total_tokens"]):.2f} util/1k',
+        )
+        loser = min(
+            efficiency_candidates,
+            key=lambda run: (
+                float(run.get("utility_per_1k_total_tokens") or 0.0),
+                int(run.get("usage_total_tokens") or 0),
+            ),
+        )
+        add_award(
+            award_id="least_efficient",
+            label="Worst Token Efficiency",
+            description=(
+                f"Lowest utility per 1k tokens among clean current full-suite runs "
+                f"at or above the {EFFICIENCY_QUALITY_FLOOR:.0f} pass mark, where utility = suite_max_demerits - demerits."
+            ),
+            winner=loser,
+            metric_value=float(loser["utility_per_1k_total_tokens"]),
+            metric_display=f'{float(loser["utility_per_1k_total_tokens"]):.2f} util/1k',
         )
 
     noisy_candidates = [run for run in eligible if run.get("usage_total_tokens") not in (None, 0)]
@@ -508,8 +667,8 @@ def _build_awards(
         )
         add_award(
             award_id="noisiest",
-            label="Noisiest",
-            description="Most total tokens consumed among clean headline runs.",
+            label="Highest Token Burn",
+            description="Most total tokens consumed among clean current full-suite runs.",
             winner=winner,
             metric_value=int(winner["usage_total_tokens"]),
             metric_display=f'{int(winner["usage_total_tokens"]):,} tok',
@@ -527,20 +686,14 @@ def _build_awards(
         winner = max(params_candidates, key=lambda run: (run["_quality_per_billion"], float(run["overall_quality"])))
         add_award(
             award_id="underdog",
-            label="Underdog",
-            description="Best overall quality per billion parameters among runs with known size metadata.",
+            label="Best Throughput Efficiency",
+            description=(
+                "Best overall quality per active billion parameters among runs with known size metadata. "
+                "This is a rough throughput-side proxy, not a VRAM or backbone-size metric."
+            ),
             winner=winner,
             metric_value=winner["_quality_per_billion"],
-            metric_display=f'{winner["_quality_per_billion"]:.2f} quality/B',
-        )
-        loser = min(params_candidates, key=lambda run: (run["_quality_per_billion"], -float(run["overall_quality"])))
-        add_award(
-            award_id="fatcat",
-            label="Fatcat",
-            description="Worst overall quality per billion parameters among runs with known size metadata.",
-            winner=loser,
-            metric_value=loser["_quality_per_billion"],
-            metric_display=f'{loser["_quality_per_billion"]:.2f} quality/B',
+            metric_display=f'{winner["_quality_per_billion"]:.2f} quality/active-B',
         )
         for run in params_candidates:
             run.pop("_quality_per_billion", None)
@@ -683,10 +836,16 @@ def _task_rows(task_index: dict[str, TaskMeta]) -> list[dict[str, Any]]:
 
 def build_docs_data() -> dict[str, Any]:
     task_index = load_task_index()
+    current_task_count = len(task_index)
     subject_meta_index = load_subject_meta_index()
     runs = load_runs(task_index, subject_meta_index)
     runs = sorted(runs, key=lambda row: row["run_id"])
-    headline_runs = [run for run in runs if run.get("headline_eligible")]
+    for run in runs:
+        run["current_full_suite_eligible"] = _is_current_full_suite_run(
+            run,
+            total_task_count=current_task_count,
+        )
+    headline_runs = [run for run in runs if run.get("current_full_suite_eligible")]
     category_reference_scores = _category_reference_scores(runs)
 
     for run in runs:
@@ -708,6 +867,7 @@ def build_docs_data() -> dict[str, Any]:
 
     data = {
         "generated_at": datetime.now(UTC).isoformat(),
+        "current_suite_task_count": current_task_count,
         "efficiency_quality_floor": EFFICIENCY_QUALITY_FLOOR,
         "category_order": CATEGORY_ORDER,
         "category_reference_scores": category_reference_scores,

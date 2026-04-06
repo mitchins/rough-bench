@@ -147,6 +147,9 @@ class SubjectDefinition:
     max_tokens_profile: str = ""
     max_tokens_overrides: tuple[tuple[str, int], ...] = ()
     thinking_type: str = ""
+    params_billion: float | None = None
+    params_billion_backbone: float | None = None
+    loaded_size_gb: float | None = None
     notes: str = ""
     storage_name: str = ""
 
@@ -216,6 +219,17 @@ class SubjectDefinition:
             ),
             max_tokens_overrides=_as_max_tokens_overrides(data.get("max_tokens_overrides")),
             thinking_type=str(data.get("thinking_type", "")),
+            params_billion=(
+                None if data.get("params_billion") in (None, "") else float(data.get("params_billion"))
+            ),
+            params_billion_backbone=(
+                None
+                if data.get("params_billion_backbone") in (None, "")
+                else float(data.get("params_billion_backbone"))
+            ),
+            loaded_size_gb=(
+                None if data.get("loaded_size_gb") in (None, "") else float(data.get("loaded_size_gb"))
+            ),
             notes=str(data.get("notes", "")),
             storage_name=storage_name,
         )

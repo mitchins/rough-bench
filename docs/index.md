@@ -15,6 +15,8 @@ Fun auto-calculated badges from the current clean run set. These update whenever
 
 ## Overall Leaderboard
 
+<p class="rb-muted" id="rb-overall-note"></p>
+
 <div class="rb-table-wrap">
   <table class="rb-table" id="rb-overall-table"></table>
 </div>
@@ -22,7 +24,7 @@ Fun auto-calculated badges from the current clean run set. These update whenever
 ## Efficiency Leaderboard
 
 <p class="rb-muted">
-Efficiency only includes complete, untainted runs above the configured quality floor.
+Efficiency only includes complete, untainted current full-suite runs above the pass mark, and ranks them by utility per 1k tokens, where utility = suite max demerits minus observed demerits.
 </p>
 
 <div class="rb-table-wrap">

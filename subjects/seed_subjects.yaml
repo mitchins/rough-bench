@@ -12,6 +12,21 @@ subjects:
     direct_answer_first: true
     notes: Baseline stronger local subject model.
 
+  - id: gpt_oss_120b_local
+    title: GPT-OSS 120B local
+    params_billion: 120
+    params_billion_backbone: 117
+    loaded_size_gb: 63.4
+    base_url: http://192.168.2.216:8080/v1
+    model: gpt-oss-120b-MXFP4-00001-of-00002.gguf
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 600
+    reasoning_effort: medium
+    direct_answer_first: true
+    notes: Larger sibling of `gpt_oss_20b_local`; start on medium effort and revisit with `balanced_auto` if the extra compute is acceptable.
+
   - id: gpt_oss_20b_auto
     title: GPT-OSS 20B auto
     params_billion: 20
@@ -133,24 +148,26 @@ subjects:
   - id: qwen3_5_35b_a3b_compute_test
     title: Qwen3.5 35B A3B compute-test
     params_billion: 3
-    base_url: http://192.168.4.222:1234/v1
+    params_billion_backbone: 35
+    base_url: http://192.168.4.222:8080/v1
     model: qwen/qwen3.5-35b-a3b
     api_key: dummy
     temperature: 0.0
     max_tokens: 10000
     timeout_seconds: 600
-    notes: LM Studio-served Qwen3.5 35B A3B on compute-test. Running as a Q8 GGUF; user reports perplexity delta under 0.1%, so note it but treat it as practically negligible.
+    notes: Raw llama.cpp-served Qwen3.5 35B A3B on compute-test. Running as a Q8 GGUF; user reports perplexity delta under 0.1%, so note it but treat it as practically negligible.
 
   - id: gemma_4_26b_a4b_compute_test
     title: Gemma 4 26B A4B compute-test
     params_billion: 4
-    base_url: http://192.168.4.222:1234/v1
+    params_billion_backbone: 26
+    base_url: http://192.168.4.222:8080/v1
     model: google/gemma-4-26b-a4b
     api_key: dummy
     temperature: 0.0
     max_tokens: 10000
     timeout_seconds: 600
-    notes: LM Studio-served Gemma 4 26B A4B on compute-test. Running as a Q8 quantized local model; treat the quantization note as operational context, not a major comparability caveat.
+    notes: Raw llama.cpp-served Gemma 4 26B A4B on compute-test. Running as a Q8 quantized local model; treat the quantization note as operational context, not a major comparability caveat.
 
   - id: glm_4_6v_flash_labpc
     title: GLM-4.6V-Flash lab-pc (ethernet)
@@ -187,13 +204,51 @@ subjects:
   - id: lfm2_24b_a2b_compute_test
     title: LFM2 24B A2B compute-test
     params_billion: 2
-    base_url: http://192.168.4.222:1234/v1
+    params_billion_backbone: 24
+    base_url: http://192.168.4.222:8080/v1
     model: liquid/lfm2-24b-a2b
     api_key: dummy
     temperature: 0.0
     max_tokens: 10000
     timeout_seconds: 600
-    notes: "LM Studio-served Liquid LFM2 24B A2B on compute-test. Treated like other high-fidelity local MoE runs; active params are recorded for size-normalized comparisons."
+    notes: "Raw llama.cpp-served Liquid LFM2 24B A2B on compute-test. Treated like other high-fidelity local MoE runs; active params are recorded for size-normalized comparisons."
+
+  - id: nemotron_3_nano_4b_compute_test
+    title: Nemotron 3 Nano 4B compute-test
+    params_billion: 4
+    base_url: http://192.168.4.222:8080/v1
+    model: nvidia/nemotron-3-nano-4b
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 600
+    notes: "Raw llama.cpp-served NVIDIA Nemotron 3 Nano 4B on compute-test. Kept as its own subject because the endpoint may still expose a non-4B Nemotron alias."
+
+  - id: nemotron_3_nano_compute_test
+    title: Nemotron 3 Nano 30B A4B compute-test
+    params_billion: 9
+    params_billion_backbone: 31.6
+    loaded_size_gb: 33.6
+    base_url: http://192.168.2.216:8080/v1
+    model: NVIDIA-Nemotron-3-Nano-30B-A3B-Q8_0.gguf
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 600
+    notes: "Raw llama.cpp-served NVIDIA Nemotron 3 Nano 30B A4B alias on compute-test. `params_billion: 4` is intentional here because current size-normalized docs use active params as a throughput-side proxy, not backbone size. If the server exposes both `nvidia/nemotron-3-nano` and `nvidia/nemotron-3-nano-4b`, this subject keeps the alias separate so they can be compared directly."
+
+  - id: granite_4_0_h_small_q8_compute_test
+    title: Granite 4.0 H Small Q8 compute-test
+    params_billion: 9
+    params_billion_backbone: 32
+    loaded_size_gb: 34.3
+    base_url: http://192.168.2.216:8080/v1
+    model: granite-4.0-h-small-Q8_0.gguf
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 600
+    notes: "Raw llama.cpp-served Granite 4.0 H Small Q8 on the compute-test Proxmox box, but in a separate container at 192.168.2.216. Treated as a hybrid MoE model with roughly 32B total / backbone parameters and about 9B active parameters for throughput-side comparisons."
 
   - id: gemma_3_1b_router
     title: Gemma 3 1B router

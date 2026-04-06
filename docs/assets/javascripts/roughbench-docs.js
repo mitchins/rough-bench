@@ -62,8 +62,16 @@
     `;
   }
 
+  function displayTitle(run) {
+    return run.display_title || run.title;
+  }
+
+  function runMeta(run) {
+    return run.model || "";
+  }
+
   function runLabel(run) {
-    return `${run.title} (${run.run_id})`;
+    return displayTitle(run);
   }
 
   function bar(value) {
@@ -136,13 +144,20 @@
 
   function renderOverviewTables() {
     const overall = document.getElementById("rb-overall-table");
+    const overallNote = document.getElementById("rb-overall-note");
     const efficiency = document.getElementById("rb-efficiency-table");
+    if (overallNote) {
+      const count = Number(data.current_suite_task_count || 0);
+      overallNote.textContent = count
+        ? `Only complete current full-suite runs are shown here (${count}/${count} tasks). Smoke runs and older smaller-suite runs are excluded.`
+        : "Only complete current full-suite runs are shown here. Smoke runs and older smaller-suite runs are excluded.";
+    }
     if (overall) {
       renderTable(
         overall,
         [
           { label: "Rank", render: (_, index) => String(index + 1) },
-          { label: "Run", render: (row) => `${runLabel(row)}<br><span class="rb-muted">${row.model}</span>${awardPills(row)}` },
+          { label: "Run", render: (row) => runLabel(row) },
           { label: "Status", render: (row) => badge(row) },
           { label: "Demerits", render: (row) => `${number(row.roughbench_demerits)} / ${number(row.suite_max_demerits)}` },
           { label: "Quality", render: (row) => pct(row.overall_quality) },
@@ -167,10 +182,20 @@
         efficiency,
         [
           { label: "Rank", render: (_, index) => String(index + 1) },
-          { label: "Run", render: (row) => `${runLabel(row)}<br><span class="rb-muted">${row.model}</span>${awardPills(row)}` },
-          { label: "Demerits / 1k", render: (row) => Number(row.demerits_per_1k_total_tokens).toFixed(2) },
-          { label: "Quality", render: (row) => pct(row.overall_quality) },
+          { label: "Run", render: (row) => {
+              const meta = runMeta(row);
+              return `${runLabel(row)}${meta ? `<br><span class="rb-muted">${meta}</span>` : ""}${awardPills(row)}`;
+            } },
+          {
+            label: "Utility / 1k",
+            render: (row) =>
+              row.utility_per_1k_total_tokens !== null && row.utility_per_1k_total_tokens !== undefined
+                ? Number(row.utility_per_1k_total_tokens).toFixed(2)
+                : "—",
+          },
           { label: "Tokens", render: (row) => number(row.usage_total_tokens) },
+          { label: "Quality", render: (row) => pct(row.overall_quality) },
+          { label: "Demerits", render: (row) => `${number(row.roughbench_demerits)} / ${number(row.suite_max_demerits)}` },
           {
             label: "Mix",
             render: (row) => {
@@ -245,7 +270,7 @@
         return `
           <section class="rb-token-mix-row">
             <div class="rb-token-mix-head">
-              <div class="rb-token-mix-title">${run.title}</div>
+              <div class="rb-token-mix-title">${displayTitle(run)}</div>
               <div class="rb-token-mix-meta">${number(run.usage_total_tokens)} total tok · ${badge(run)}</div>
             </div>
             <div class="rb-token-mix-track">
@@ -315,7 +340,7 @@
       .join(" ");
 
     root.innerHTML = `
-      <svg viewBox="0 0 ${size} ${size}" role="img" aria-label="Category radar for ${run.title}">
+      <svg viewBox="0 0 ${size} ${size}" role="img" aria-label="Category radar for ${displayTitle(run)}">
         ${gridPolys.join("")}
         ${axes}
         <polygon points="${dataPoints}" fill="rgba(11,107,87,0.18)" stroke="#0b6b57" stroke-width="3" />
@@ -415,7 +440,7 @@
         const cards = [runA, runB].map(
           (run) => `
             <section class="rb-card">
-              <h3>${run.title}</h3>
+              <h3>${displayTitle(run)}</h3>
               <div class="rb-card-value">${number(run.roughbench_demerits)} / ${number(run.suite_max_demerits)}</div>
               <div class="rb-card-note">${pct(run.overall_quality)} quality · ${number(run.usage_total_tokens)} tokens · ${badge(run)}</div>
             </section>
@@ -520,7 +545,7 @@
       const cardRows = [
         ["Headline Runs", number(rows.length), "Complete runs with zero failed tasks in this category leaderboard"],
         ["Best Quality", reference?.quality !== null && reference?.quality !== undefined ? pct(reference.quality) : "—", "Highest absolute category quality currently recorded"],
-        ["Best Model", top ? top.title : "—", top ? top.model : "No eligible run recorded"],
+        ["Best Model", top ? top.title : "—", top ? [top.model, top.deployment_label].filter(Boolean).join(" · ") : "No eligible run recorded"],
       ];
       cards.innerHTML = cardRows
         .map(
@@ -539,7 +564,7 @@
       table,
       [
         { label: "Rank", render: (_, index) => String(index + 1) },
-        { label: "Run", render: (row) => `${row.title}<br><span class="rb-muted">${row.model}</span>` },
+        { label: "Run", render: (row) => `${row.title}<br><span class="rb-muted">${[row.model, row.deployment_label].filter(Boolean).join(" · ")}</span>` },
         { label: "Quality", render: (row) => `${pct(row.quality)} ${bar(row.quality)}` },
         { label: "Demerits", render: (row) => `${number(row.demerits)} / ${number(row.max_demerits)}` },
         { label: "Tasks", render: (row) => number(row.task_count) },
