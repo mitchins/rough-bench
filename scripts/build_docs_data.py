@@ -182,6 +182,7 @@ def _quality_from_pct(suite_demerit_pct: Any) -> float | None:
 
 def _canonical_title(title: str) -> str:
     value = str(title or "").strip()
+    value = re.sub(r"\s+\(z\.?a\.?i(?:\s+coding\s+plan)?\)$", "", value, flags=re.I)
     value = re.sub(r"\s+\(ethernet\)$", "", value, flags=re.I)
     value = re.sub(r"\s+lab-pc$", "", value, flags=re.I)
     value = re.sub(r"\s+compute-test$", "", value, flags=re.I)

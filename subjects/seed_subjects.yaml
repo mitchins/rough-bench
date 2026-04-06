@@ -27,6 +27,22 @@ subjects:
     direct_answer_first: true
     notes: Larger sibling of `gpt_oss_20b_local`; start on medium effort and revisit with `balanced_auto` if the extra compute is acceptable.
 
+  - id: gpt_oss_120b_auto
+    title: GPT-OSS 120B auto
+    params_billion: 120
+    params_billion_backbone: 117
+    loaded_size_gb: 63.4
+    base_url: http://192.168.2.216:8080/v1
+    model: gpt-oss-120b-MXFP4-00001-of-00002.gguf
+    api_key: dummy
+    temperature: 0.0
+    max_tokens: 10000
+    timeout_seconds: 600
+    reasoning_effort: medium
+    reasoning_effort_profile: balanced_auto
+    direct_answer_first: true
+    notes: GPT-OSS 120B with a balanced auto reasoning-effort profile. Defaults to medium effort, but escalates a small allowlist of long-horizon tasks to high.
+
   - id: gpt_oss_20b_auto
     title: GPT-OSS 20B auto
     params_billion: 20
