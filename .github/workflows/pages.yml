@@ -38,7 +38,10 @@ jobs:
           pip install -e '.[docs]'
 
       - name: Build docs
-        run: make docs-build
+        run: |
+          # Use the committed docs payload. CI does not have the local runs/ tree,
+          # so regenerating docs_data.json here would publish empty leaderboards.
+          mkdocs build
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
