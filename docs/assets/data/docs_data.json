@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-06T06:10:52.922454+00:00",
+  "generated_at": "2026-04-06T06:11:45.570041+00:00",
   "current_suite_task_count": 53,
   "efficiency_quality_floor": 75.0,
   "category_order": [
@@ -124,8 +124,8 @@
       "winner_title": "GLM-5.1 (Z.AI Coding Plan)",
       "winner_deployment_label": "",
       "winner_model": "glm-5.1",
-      "metric_value": 22.2953984268226,
-      "metric_display": "22.30 rarity pts"
+      "metric_value": 20.68113542803949,
+      "metric_display": "20.68 rarity pts"
     },
     {
       "id": "linguist",
@@ -143,13 +143,13 @@
       "id": "sentry",
       "label": "The Sentry",
       "description": "Best aggregate quality across the explicit Home Assistant-style household oversight set: occupancy, ambiguous security triage, tool-call notification triage, and aquarium monitoring.",
-      "winner_run_id": "nemotron_3_nano_compute_test_full_rule",
-      "winner_subject_id": "nemotron_3_nano_compute_test",
-      "winner_title": "Nemotron 3 Nano 30B A4B",
-      "winner_deployment_label": "compute-test",
-      "winner_model": "NVIDIA-Nemotron-3-Nano-30B-A3B-Q8_0.gguf",
-      "metric_value": 81.4,
-      "metric_display": "81.4%"
+      "winner_run_id": "glm_4_7_zai_full_rule",
+      "winner_subject_id": "glm_4_7_zai",
+      "winner_title": "GLM-4.7 (Z.AI Coding Plan)",
+      "winner_deployment_label": "",
+      "winner_model": "glm-4.7",
+      "metric_value": 84.2,
+      "metric_display": "84.2%"
     }
   ],
   "categories": [
@@ -5306,6 +5306,147 @@
       "awards": []
     },
     {
+      "run_id": "glm_4_5_air_zai_full_rule",
+      "run_path": "runs/glm_4_5_air_zai_full_rule",
+      "subject_id": "glm_4_5_air_zai",
+      "title": "GLM-4.5-Air (Z.AI Coding Plan)",
+      "canonical_title": "GLM-4.5-Air (Z.AI Coding Plan)",
+      "display_title": "GLM-4.5-Air (Z.AI Coding Plan)",
+      "deployment_label": "",
+      "variant_label": "",
+      "model": "glm-4.5-air",
+      "provider": "openai-compatible",
+      "base_url": "https://api.z.ai/api/coding/paas/v4",
+      "reasoning_effort": "",
+      "reasoning_effort_profile": "",
+      "status": "partial",
+      "completed_task_count": 6,
+      "requested_task_count": 53,
+      "failed_task_count": 0,
+      "summary": "Completed 6 of 53 task(s); no task failures. 6 of 6 task(s) triggered penalties; 38 signal(s) passed.",
+      "roughbench_demerits": 33,
+      "suite_max_demerits": 215,
+      "suite_demerit_pct": 15.3,
+      "overall_quality": 84.7,
+      "utility_points": 182.0,
+      "utility_per_1k_total_tokens": 29.87,
+      "usage_total_tokens": 6094,
+      "usage_prompt_tokens": 1387,
+      "usage_completion_tokens": 4707,
+      "usage_reasoning_tokens": null,
+      "usage_answer_tokens": null,
+      "usage_unsplit_completion_tokens": 4707,
+      "demerits_per_1k_total_tokens": 5.42,
+      "params_billion": null,
+      "params_billion_active": null,
+      "params_billion_backbone": null,
+      "loaded_size_gb": null,
+      "headline_eligible": false,
+      "tainted": false,
+      "tainted_task_count": 0,
+      "taint_reason": null,
+      "context_retry_task_count": 0,
+      "categories": {
+        "build_systems": {
+          "id": "build_systems",
+          "label": "Build & Systems",
+          "demerits": 0.0,
+          "max_demerits": 0.0,
+          "quality": null,
+          "task_count": 0,
+          "relative_quality": null
+        },
+        "ml_nlp_engineering": {
+          "id": "ml_nlp_engineering",
+          "label": "ML & NLP Engineering",
+          "demerits": 6.0,
+          "max_demerits": 53.0,
+          "quality": 88.7,
+          "task_count": 2,
+          "relative_quality": 105.8
+        },
+        "search_analytics": {
+          "id": "search_analytics",
+          "label": "Search & Analytics",
+          "demerits": 18.0,
+          "max_demerits": 80.0,
+          "quality": 77.5,
+          "task_count": 2,
+          "relative_quality": 88.1
+        },
+        "language_localization": {
+          "id": "language_localization",
+          "label": "Language & Localization",
+          "demerits": 0.0,
+          "max_demerits": 0.0,
+          "quality": null,
+          "task_count": 0,
+          "relative_quality": null
+        },
+        "planning_product": {
+          "id": "planning_product",
+          "label": "Planning & Product",
+          "demerits": 9.0,
+          "max_demerits": 82.0,
+          "quality": 89.0,
+          "task_count": 2,
+          "relative_quality": 99.8
+        },
+        "judgment_creative": {
+          "id": "judgment_creative",
+          "label": "Judgment & Creative",
+          "demerits": 0.0,
+          "max_demerits": 0.0,
+          "quality": null,
+          "task_count": 0,
+          "relative_quality": null
+        },
+        "uncategorized": {
+          "id": "uncategorized",
+          "label": "Uncategorized",
+          "demerits": 0.0,
+          "max_demerits": 0.0,
+          "quality": null,
+          "task_count": 0
+        }
+      },
+      "task_penalties": {
+        "agent_rubric_false_competence_spec": {
+          "total_penalty": 5.0,
+          "max_penalty_possible": 25.0,
+          "quality": 80.0
+        },
+        "agent_task_spec_not_handwave": {
+          "total_penalty": 4.0,
+          "max_penalty_possible": 57.0,
+          "quality": 93.0
+        },
+        "analytics_ab_test_mix_shift_decision": {
+          "total_penalty": 15.0,
+          "max_penalty_possible": 46.0,
+          "quality": 67.4
+        },
+        "analytics_guardrail_tradeoff_launch_decision": {
+          "total_penalty": 3.0,
+          "max_penalty_possible": 34.0,
+          "quality": 91.2
+        },
+        "applied_nlp_annotation_quality_gate": {
+          "total_penalty": 3.0,
+          "max_penalty_possible": 26.0,
+          "quality": 88.5
+        },
+        "applied_nlp_bio_sequence_cleanup": {
+          "total_penalty": 3.0,
+          "max_penalty_possible": 27.0,
+          "quality": 88.9
+        }
+      },
+      "failed_task_penalties": [],
+      "current_full_suite_eligible": false,
+      "awards": []
+    },
+    {
       "run_id": "glm_4_6v_flash_labpc_full_rule",
       "run_path": "runs/glm_4_6v_flash_labpc_full_rule",
       "subject_id": "glm_4_6v_flash_labpc",
@@ -6791,29 +6932,29 @@
       "base_url": "https://api.z.ai/api/coding/paas/v4",
       "reasoning_effort": "",
       "reasoning_effort_profile": "",
-      "status": "partial",
-      "completed_task_count": 52,
+      "status": "complete",
+      "completed_task_count": 53,
       "requested_task_count": 53,
       "failed_task_count": 0,
-      "summary": "Completed 52 of 53 task(s); no task failures. 39 of 52 task(s) triggered penalties; 223 signal(s) passed.",
-      "roughbench_demerits": 412,
-      "suite_max_demerits": 1837,
-      "suite_demerit_pct": 22.4,
-      "overall_quality": 77.6,
-      "utility_points": 1425.0,
-      "utility_per_1k_total_tokens": 22.7,
-      "usage_total_tokens": 62779,
-      "usage_prompt_tokens": 15569,
-      "usage_completion_tokens": 47210,
+      "summary": "Completed 53 of 53 task(s); no task failures. 40 of 53 task(s) triggered penalties; 226 signal(s) passed.",
+      "roughbench_demerits": 420,
+      "suite_max_demerits": 1867,
+      "suite_demerit_pct": 22.5,
+      "overall_quality": 77.5,
+      "utility_points": 1447.0,
+      "utility_per_1k_total_tokens": 22.41,
+      "usage_total_tokens": 64579,
+      "usage_prompt_tokens": 16624,
+      "usage_completion_tokens": 47955,
       "usage_reasoning_tokens": 0,
-      "usage_answer_tokens": 47210,
+      "usage_answer_tokens": 47955,
       "usage_unsplit_completion_tokens": null,
-      "demerits_per_1k_total_tokens": 6.56,
+      "demerits_per_1k_total_tokens": 6.5,
       "params_billion": null,
       "params_billion_active": null,
       "params_billion_backbone": null,
       "loaded_size_gb": null,
-      "headline_eligible": false,
+      "headline_eligible": true,
       "tainted": false,
       "tainted_task_count": 0,
       "taint_reason": null,
@@ -6867,11 +7008,11 @@
         "judgment_creative": {
           "id": "judgment_creative",
           "label": "Judgment & Creative",
-          "demerits": 25.0,
-          "max_demerits": 259.0,
-          "quality": 90.3,
-          "task_count": 6,
-          "relative_quality": 97.4
+          "demerits": 33.0,
+          "max_demerits": 289.0,
+          "quality": 88.6,
+          "task_count": 7,
+          "relative_quality": 95.6
         },
         "uncategorized": {
           "id": "uncategorized",
@@ -7142,11 +7283,21 @@
           "total_penalty": 4.0,
           "max_penalty_possible": 24.0,
           "quality": 83.3
+        },
+        "writing_prose_critique_gritty_fantasy": {
+          "total_penalty": 8.0,
+          "max_penalty_possible": 30.0,
+          "quality": 73.3
         }
       },
       "failed_task_penalties": [],
-      "current_full_suite_eligible": false,
-      "awards": []
+      "current_full_suite_eligible": true,
+      "awards": [
+        {
+          "id": "sentry",
+          "label": "The Sentry"
+        }
+      ]
     },
     {
       "run_id": "glm_5_1_full_rule",
@@ -13577,12 +13728,7 @@
       },
       "failed_task_penalties": [],
       "current_full_suite_eligible": true,
-      "awards": [
-        {
-          "id": "sentry",
-          "label": "The Sentry"
-        }
-      ]
+      "awards": []
     },
     {
       "run_id": "qwen3_4b_thinking_full_rule",
@@ -20626,6 +20772,387 @@
       "awards": []
     },
     {
+      "run_id": "glm_4_7_zai_full_rule",
+      "run_path": "runs/glm_4_7_zai_full_rule",
+      "subject_id": "glm_4_7_zai",
+      "title": "GLM-4.7 (Z.AI Coding Plan)",
+      "canonical_title": "GLM-4.7 (Z.AI Coding Plan)",
+      "display_title": "GLM-4.7 (Z.AI Coding Plan)",
+      "deployment_label": "",
+      "variant_label": "",
+      "model": "glm-4.7",
+      "provider": "openai-compatible",
+      "base_url": "https://api.z.ai/api/coding/paas/v4",
+      "reasoning_effort": "",
+      "reasoning_effort_profile": "",
+      "status": "complete",
+      "completed_task_count": 53,
+      "requested_task_count": 53,
+      "failed_task_count": 0,
+      "summary": "Completed 53 of 53 task(s); no task failures. 40 of 53 task(s) triggered penalties; 226 signal(s) passed.",
+      "roughbench_demerits": 420,
+      "suite_max_demerits": 1867,
+      "suite_demerit_pct": 22.5,
+      "overall_quality": 77.5,
+      "utility_points": 1447.0,
+      "utility_per_1k_total_tokens": 22.41,
+      "usage_total_tokens": 64579,
+      "usage_prompt_tokens": 16624,
+      "usage_completion_tokens": 47955,
+      "usage_reasoning_tokens": 0,
+      "usage_answer_tokens": 47955,
+      "usage_unsplit_completion_tokens": null,
+      "demerits_per_1k_total_tokens": 6.5,
+      "params_billion": null,
+      "params_billion_active": null,
+      "params_billion_backbone": null,
+      "loaded_size_gb": null,
+      "headline_eligible": true,
+      "tainted": false,
+      "tainted_task_count": 0,
+      "taint_reason": null,
+      "context_retry_task_count": 0,
+      "categories": {
+        "build_systems": {
+          "id": "build_systems",
+          "label": "Build & Systems",
+          "demerits": 67.0,
+          "max_demerits": 137.0,
+          "quality": 51.1,
+          "task_count": 4,
+          "relative_quality": 76.0
+        },
+        "ml_nlp_engineering": {
+          "id": "ml_nlp_engineering",
+          "label": "ML & NLP Engineering",
+          "demerits": 99.0,
+          "max_demerits": 389.0,
+          "quality": 74.6,
+          "task_count": 13,
+          "relative_quality": 89.0
+        },
+        "search_analytics": {
+          "id": "search_analytics",
+          "label": "Search & Analytics",
+          "demerits": 100.0,
+          "max_demerits": 267.0,
+          "quality": 62.5,
+          "task_count": 7,
+          "relative_quality": 71.0
+        },
+        "language_localization": {
+          "id": "language_localization",
+          "label": "Language & Localization",
+          "demerits": 49.0,
+          "max_demerits": 285.0,
+          "quality": 82.8,
+          "task_count": 11,
+          "relative_quality": 89.4
+        },
+        "planning_product": {
+          "id": "planning_product",
+          "label": "Planning & Product",
+          "demerits": 72.0,
+          "max_demerits": 500.0,
+          "quality": 85.6,
+          "task_count": 11,
+          "relative_quality": 96.0
+        },
+        "judgment_creative": {
+          "id": "judgment_creative",
+          "label": "Judgment & Creative",
+          "demerits": 33.0,
+          "max_demerits": 289.0,
+          "quality": 88.6,
+          "task_count": 7,
+          "relative_quality": 95.6
+        },
+        "uncategorized": {
+          "id": "uncategorized",
+          "label": "Uncategorized",
+          "demerits": 0.0,
+          "max_demerits": 0.0,
+          "quality": null,
+          "task_count": 0
+        }
+      },
+      "task_penalties": {
+        "agent_rubric_false_competence_spec": {
+          "total_penalty": 5.0,
+          "max_penalty_possible": 25.0,
+          "quality": 80.0
+        },
+        "agent_task_spec_not_handwave": {
+          "total_penalty": 4.0,
+          "max_penalty_possible": 57.0,
+          "quality": 93.0
+        },
+        "analytics_ab_test_mix_shift_decision": {
+          "total_penalty": 3.0,
+          "max_penalty_possible": 46.0,
+          "quality": 93.5
+        },
+        "analytics_guardrail_tradeoff_launch_decision": {
+          "total_penalty": 3.0,
+          "max_penalty_possible": 34.0,
+          "quality": 91.2
+        },
+        "applied_nlp_annotation_quality_gate": {
+          "total_penalty": 3.0,
+          "max_penalty_possible": 26.0,
+          "quality": 88.5
+        },
+        "applied_nlp_bio_sequence_cleanup": {
+          "total_penalty": 3.0,
+          "max_penalty_possible": 27.0,
+          "quality": 88.9
+        },
+        "applied_nlp_conflicting_summary": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 39.0,
+          "quality": 100.0
+        },
+        "applied_nlp_label_normalization": {
+          "total_penalty": 3.0,
+          "max_penalty_possible": 28.0,
+          "quality": 89.3
+        },
+        "applied_nlp_ner_span_audit": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 25.0,
+          "quality": 100.0
+        },
+        "applied_nlp_sentiment_batch": {
+          "total_penalty": 3.0,
+          "max_penalty_possible": 30.0,
+          "quality": 90.0
+        },
+        "aquarium_ph_crash_triage": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 52.0,
+          "quality": 100.0
+        },
+        "critique_without_sandwich": {
+          "total_penalty": 5.0,
+          "max_penalty_possible": 23.0,
+          "quality": 78.3
+        },
+        "design_cardgame_blight_mechanics": {
+          "total_penalty": 20.0,
+          "max_penalty_possible": 38.0,
+          "quality": 47.4
+        },
+        "design_magic_system_tractable_constraints": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 59.0,
+          "quality": 100.0
+        },
+        "hf_datasets_streaming_rewrite_under_caps": {
+          "total_penalty": 16.0,
+          "max_penalty_possible": 27.0,
+          "quality": 40.7
+        },
+        "home_energy_ev_charge_decision": {
+          "total_penalty": 2.0,
+          "max_penalty_possible": 41.0,
+          "quality": 95.1
+        },
+        "lang_japanese_idiom_localization_batch": {
+          "total_penalty": 20.0,
+          "max_penalty_possible": 45.0,
+          "quality": 55.6
+        },
+        "lang_japanese_implied_uchi_soto": {
+          "total_penalty": 4.0,
+          "max_penalty_possible": 17.0,
+          "quality": 76.5
+        },
+        "lang_japanese_keigo_hierarchy_inference": {
+          "total_penalty": 4.0,
+          "max_penalty_possible": 18.0,
+          "quality": 77.8
+        },
+        "lang_japanese_translation_kaze_no_tayori": {
+          "total_penalty": 9.0,
+          "max_penalty_possible": 17.0,
+          "quality": 47.1
+        },
+        "lang_korean_idiom_localization_batch": {
+          "total_penalty": 3.0,
+          "max_penalty_possible": 44.0,
+          "quality": 93.2
+        },
+        "lang_korean_politeness_level_switch": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 30.0,
+          "quality": 100.0
+        },
+        "lang_korean_register_tone_batch": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 40.0,
+          "quality": 100.0
+        },
+        "lang_korean_sarcastic_nunchi_pparune": {
+          "total_penalty": 9.0,
+          "max_penalty_possible": 22.0,
+          "quality": 59.1
+        },
+        "lang_korean_translation_nunchi_eopda": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 18.0,
+          "quality": 100.0
+        },
+        "lang_korean_translation_ssitgo_wa": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 17.0,
+          "quality": 100.0
+        },
+        "lang_korean_webtoon_register_preservation": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 17.0,
+          "quality": 100.0
+        },
+        "medical_cannabis_risk_straight_talk": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 45.0,
+          "quality": 100.0
+        },
+        "medical_straight_talk_ldl_148": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 44.0,
+          "quality": 100.0
+        },
+        "ml_distributed_eval_debug": {
+          "total_penalty": 24.0,
+          "max_penalty_possible": 31.0,
+          "quality": 22.6
+        },
+        "ml_t5_seq2seq_data_collator_mismatch": {
+          "total_penalty": 12.0,
+          "max_penalty_possible": 27.0,
+          "quality": 55.6
+        },
+        "nlp_augmentation_structural_corruption": {
+          "total_penalty": 7.0,
+          "max_penalty_possible": 29.0,
+          "quality": 75.9
+        },
+        "nlp_bio_off_axis_crf": {
+          "total_penalty": 9.0,
+          "max_penalty_possible": 28.0,
+          "quality": 67.9
+        },
+        "nlp_seqeval_vs_token_f1": {
+          "total_penalty": 11.0,
+          "max_penalty_possible": 30.0,
+          "quality": 63.3
+        },
+        "nutrition_multi_component_meal_servings": {
+          "total_penalty": 34.0,
+          "max_penalty_possible": 45.0,
+          "quality": 24.4
+        },
+        "nutrition_table_from_variable_ingredients": {
+          "total_penalty": 11.0,
+          "max_penalty_possible": 37.0,
+          "quality": 70.3
+        },
+        "nutrition_two_component_bowl_fixed_topping": {
+          "total_penalty": 29.0,
+          "max_penalty_possible": 36.0,
+          "quality": 19.4
+        },
+        "rag_broad_search_regression_audit": {
+          "total_penalty": 12.0,
+          "max_penalty_possible": 41.0,
+          "quality": 70.7
+        },
+        "reasoning_settled_blame_purdue_opioid": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 50.0,
+          "quality": 100.0
+        },
+        "retrieval_local_search_stack_practicality": {
+          "total_penalty": 8.0,
+          "max_penalty_possible": 28.0,
+          "quality": 71.4
+        },
+        "smarthome_conflicting_signals_pet_vs_intrusion": {
+          "total_penalty": 18.0,
+          "max_penalty_possible": 50.0,
+          "quality": 64.0
+        },
+        "smarthome_occupancy_inference_alert": {
+          "total_penalty": 11.0,
+          "max_penalty_possible": 38.0,
+          "quality": 71.1
+        },
+        "smarthome_toolcall_notification_triage": {
+          "total_penalty": 0.0,
+          "max_penalty_possible": 43.0,
+          "quality": 100.0
+        },
+        "swe_existing_code_http_cache_bugfix": {
+          "total_penalty": 32.0,
+          "max_penalty_possible": 34.0,
+          "quality": 5.9
+        },
+        "swe_realtime_buzzer_server": {
+          "total_penalty": 5.0,
+          "max_penalty_possible": 41.0,
+          "quality": 87.8
+        },
+        "swe_scraper_persistent_resumable": {
+          "total_penalty": 14.0,
+          "max_penalty_possible": 35.0,
+          "quality": 60.0
+        },
+        "t5_relpebias_failure_mode": {
+          "total_penalty": 11.0,
+          "max_penalty_possible": 37.0,
+          "quality": 70.3
+        },
+        "tool_planning_migration_plan_concrete": {
+          "total_penalty": 13.0,
+          "max_penalty_possible": 55.0,
+          "quality": 76.4
+        },
+        "tool_planning_search_diagnose_patch": {
+          "total_penalty": 10.0,
+          "max_penalty_possible": 66.0,
+          "quality": 84.8
+        },
+        "train_inference_mismatch_audit": {
+          "total_penalty": 13.0,
+          "max_penalty_possible": 32.0,
+          "quality": 59.4
+        },
+        "ux_multirole_service_hub_ia": {
+          "total_penalty": 5.0,
+          "max_penalty_possible": 49.0,
+          "quality": 89.8
+        },
+        "ux_story_ide_nimble_architecture": {
+          "total_penalty": 4.0,
+          "max_penalty_possible": 24.0,
+          "quality": 83.3
+        },
+        "writing_prose_critique_gritty_fantasy": {
+          "total_penalty": 8.0,
+          "max_penalty_possible": 30.0,
+          "quality": 73.3
+        }
+      },
+      "failed_task_penalties": [],
+      "current_full_suite_eligible": true,
+      "awards": [
+        {
+          "id": "sentry",
+          "label": "The Sentry"
+        }
+      ]
+    },
+    {
       "run_id": "glm_5_1_zai_full_rule",
       "run_path": "runs/glm_5_1_zai_full_rule",
       "subject_id": "glm_5_1_zai",
@@ -24405,12 +24932,7 @@
       },
       "failed_task_penalties": [],
       "current_full_suite_eligible": true,
-      "awards": [
-        {
-          "id": "sentry",
-          "label": "The Sentry"
-        }
-      ]
+      "awards": []
     },
     {
       "run_id": "qwen3_5_35b_a3b_compute_test_full_rule",
@@ -27442,6 +27964,387 @@
         "awards": []
       },
       {
+        "run_id": "glm_4_7_zai_full_rule",
+        "run_path": "runs/glm_4_7_zai_full_rule",
+        "subject_id": "glm_4_7_zai",
+        "title": "GLM-4.7 (Z.AI Coding Plan)",
+        "canonical_title": "GLM-4.7 (Z.AI Coding Plan)",
+        "display_title": "GLM-4.7 (Z.AI Coding Plan)",
+        "deployment_label": "",
+        "variant_label": "",
+        "model": "glm-4.7",
+        "provider": "openai-compatible",
+        "base_url": "https://api.z.ai/api/coding/paas/v4",
+        "reasoning_effort": "",
+        "reasoning_effort_profile": "",
+        "status": "complete",
+        "completed_task_count": 53,
+        "requested_task_count": 53,
+        "failed_task_count": 0,
+        "summary": "Completed 53 of 53 task(s); no task failures. 40 of 53 task(s) triggered penalties; 226 signal(s) passed.",
+        "roughbench_demerits": 420,
+        "suite_max_demerits": 1867,
+        "suite_demerit_pct": 22.5,
+        "overall_quality": 77.5,
+        "utility_points": 1447.0,
+        "utility_per_1k_total_tokens": 22.41,
+        "usage_total_tokens": 64579,
+        "usage_prompt_tokens": 16624,
+        "usage_completion_tokens": 47955,
+        "usage_reasoning_tokens": 0,
+        "usage_answer_tokens": 47955,
+        "usage_unsplit_completion_tokens": null,
+        "demerits_per_1k_total_tokens": 6.5,
+        "params_billion": null,
+        "params_billion_active": null,
+        "params_billion_backbone": null,
+        "loaded_size_gb": null,
+        "headline_eligible": true,
+        "tainted": false,
+        "tainted_task_count": 0,
+        "taint_reason": null,
+        "context_retry_task_count": 0,
+        "categories": {
+          "build_systems": {
+            "id": "build_systems",
+            "label": "Build & Systems",
+            "demerits": 67.0,
+            "max_demerits": 137.0,
+            "quality": 51.1,
+            "task_count": 4,
+            "relative_quality": 76.0
+          },
+          "ml_nlp_engineering": {
+            "id": "ml_nlp_engineering",
+            "label": "ML & NLP Engineering",
+            "demerits": 99.0,
+            "max_demerits": 389.0,
+            "quality": 74.6,
+            "task_count": 13,
+            "relative_quality": 89.0
+          },
+          "search_analytics": {
+            "id": "search_analytics",
+            "label": "Search & Analytics",
+            "demerits": 100.0,
+            "max_demerits": 267.0,
+            "quality": 62.5,
+            "task_count": 7,
+            "relative_quality": 71.0
+          },
+          "language_localization": {
+            "id": "language_localization",
+            "label": "Language & Localization",
+            "demerits": 49.0,
+            "max_demerits": 285.0,
+            "quality": 82.8,
+            "task_count": 11,
+            "relative_quality": 89.4
+          },
+          "planning_product": {
+            "id": "planning_product",
+            "label": "Planning & Product",
+            "demerits": 72.0,
+            "max_demerits": 500.0,
+            "quality": 85.6,
+            "task_count": 11,
+            "relative_quality": 96.0
+          },
+          "judgment_creative": {
+            "id": "judgment_creative",
+            "label": "Judgment & Creative",
+            "demerits": 33.0,
+            "max_demerits": 289.0,
+            "quality": 88.6,
+            "task_count": 7,
+            "relative_quality": 95.6
+          },
+          "uncategorized": {
+            "id": "uncategorized",
+            "label": "Uncategorized",
+            "demerits": 0.0,
+            "max_demerits": 0.0,
+            "quality": null,
+            "task_count": 0
+          }
+        },
+        "task_penalties": {
+          "agent_rubric_false_competence_spec": {
+            "total_penalty": 5.0,
+            "max_penalty_possible": 25.0,
+            "quality": 80.0
+          },
+          "agent_task_spec_not_handwave": {
+            "total_penalty": 4.0,
+            "max_penalty_possible": 57.0,
+            "quality": 93.0
+          },
+          "analytics_ab_test_mix_shift_decision": {
+            "total_penalty": 3.0,
+            "max_penalty_possible": 46.0,
+            "quality": 93.5
+          },
+          "analytics_guardrail_tradeoff_launch_decision": {
+            "total_penalty": 3.0,
+            "max_penalty_possible": 34.0,
+            "quality": 91.2
+          },
+          "applied_nlp_annotation_quality_gate": {
+            "total_penalty": 3.0,
+            "max_penalty_possible": 26.0,
+            "quality": 88.5
+          },
+          "applied_nlp_bio_sequence_cleanup": {
+            "total_penalty": 3.0,
+            "max_penalty_possible": 27.0,
+            "quality": 88.9
+          },
+          "applied_nlp_conflicting_summary": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 39.0,
+            "quality": 100.0
+          },
+          "applied_nlp_label_normalization": {
+            "total_penalty": 3.0,
+            "max_penalty_possible": 28.0,
+            "quality": 89.3
+          },
+          "applied_nlp_ner_span_audit": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 25.0,
+            "quality": 100.0
+          },
+          "applied_nlp_sentiment_batch": {
+            "total_penalty": 3.0,
+            "max_penalty_possible": 30.0,
+            "quality": 90.0
+          },
+          "aquarium_ph_crash_triage": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 52.0,
+            "quality": 100.0
+          },
+          "critique_without_sandwich": {
+            "total_penalty": 5.0,
+            "max_penalty_possible": 23.0,
+            "quality": 78.3
+          },
+          "design_cardgame_blight_mechanics": {
+            "total_penalty": 20.0,
+            "max_penalty_possible": 38.0,
+            "quality": 47.4
+          },
+          "design_magic_system_tractable_constraints": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 59.0,
+            "quality": 100.0
+          },
+          "hf_datasets_streaming_rewrite_under_caps": {
+            "total_penalty": 16.0,
+            "max_penalty_possible": 27.0,
+            "quality": 40.7
+          },
+          "home_energy_ev_charge_decision": {
+            "total_penalty": 2.0,
+            "max_penalty_possible": 41.0,
+            "quality": 95.1
+          },
+          "lang_japanese_idiom_localization_batch": {
+            "total_penalty": 20.0,
+            "max_penalty_possible": 45.0,
+            "quality": 55.6
+          },
+          "lang_japanese_implied_uchi_soto": {
+            "total_penalty": 4.0,
+            "max_penalty_possible": 17.0,
+            "quality": 76.5
+          },
+          "lang_japanese_keigo_hierarchy_inference": {
+            "total_penalty": 4.0,
+            "max_penalty_possible": 18.0,
+            "quality": 77.8
+          },
+          "lang_japanese_translation_kaze_no_tayori": {
+            "total_penalty": 9.0,
+            "max_penalty_possible": 17.0,
+            "quality": 47.1
+          },
+          "lang_korean_idiom_localization_batch": {
+            "total_penalty": 3.0,
+            "max_penalty_possible": 44.0,
+            "quality": 93.2
+          },
+          "lang_korean_politeness_level_switch": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 30.0,
+            "quality": 100.0
+          },
+          "lang_korean_register_tone_batch": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 40.0,
+            "quality": 100.0
+          },
+          "lang_korean_sarcastic_nunchi_pparune": {
+            "total_penalty": 9.0,
+            "max_penalty_possible": 22.0,
+            "quality": 59.1
+          },
+          "lang_korean_translation_nunchi_eopda": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 18.0,
+            "quality": 100.0
+          },
+          "lang_korean_translation_ssitgo_wa": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 17.0,
+            "quality": 100.0
+          },
+          "lang_korean_webtoon_register_preservation": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 17.0,
+            "quality": 100.0
+          },
+          "medical_cannabis_risk_straight_talk": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 45.0,
+            "quality": 100.0
+          },
+          "medical_straight_talk_ldl_148": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 44.0,
+            "quality": 100.0
+          },
+          "ml_distributed_eval_debug": {
+            "total_penalty": 24.0,
+            "max_penalty_possible": 31.0,
+            "quality": 22.6
+          },
+          "ml_t5_seq2seq_data_collator_mismatch": {
+            "total_penalty": 12.0,
+            "max_penalty_possible": 27.0,
+            "quality": 55.6
+          },
+          "nlp_augmentation_structural_corruption": {
+            "total_penalty": 7.0,
+            "max_penalty_possible": 29.0,
+            "quality": 75.9
+          },
+          "nlp_bio_off_axis_crf": {
+            "total_penalty": 9.0,
+            "max_penalty_possible": 28.0,
+            "quality": 67.9
+          },
+          "nlp_seqeval_vs_token_f1": {
+            "total_penalty": 11.0,
+            "max_penalty_possible": 30.0,
+            "quality": 63.3
+          },
+          "nutrition_multi_component_meal_servings": {
+            "total_penalty": 34.0,
+            "max_penalty_possible": 45.0,
+            "quality": 24.4
+          },
+          "nutrition_table_from_variable_ingredients": {
+            "total_penalty": 11.0,
+            "max_penalty_possible": 37.0,
+            "quality": 70.3
+          },
+          "nutrition_two_component_bowl_fixed_topping": {
+            "total_penalty": 29.0,
+            "max_penalty_possible": 36.0,
+            "quality": 19.4
+          },
+          "rag_broad_search_regression_audit": {
+            "total_penalty": 12.0,
+            "max_penalty_possible": 41.0,
+            "quality": 70.7
+          },
+          "reasoning_settled_blame_purdue_opioid": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 50.0,
+            "quality": 100.0
+          },
+          "retrieval_local_search_stack_practicality": {
+            "total_penalty": 8.0,
+            "max_penalty_possible": 28.0,
+            "quality": 71.4
+          },
+          "smarthome_conflicting_signals_pet_vs_intrusion": {
+            "total_penalty": 18.0,
+            "max_penalty_possible": 50.0,
+            "quality": 64.0
+          },
+          "smarthome_occupancy_inference_alert": {
+            "total_penalty": 11.0,
+            "max_penalty_possible": 38.0,
+            "quality": 71.1
+          },
+          "smarthome_toolcall_notification_triage": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 43.0,
+            "quality": 100.0
+          },
+          "swe_existing_code_http_cache_bugfix": {
+            "total_penalty": 32.0,
+            "max_penalty_possible": 34.0,
+            "quality": 5.9
+          },
+          "swe_realtime_buzzer_server": {
+            "total_penalty": 5.0,
+            "max_penalty_possible": 41.0,
+            "quality": 87.8
+          },
+          "swe_scraper_persistent_resumable": {
+            "total_penalty": 14.0,
+            "max_penalty_possible": 35.0,
+            "quality": 60.0
+          },
+          "t5_relpebias_failure_mode": {
+            "total_penalty": 11.0,
+            "max_penalty_possible": 37.0,
+            "quality": 70.3
+          },
+          "tool_planning_migration_plan_concrete": {
+            "total_penalty": 13.0,
+            "max_penalty_possible": 55.0,
+            "quality": 76.4
+          },
+          "tool_planning_search_diagnose_patch": {
+            "total_penalty": 10.0,
+            "max_penalty_possible": 66.0,
+            "quality": 84.8
+          },
+          "train_inference_mismatch_audit": {
+            "total_penalty": 13.0,
+            "max_penalty_possible": 32.0,
+            "quality": 59.4
+          },
+          "ux_multirole_service_hub_ia": {
+            "total_penalty": 5.0,
+            "max_penalty_possible": 49.0,
+            "quality": 89.8
+          },
+          "ux_story_ide_nimble_architecture": {
+            "total_penalty": 4.0,
+            "max_penalty_possible": 24.0,
+            "quality": 83.3
+          },
+          "writing_prose_critique_gritty_fantasy": {
+            "total_penalty": 8.0,
+            "max_penalty_possible": 30.0,
+            "quality": 73.3
+          }
+        },
+        "failed_task_penalties": [],
+        "current_full_suite_eligible": true,
+        "awards": [
+          {
+            "id": "sentry",
+            "label": "The Sentry"
+          }
+        ]
+      },
+      {
         "run_id": "glm_5_1_zai_full_rule",
         "run_path": "runs/glm_5_1_zai_full_rule",
         "subject_id": "glm_5_1_zai",
@@ -28200,12 +29103,7 @@
         },
         "failed_task_penalties": [],
         "current_full_suite_eligible": true,
-        "awards": [
-          {
-            "id": "sentry",
-            "label": "The Sentry"
-          }
-        ]
+        "awards": []
       },
       {
         "run_id": "gpt_oss_120b_local_full_rule",
@@ -32741,6 +33639,387 @@
         "awards": []
       },
       {
+        "run_id": "glm_4_7_zai_full_rule",
+        "run_path": "runs/glm_4_7_zai_full_rule",
+        "subject_id": "glm_4_7_zai",
+        "title": "GLM-4.7 (Z.AI Coding Plan)",
+        "canonical_title": "GLM-4.7 (Z.AI Coding Plan)",
+        "display_title": "GLM-4.7 (Z.AI Coding Plan)",
+        "deployment_label": "",
+        "variant_label": "",
+        "model": "glm-4.7",
+        "provider": "openai-compatible",
+        "base_url": "https://api.z.ai/api/coding/paas/v4",
+        "reasoning_effort": "",
+        "reasoning_effort_profile": "",
+        "status": "complete",
+        "completed_task_count": 53,
+        "requested_task_count": 53,
+        "failed_task_count": 0,
+        "summary": "Completed 53 of 53 task(s); no task failures. 40 of 53 task(s) triggered penalties; 226 signal(s) passed.",
+        "roughbench_demerits": 420,
+        "suite_max_demerits": 1867,
+        "suite_demerit_pct": 22.5,
+        "overall_quality": 77.5,
+        "utility_points": 1447.0,
+        "utility_per_1k_total_tokens": 22.41,
+        "usage_total_tokens": 64579,
+        "usage_prompt_tokens": 16624,
+        "usage_completion_tokens": 47955,
+        "usage_reasoning_tokens": 0,
+        "usage_answer_tokens": 47955,
+        "usage_unsplit_completion_tokens": null,
+        "demerits_per_1k_total_tokens": 6.5,
+        "params_billion": null,
+        "params_billion_active": null,
+        "params_billion_backbone": null,
+        "loaded_size_gb": null,
+        "headline_eligible": true,
+        "tainted": false,
+        "tainted_task_count": 0,
+        "taint_reason": null,
+        "context_retry_task_count": 0,
+        "categories": {
+          "build_systems": {
+            "id": "build_systems",
+            "label": "Build & Systems",
+            "demerits": 67.0,
+            "max_demerits": 137.0,
+            "quality": 51.1,
+            "task_count": 4,
+            "relative_quality": 76.0
+          },
+          "ml_nlp_engineering": {
+            "id": "ml_nlp_engineering",
+            "label": "ML & NLP Engineering",
+            "demerits": 99.0,
+            "max_demerits": 389.0,
+            "quality": 74.6,
+            "task_count": 13,
+            "relative_quality": 89.0
+          },
+          "search_analytics": {
+            "id": "search_analytics",
+            "label": "Search & Analytics",
+            "demerits": 100.0,
+            "max_demerits": 267.0,
+            "quality": 62.5,
+            "task_count": 7,
+            "relative_quality": 71.0
+          },
+          "language_localization": {
+            "id": "language_localization",
+            "label": "Language & Localization",
+            "demerits": 49.0,
+            "max_demerits": 285.0,
+            "quality": 82.8,
+            "task_count": 11,
+            "relative_quality": 89.4
+          },
+          "planning_product": {
+            "id": "planning_product",
+            "label": "Planning & Product",
+            "demerits": 72.0,
+            "max_demerits": 500.0,
+            "quality": 85.6,
+            "task_count": 11,
+            "relative_quality": 96.0
+          },
+          "judgment_creative": {
+            "id": "judgment_creative",
+            "label": "Judgment & Creative",
+            "demerits": 33.0,
+            "max_demerits": 289.0,
+            "quality": 88.6,
+            "task_count": 7,
+            "relative_quality": 95.6
+          },
+          "uncategorized": {
+            "id": "uncategorized",
+            "label": "Uncategorized",
+            "demerits": 0.0,
+            "max_demerits": 0.0,
+            "quality": null,
+            "task_count": 0
+          }
+        },
+        "task_penalties": {
+          "agent_rubric_false_competence_spec": {
+            "total_penalty": 5.0,
+            "max_penalty_possible": 25.0,
+            "quality": 80.0
+          },
+          "agent_task_spec_not_handwave": {
+            "total_penalty": 4.0,
+            "max_penalty_possible": 57.0,
+            "quality": 93.0
+          },
+          "analytics_ab_test_mix_shift_decision": {
+            "total_penalty": 3.0,
+            "max_penalty_possible": 46.0,
+            "quality": 93.5
+          },
+          "analytics_guardrail_tradeoff_launch_decision": {
+            "total_penalty": 3.0,
+            "max_penalty_possible": 34.0,
+            "quality": 91.2
+          },
+          "applied_nlp_annotation_quality_gate": {
+            "total_penalty": 3.0,
+            "max_penalty_possible": 26.0,
+            "quality": 88.5
+          },
+          "applied_nlp_bio_sequence_cleanup": {
+            "total_penalty": 3.0,
+            "max_penalty_possible": 27.0,
+            "quality": 88.9
+          },
+          "applied_nlp_conflicting_summary": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 39.0,
+            "quality": 100.0
+          },
+          "applied_nlp_label_normalization": {
+            "total_penalty": 3.0,
+            "max_penalty_possible": 28.0,
+            "quality": 89.3
+          },
+          "applied_nlp_ner_span_audit": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 25.0,
+            "quality": 100.0
+          },
+          "applied_nlp_sentiment_batch": {
+            "total_penalty": 3.0,
+            "max_penalty_possible": 30.0,
+            "quality": 90.0
+          },
+          "aquarium_ph_crash_triage": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 52.0,
+            "quality": 100.0
+          },
+          "critique_without_sandwich": {
+            "total_penalty": 5.0,
+            "max_penalty_possible": 23.0,
+            "quality": 78.3
+          },
+          "design_cardgame_blight_mechanics": {
+            "total_penalty": 20.0,
+            "max_penalty_possible": 38.0,
+            "quality": 47.4
+          },
+          "design_magic_system_tractable_constraints": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 59.0,
+            "quality": 100.0
+          },
+          "hf_datasets_streaming_rewrite_under_caps": {
+            "total_penalty": 16.0,
+            "max_penalty_possible": 27.0,
+            "quality": 40.7
+          },
+          "home_energy_ev_charge_decision": {
+            "total_penalty": 2.0,
+            "max_penalty_possible": 41.0,
+            "quality": 95.1
+          },
+          "lang_japanese_idiom_localization_batch": {
+            "total_penalty": 20.0,
+            "max_penalty_possible": 45.0,
+            "quality": 55.6
+          },
+          "lang_japanese_implied_uchi_soto": {
+            "total_penalty": 4.0,
+            "max_penalty_possible": 17.0,
+            "quality": 76.5
+          },
+          "lang_japanese_keigo_hierarchy_inference": {
+            "total_penalty": 4.0,
+            "max_penalty_possible": 18.0,
+            "quality": 77.8
+          },
+          "lang_japanese_translation_kaze_no_tayori": {
+            "total_penalty": 9.0,
+            "max_penalty_possible": 17.0,
+            "quality": 47.1
+          },
+          "lang_korean_idiom_localization_batch": {
+            "total_penalty": 3.0,
+            "max_penalty_possible": 44.0,
+            "quality": 93.2
+          },
+          "lang_korean_politeness_level_switch": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 30.0,
+            "quality": 100.0
+          },
+          "lang_korean_register_tone_batch": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 40.0,
+            "quality": 100.0
+          },
+          "lang_korean_sarcastic_nunchi_pparune": {
+            "total_penalty": 9.0,
+            "max_penalty_possible": 22.0,
+            "quality": 59.1
+          },
+          "lang_korean_translation_nunchi_eopda": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 18.0,
+            "quality": 100.0
+          },
+          "lang_korean_translation_ssitgo_wa": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 17.0,
+            "quality": 100.0
+          },
+          "lang_korean_webtoon_register_preservation": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 17.0,
+            "quality": 100.0
+          },
+          "medical_cannabis_risk_straight_talk": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 45.0,
+            "quality": 100.0
+          },
+          "medical_straight_talk_ldl_148": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 44.0,
+            "quality": 100.0
+          },
+          "ml_distributed_eval_debug": {
+            "total_penalty": 24.0,
+            "max_penalty_possible": 31.0,
+            "quality": 22.6
+          },
+          "ml_t5_seq2seq_data_collator_mismatch": {
+            "total_penalty": 12.0,
+            "max_penalty_possible": 27.0,
+            "quality": 55.6
+          },
+          "nlp_augmentation_structural_corruption": {
+            "total_penalty": 7.0,
+            "max_penalty_possible": 29.0,
+            "quality": 75.9
+          },
+          "nlp_bio_off_axis_crf": {
+            "total_penalty": 9.0,
+            "max_penalty_possible": 28.0,
+            "quality": 67.9
+          },
+          "nlp_seqeval_vs_token_f1": {
+            "total_penalty": 11.0,
+            "max_penalty_possible": 30.0,
+            "quality": 63.3
+          },
+          "nutrition_multi_component_meal_servings": {
+            "total_penalty": 34.0,
+            "max_penalty_possible": 45.0,
+            "quality": 24.4
+          },
+          "nutrition_table_from_variable_ingredients": {
+            "total_penalty": 11.0,
+            "max_penalty_possible": 37.0,
+            "quality": 70.3
+          },
+          "nutrition_two_component_bowl_fixed_topping": {
+            "total_penalty": 29.0,
+            "max_penalty_possible": 36.0,
+            "quality": 19.4
+          },
+          "rag_broad_search_regression_audit": {
+            "total_penalty": 12.0,
+            "max_penalty_possible": 41.0,
+            "quality": 70.7
+          },
+          "reasoning_settled_blame_purdue_opioid": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 50.0,
+            "quality": 100.0
+          },
+          "retrieval_local_search_stack_practicality": {
+            "total_penalty": 8.0,
+            "max_penalty_possible": 28.0,
+            "quality": 71.4
+          },
+          "smarthome_conflicting_signals_pet_vs_intrusion": {
+            "total_penalty": 18.0,
+            "max_penalty_possible": 50.0,
+            "quality": 64.0
+          },
+          "smarthome_occupancy_inference_alert": {
+            "total_penalty": 11.0,
+            "max_penalty_possible": 38.0,
+            "quality": 71.1
+          },
+          "smarthome_toolcall_notification_triage": {
+            "total_penalty": 0.0,
+            "max_penalty_possible": 43.0,
+            "quality": 100.0
+          },
+          "swe_existing_code_http_cache_bugfix": {
+            "total_penalty": 32.0,
+            "max_penalty_possible": 34.0,
+            "quality": 5.9
+          },
+          "swe_realtime_buzzer_server": {
+            "total_penalty": 5.0,
+            "max_penalty_possible": 41.0,
+            "quality": 87.8
+          },
+          "swe_scraper_persistent_resumable": {
+            "total_penalty": 14.0,
+            "max_penalty_possible": 35.0,
+            "quality": 60.0
+          },
+          "t5_relpebias_failure_mode": {
+            "total_penalty": 11.0,
+            "max_penalty_possible": 37.0,
+            "quality": 70.3
+          },
+          "tool_planning_migration_plan_concrete": {
+            "total_penalty": 13.0,
+            "max_penalty_possible": 55.0,
+            "quality": 76.4
+          },
+          "tool_planning_search_diagnose_patch": {
+            "total_penalty": 10.0,
+            "max_penalty_possible": 66.0,
+            "quality": 84.8
+          },
+          "train_inference_mismatch_audit": {
+            "total_penalty": 13.0,
+            "max_penalty_possible": 32.0,
+            "quality": 59.4
+          },
+          "ux_multirole_service_hub_ia": {
+            "total_penalty": 5.0,
+            "max_penalty_possible": 49.0,
+            "quality": 89.8
+          },
+          "ux_story_ide_nimble_architecture": {
+            "total_penalty": 4.0,
+            "max_penalty_possible": 24.0,
+            "quality": 83.3
+          },
+          "writing_prose_critique_gritty_fantasy": {
+            "total_penalty": 8.0,
+            "max_penalty_possible": 30.0,
+            "quality": 73.3
+          }
+        },
+        "failed_task_penalties": [],
+        "current_full_suite_eligible": true,
+        "awards": [
+          {
+            "id": "sentry",
+            "label": "The Sentry"
+          }
+        ]
+      },
+      {
         "run_id": "gpt_oss_20b_full_rule_medium",
         "run_path": "runs/gpt_oss_20b_full_rule_medium",
         "subject_id": "gpt_oss_20b_local",
@@ -34618,12 +35897,7 @@
         },
         "failed_task_penalties": [],
         "current_full_suite_eligible": true,
-        "awards": [
-          {
-            "id": "sentry",
-            "label": "The Sentry"
-          }
-        ]
+        "awards": []
       },
       {
         "run_id": "gemma_4_26b_a4b_compute_test_full_rule",
@@ -35892,6 +37166,19 @@
           "task_count": 4
         },
         {
+          "run_id": "glm_4_7_zai_full_rule",
+          "subject_id": "glm_4_7_zai",
+          "title": "GLM-4.7 (Z.AI Coding Plan)",
+          "deployment_label": "",
+          "model": "glm-4.7",
+          "status": "complete",
+          "tainted": false,
+          "quality": 51.1,
+          "demerits": 67.0,
+          "max_demerits": 137.0,
+          "task_count": 4
+        },
+        {
           "run_id": "gemma_3n_e4b_router_full_rule",
           "subject_id": "gemma_3n_e4b_router",
           "title": "Gemma 3n E4B",
@@ -36098,6 +37385,19 @@
           "tainted": false,
           "quality": 75.1,
           "demerits": 97.0,
+          "max_demerits": 389.0,
+          "task_count": 13
+        },
+        {
+          "run_id": "glm_4_7_zai_full_rule",
+          "subject_id": "glm_4_7_zai",
+          "title": "GLM-4.7 (Z.AI Coding Plan)",
+          "deployment_label": "",
+          "model": "glm-4.7",
+          "status": "complete",
+          "tainted": false,
+          "quality": 74.6,
+          "demerits": 99.0,
           "max_demerits": 389.0,
           "task_count": 13
         },
@@ -36390,6 +37690,19 @@
           "task_count": 7
         },
         {
+          "run_id": "glm_4_7_zai_full_rule",
+          "subject_id": "glm_4_7_zai",
+          "title": "GLM-4.7 (Z.AI Coding Plan)",
+          "deployment_label": "",
+          "model": "glm-4.7",
+          "status": "complete",
+          "tainted": false,
+          "quality": 62.5,
+          "demerits": 100.0,
+          "max_demerits": 267.0,
+          "task_count": 7
+        },
+        {
           "run_id": "glm_5_1_zai_full_rule",
           "subject_id": "glm_5_1_zai",
           "title": "GLM-5.1 (Z.AI Coding Plan)",
@@ -36652,6 +37965,19 @@
           "task_count": 11
         },
         {
+          "run_id": "glm_4_7_zai_full_rule",
+          "subject_id": "glm_4_7_zai",
+          "title": "GLM-4.7 (Z.AI Coding Plan)",
+          "deployment_label": "",
+          "model": "glm-4.7",
+          "status": "complete",
+          "tainted": false,
+          "quality": 82.8,
+          "demerits": 49.0,
+          "max_demerits": 285.0,
+          "task_count": 11
+        },
+        {
           "run_id": "gemma_3_4b_router_full_rule",
           "subject_id": "gemma_3_4b_router",
           "title": "Gemma 3 4B",
@@ -36793,6 +38119,19 @@
           "tainted": false,
           "quality": 85.8,
           "demerits": 71.0,
+          "max_demerits": 500.0,
+          "task_count": 11
+        },
+        {
+          "run_id": "glm_4_7_zai_full_rule",
+          "subject_id": "glm_4_7_zai",
+          "title": "GLM-4.7 (Z.AI Coding Plan)",
+          "deployment_label": "",
+          "model": "glm-4.7",
+          "status": "complete",
+          "tainted": false,
+          "quality": 85.6,
+          "demerits": 72.0,
           "max_demerits": 500.0,
           "task_count": 11
         },
@@ -37068,6 +38407,19 @@
           "tainted": false,
           "quality": 89.6,
           "demerits": 30.0,
+          "max_demerits": 289.0,
+          "task_count": 7
+        },
+        {
+          "run_id": "glm_4_7_zai_full_rule",
+          "subject_id": "glm_4_7_zai",
+          "title": "GLM-4.7 (Z.AI Coding Plan)",
+          "deployment_label": "",
+          "model": "glm-4.7",
+          "status": "complete",
+          "tainted": false,
+          "quality": 88.6,
+          "demerits": 33.0,
           "max_demerits": 289.0,
           "task_count": 7
         },
